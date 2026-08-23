@@ -1,5 +1,5 @@
 #Multiplicação
 
 def multiplica (X,Y)
-   resultado = x * Y
+   resultado = X * Y
    return resultado
