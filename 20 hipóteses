@@ -1,0 +1,24 @@
+Problema encontrado: Alunos, professores e funcionários da PUC-Rio não têm uma forma rápida e confiável de saber onde comer no campus — quais restaurantes e cantinas existem, o que cada um está servindo naquele dia, quanto custa e se vale a pena. Isso é agravado pelo intervalo curto entre aulas: sem essa informação centralizada, as pessoas decidem "no escuro" (entram na fila errada, comem mal, gastam mais do que precisavam, ou perdem tempo do intervalo decidindo onde comer).
+
+20 hipóteses:
+
+App/site centralizado com o cardápio diário de cada restaurante do campus.
+Mapa interativo do campus mostrando cada opção de comida com tempo de fila estimado em tempo real.
+Sistema de avaliação por estrelas alimentado pelos próprios alunos, com comentários curtos por prato.
+Chatbot no WhatsApp/Telegram que responde "o que tem pra comer hoje perto de mim" sem precisar abrir um app.
+Painel digital físico (tipo TV) na entrada dos prédios principais mostrando o cardápio do dia dos restaurantes próximos.
+Painel simples que os próprios restaurantes atualizam direto, tirando a dependência de terceiros digitarem o cardápio por eles.
+Fila virtual / senha digital, reduzindo o tempo que a pessoa fica parada fisicamente esperando.
+Ranking semanal ("top 5 da semana") divulgado nas redes sociais do DCE ou dos centros acadêmicos.
+Canal ou grupo por restaurante (WhatsApp/Instagram) onde cada um posta o cardápio do dia.
+Integração com o calendário do aluno, sugerindo onde comer com base no horário livre entre aulas.
+Pré-pedido/reserva para retirar a comida pronta no horário do intervalo, sem enfrentar fila.
+Incentivo (desconto/cashback) para quem avalia, garantindo volume de dados confiáveis de qualidade.
+Ponto de informação humano na praça de alimentação, principalmente para orientar calouros nas primeiras semanas.
+Totens físicos de autoatendimento espalhados pelo campus com cardápio e avaliações.
+Integração com apps de delivery já existentes para ampliar as opções de fora que entregam no campus.
+Oficina/curso oferecido pela universidade aos donos dos restaurantes sobre como manter um cardápio digital atualizado.
+Sistema por SMS para quem está sem internet no momento: manda "CARDÁPIO" e recebe a resposta automática.
+Pesquisa de satisfação mensal do Diretório Acadêmico, com resultado afixado em mural físico.
+Filtro focado em restrições alimentares (vegano, sem glúten, etc.) — resolve só essa fatia específica do problema.
+Marketplace interno onde os restaurantes publicam promoções do dia, o que também os incentiva a manter os dados em dia.
