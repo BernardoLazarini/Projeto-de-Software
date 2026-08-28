@@ -1,6 +1,2 @@
-Projeto de Software sobre PUC-Rio
-
-Vai ser feito um website sobre as opções gastronômicas disponíveis aos alunos da PUC-Rio.
-O site vai conter, além de todos os restaurantes, um mini-mapa de localização de cada um, um sistema da avaliação de qualidade feito por usuários, uma breve descrição sobre o restaurante e o estilo de comida que oferecem. 
-
-
+Projeto de Software sobre PUC-RIO
+Vai ser criado um web-app sobre a gastronomia na PUC-Rio, descrevendo todas as opções de lojas, os cardápios, as suas localizações, uma breve descrição do restaurante e a avaliação de usuários.
