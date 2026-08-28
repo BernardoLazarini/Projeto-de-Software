@@ -1,5 +1,5 @@
 #Multiplicação
 
-def multiplica (X,Y)
+def multiplicaf (X,Y):
    resultado = X * Y
    return resultado
