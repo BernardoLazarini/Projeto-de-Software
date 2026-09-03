@@ -1,0 +1,19 @@
+Principais funcionalidades dos concorrentes
+
+Após a pesquisa inicial feita pelo grupo, precebe-se que não há concorrência direta para o ambiente da PUC-Rio, porém suas funcionalidades são fundamentais para a criação de um web-app masi acessível e de melhor qualidade.
+
+Os sites com objetivos mais semelhantes ao que o que o grupo deseja fazer são DineOnCampus e CampusDish, sites americanos.
+
+O site CampusDish uma aba de localizações e cardápios, em que uma tela ícones representando todos os restaurantes do campus aparece. Tem uma foto individual do restaurante em cada ícone.  Diz o horário de funcionalidade, o endereço e o link do restaurante dentro de um app de delivery. 
+    A principal funcionalidade é a facildade de manuseio, com um front-end extremamente informativo e simples. 
+
+O BandejApp (Aplicativo mobile do bandejão da UFRJ), igual ao dá PUC-Rio, somente mostra o cardápio dos dias da semana. É eficiente, pois visa somente um restaurante, logo atribui tudo necessário a ele. 
+    A principal funcionalidade é a não necessidade de conexão contínua à internet para o funcionamento, facilitando o acesso até em momentos em que a conexåõ é perdida durante a navegação.
+
+O aplicatico DineOnCampus oferece as informações nutricionais, como calorias, alérgenos e detalhes sobre os pratos, além de mostrar a localização e rotas até chegarem nos pontos gstronômicos.
+
+    A maior diferença entre esses site e as ideias originais do grupo (que estão sendo mostradas como válidas intervenções com a existência de sucesso em outros locais) é o fato do DineOnCampus e o CampusDish apresentarem a opcão dos alunos criarem Planos de refeições, em que ao pagar um valor inteiro, ganha-se benefícios de acordo com o plano escolhido. Quase um plano de Vale Refeição, ditado por uma quantidade de utilizações pre-fixas por plano( independente do preço de cada refeição).
+        Ex:
+            Um plano de $1.721 por 120 utilizações do cartão por semestre, $400 dolares de alimentação por fora e três trocas de alimentação por semana(ao máximo de $648) por utilizações por fora do ramo de alimentação.
+
+Essa última sai do plano de funcionamento previsto para o site na PUC-Rio, mas demostra com muita convicção a adesão de alunos à sites que facilitam a alimentação dentro do ambiente universitário.
