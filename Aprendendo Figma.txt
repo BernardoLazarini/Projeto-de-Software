@@ -1,0 +1,10 @@
+Aprendendo a usar o Figma:
+
+Vídeo do Youtube do Figma sobre o funcionamento:
+  https://www.youtube.com/watch?v=1PFkmrb4Bqg
+
+Exemplo de criação de webapp no Figma:
+  https://www.youtube.com/watch?v=w1IssNgKM28
+
+Modelo de web-app feito no Figma:
+  https://www.figma.com/make/UWgbhKXUoCQshHgjTTC24k/Campus-Restaurant-Webapp?t=8Ws3kKqaS8DgE5dc-1
