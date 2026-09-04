@@ -1,0 +1,6 @@
+Análise de produtos similares
+
+Cardápio Bandejão PUC-Rio (oficial da universidade): mostra só o cardápio da semana do Bandejão. Ponto forte: é oficial e fácil de achar. Fraqueza: cobre um único restaurante, não tem avaliação nem comparação — é basicamente um cardápio estático.
+Mapa S.A. (guia feito por aluno, 2014): lista 13 estabelecimentos do campus com localização, tipo de comida e preço médio. Ponto forte: é o único que já tentou reunir todos os restaurantes num só lugar, como a nossa ideia. Fraqueza: sem cardápio atualizado, sem avaliação, e abandonado — mostra que a demanda existe, mas ninguém manteve.
+BandejãoUFRJ (app de aluno da UFRJ): cardápio do RU com widget de "próxima refeição", 4,5 estrelas e mais de 500 avaliações. Ponto forte: prova real de que universitário adota e avalia bem esse tipo de app quando é simples e rápido. Fraqueza: cobre só o restaurante universitário, não o campus inteiro — é exatamente o limite que a nossa ideia supera.
+Dine On Campus / CampusDish (plataformas comerciais dos EUA): fazem o que propomos, em escala — todos os restaurantes do campus, cardápio, localização, horário. Ponto forte: modelo de referência de produto maduro. Fraqueza: são pagas, vendidas por empresas terceirizadas (Aramark, Sodexo), e uma delas tem nota baixa (2,4 estrelas) por travar — sinal de que a execução técnica importa tanto quanto a ideia.
