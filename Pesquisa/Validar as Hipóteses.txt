@@ -1,0 +1,13 @@
+Validadas :
+
+App/site centralizado com cardápio diário — é a base da ideia, e o BandejãoUFRJ prova que aluno usa e avalia bem esse formato.
+Avaliação por estrelas com comentários — é exatamente o que falta nos concorrentes (nem o Bandejão da PUC, nem o Mapa S.A. têm isso).
+Painel simples pros próprios restaurantes atualizarem o cardápio — resolve a maior fraqueza vista nos concorrentes (cardápio desatualizado ou disperso em posts).
+Incentivo para quem avalia — mecanismo simples de gamificação pra garantir volume de avaliações reais.
+Filtro por restrição alimentar (vegano, sem glúten etc.) — fácil de implementar e resolve uma dor concreta.
+
+Boas para uma fase 2 (não travam o projeto, mas valem registrar como evolução futura):
+2, 4, 8, 10, 11, 16, 20 — mapa com fila em tempo real, chatbot no WhatsApp, ranking semanal nas redes, integração com calendário, pré-pedido, oficina pros restaurantes e marketplace de promoções. Todas têm valor, mas dependem de recursos (parceria com restaurantes, infraestrutura) que fogem do escopo inicial.
+
+Descartadas:
+5, 7, 9, 13, 14, 15, 17, 18 — painel físico de TV, senha digital de fila, grupo de WhatsApp por restaurante, atendimento humano, totens físicos, integração com delivery externo, SMS e pesquisa em mural. Ou exigem investimento físico que foge do escopo de um projeto de app, ou concorrem/duplicam com a proposta central de centralizar tudo em um único lugar.
