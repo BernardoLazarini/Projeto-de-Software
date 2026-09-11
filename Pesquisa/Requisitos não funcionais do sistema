@@ -1,10 +1,8 @@
 Lista de requisitos não funcionais do sistema:
 
-1. Preço de cada prato do cardápio
-2. Cardápio online com os pratos da semana
-3. Descrição de cada estabelecimento
-4. Mapa dos restaurantes
-5. Sistema que calcula a avaliação média do estabelecimento
-6. Sistema de segurança com relação a dados da conta do usuário
-7. Indicação de restaurantes com base na nota
-8. Ranking semanal dos estabelecimentos com base na nota obtida
+1. Segurança da conta do usuário contra acesso não autorizado
+2. A interface deve ser simples e intuitiva, permitindo que o usuário encontre um restaurante rapidamente.
+3. O mapa e as informações dos restaurantes devem ser carregados rapidamente.
+4. O sistema deve estar disponível durante o horário de funcionamento do campus.
+5. O aplicativo deve funcionar adequadamente em diferentes tamanhos de tela.
+6. As avaliações e comentários enviados pelos usuários não devem ser perdidos.
