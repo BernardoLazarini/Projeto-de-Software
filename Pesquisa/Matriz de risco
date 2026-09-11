@@ -1,0 +1,10 @@
+Matriz de Riscos
+
+| Risco                                        | Probabilidade | Impacto | Nível de risco | Prevenção                                                  |
+| -------------------------------------------- | ------------- | ------- | -------------- | ---------------------------------------------------------- |
+| Atraso no desenvolvimento                    | Média         | Alto    | 🔴 Alto        | Dividir tarefas e definir prazos                           |
+| Bugs no sistema                              | Alta          | Alto    | 🔴 Crítico     | Realizar testes durante o desenvolvimento                  |
+| Conflitos de código entre integrantes        | Média         | Alto    | 🔴 Alto        | Usar GitHub e organizar commits/branches                   |
+| Dificuldade para implementar funcionalidades | Média         | Médio   | 🟠 Médio       | Priorizar funcionalidades essenciais                       |
+| Mudanças nos requisitos do projeto           | Baixa         | Médio   | 🟡 Baixo       | Definir e registrar os requisitos antes do desenvolvimento |
+
