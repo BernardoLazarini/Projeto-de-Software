@@ -1,3 +1,48 @@
-Implementações melhores que a dos concorrentes
+Metodologia
 
-Comparando direto com o que já mapeamos: cobrir todos os restaurantes do campus, não só o Bandejão (o cardápio oficial da PUC e o BandejãoUFRJ cobrem só um restaurante cada); manter o cardápio sempre atualizado com um painel simples que o próprio dono do restaurante preenche (resolve a maior falha do Mapa S.A., que ficou parado desde 2014); ter avaliação por estrelas com comentário de texto, não só nota (nenhum concorrente local tem isso); permitir filtro por categoria de comida e por restrição alimentar (vegano, sem glúten), algo que nenhum dos concorrentes oferece; e manter o app leve e rápido — o Dine On Campus perde nota (2,4 estrelas) justamente por travar e ser lento, então isso vira um cuidado técnico explícito, não só um diferencial de discurso.
+Separei os concorrentes em dois grupos, porque eles competem em ligas diferentes e isso muda o que "melhor" significa em cada caso: concorrentes 
+diretos/locais (Cardápio Bandejão oficial da PUC-Rio, Mapa S.A. e BandejãoUFRJ — feitos por alunos ou pela própria universidade, sem custo) e referências 
+internacionais de mercado (CampusDish, da Aramark, e Dine On Campus, da RoaringSky — plataformas pagas, vendidas para a instituição contratar). Comparei 
+os dois grupos funcionalidade a funcionalidade com a nossa proposta, usando o que está publicamente disponível em cada produto (site oficial, ficha na loja 
+de apps, número de avaliações).
+
+Quadro comparativo de funcionalidades
+
+Cobertura de restaurantes — Cardápio Bandejão oficial cobre só o Bandejão; Mapa S.A. listou 13 estabelecimentos, mas parou em 2014; BandejãoUFRJ cobre só o
+RU da UFRJ; CampusDish/Dine On Campus cobrem o campus inteiro, mas fora do Brasil. Nossa proposta cobre todos os restaurantes ativos da PUC-Rio, com processo
+de manutenção contínua.
+
+Atualização do cardápio — no oficial da PUC é a própria universidade que atualiza manualmente; no Mapa S.A. ninguém atualiza mais; no BandejãoUFRJ é a equipe 
+de nutrição da UFRJ. Nossa proposta muda quem atualiza: um painel simples que o próprio dono do restaurante preenche, o que resolve a causa raiz do problema 
+do Mapa S.A. (dependia de alguém de fora manter).
+
+Avaliação de restaurante/prato dentro do produto — aqui um ponto que a versão anterior misturou: as notas que citei antes 
+(BandejãoUFRJ 4,5★, Dine On Campus 2,4★, CampusDish 2,1★) são avaliações do aplicativo na loja de apps, não avaliação de restaurante ou prato dentro do produto.
+Nenhum dos cinco concorrentes mapeados — nem os locais nem os internacionais — tem um sistema de estrelas para avaliar comida ou restaurante dentro do próprio app.
+Esse é o diferencial mais forte que identificamos, porque não é uma falha pontual de um concorrente: é uma lacuna do mercado inteiro que mapeamos.
+
+Filtro por restrição alimentar — aqui os concorrentes locais perdem e os internacionais ganham: nenhum dos três locais (PUC oficial, Mapa S.A., BandejãoUFRJ) 
+tem filtro de vegano/vegetariano/alergênico, mas CampusDish e Dine On Campus têm. Ou seja, essa funcionalidade não é inédita — é um padrão que precisamos igualar, 
+adaptado à realidade da PUC, e não um diferencial nosso.
+
+Categorização por tipo de comida — nenhum concorrente, local ou internacional, organiza por categoria de cozinha (self-service, japonês, lanche, etc.); todos listam
+por nome do estabelecimento. Isso facilita decisão rápida no intervalo entre aulas, que é o cerne do problema que definimos.
+
+Estabilidade e performance — este é um risco real, não só uma oportunidade: CampusDish tem 2,1★ e Dine On Campus 2,4★ nas lojas de app, e as reclamações recorrentes
+são as mesmas em ambos — app lento, travando, exigindo reabrir várias vezes para ver uma informação simples. Isso mostra que o conceito de app de cardápio de campus já 
+foi tentado por empresas grandes e falhou na execução, não na ideia. Por isso esse ponto entra como cuidado técnico do nosso MVP, não como discurso de marketing.
+
+Modelo de acesso — CampusDish e Dine On Campus dependem de contrato pago entre a universidade e uma empresa terceirizada (Aramark, Sodexo/RoaringSky). Nossa proposta é 
+gratuita e não depende de contrato institucional para existir, o que também significa lançamento mais rápido, sem aprovação de compras da universidade.
+
+Implementações que definimos como melhores, com a justificativa de cada uma
+
+1 - Cobrir todos os restaurantes do campus, não só o Bandejão — motivado pela limitação compartilhada por três dos cinco concorrentes (PUC oficial, BandejãoUFRJ e, em menor grau, Mapa S.A.),
+    que tratam um único restaurante como se fosse o campus inteiro.
+2 - Painel de autoatualização para o dono do restaurante — ataca diretamente a causa da obsolescência do Mapa S.A. (parado desde 2014 por depender de manutenção externa), não só o sintoma.
+3 - Avaliação por estrelas com comentário de restaurante/prato dentro do produto — preenche uma lacuna que nenhum dos cinco concorrentes mapeados cobre, sendo o diferencial de maior peso da análise.
+4 - Filtro por restrição alimentar — não é diferencial, é paridade necessária com o padrão já praticado por CampusDish e Dine On Campus; sem isso ficaríamos atrás do patamar internacional.
+5 - Categorização por tipo de comida — nenhum concorrente organiza dessa forma; resolve a decisão rápida no intervalo entre aulas, que é o problema principal já validado.
+6 - MVP enxuto, com poucas telas e sem dependências externas pesadas — resposta direta às causas de queda de nota do CampusDish (2,1★) e Dine On Campus (2,4★), ambas ligadas a lentidão e travamento, 
+    não a falta de funcionalidade.
+7 - Gratuito e sem contrato institucional — remove a barreira de adoção que os modelos pagos (CampusDish/Dine On Campus) enfrentam, permitindo lançar e testar direto com os alunos.

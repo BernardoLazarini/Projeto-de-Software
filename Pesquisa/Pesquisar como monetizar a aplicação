@@ -1,0 +1,27 @@
+Primeiro, um dado importante da pesquisa: os concorrentes brasileiros mais próximos de nós — BandejãoUFRJ, 
+Cardápio USP e Uniapp — são todos gratuitos e não divulgam nenhum modelo de receita; o Uniapp inclusive admite 
+abertamente que o "modelo de sustentabilidade financeira" não é público, sendo mantido como projeto de alunos. 
+Ou seja, o padrão do nosso mercado direto hoje é não monetizar — o que é uma opção legítima pro nosso estágio (MVP/validação), 
+mas o trabalho pede que a gente pesquise alternativas caso o projeto cresça.
+
+Quem monetiza de fato são as plataformas comerciais internacionais (CampusDish, da Aramark, e Dine On Campus): elas não cobram do 
+aluno nem vendem anúncio dentro do app — vendem a plataforma como contrato B2B pra universidade ou pra empresa terceirizada de 
+alimentação pagar pelo serviço. Aplicando essa lógica à nossa escala, as opções de monetização mais realistas são:
+
+Patrocínio institucional — propor à própria PUC-Rio (que já está investindo no Boulevard Gastronômico) custear o app como parte dessa iniciativa,
+mantendo-o gratuito pro aluno. É o modelo B2G equivalente ao que CampusDish faz com universidades americanas, adaptado pra uma universidade privada 
+bancar diretamente.
+
+Destaque pago para restaurantes — cobrar dos restaurantes do campus para aparecer em posição de destaque na lista ou ter uma promoção fixada no topo, 
+no estilo listing patrocinado que Yelp e apps de delivery usam. Como os restaurantes do campus já pagam aluguel/contrato pra operar ali, é um público comercial 
+já mapeado e acessível.
+
+Comissão sobre pré-pedido — se a funcionalidade de reserva/retirada sem fila (uma das ampliações futuras) for implementada, cobrar uma pequena comissão por
+transação, no modelo padrão de apps de delivery.
+
+Dashboard de dados para o restaurante — vender pros donos acesso a estatísticas de quantas pessoas viram o cardápio, notas médias e comentários, o que ajuda o 
+pequeno restaurante a entender sua audiência sem custo de pesquisa própria.
+
+Recomendação: para a fase atual do projeto, manter gratuito (igual a todo concorrente direto que existe hoje) e registrar patrocínio institucional e destaque 
+pago para restaurantes como os dois modelos mais viáveis para quando o app sair da fase de validação — são os que menos dependem de escala grande de usuários 
+pra começar a gerar receita.

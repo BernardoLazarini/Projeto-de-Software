@@ -1,0 +1,9 @@
+Matriz de Riscos
+
+| Risco                                      | Probabilidade | Impacto | Nível de risco | Prevenção                                      |
+|--------------------------------------------|---------------|---------|----------------|------------------------------------------------|
+| Falhas no login e criação de conta         | Média         | Alto    | 🔴 Alto        | Realizar testes de autenticação                |
+| Erros em avaliações e comentários          | Alta          | Alto    | 🔴 Crítico     | Testar notas, comentários e imagens            |
+| Problemas na integração do mapa            | Média         | Alto    | 🔴 Alto        | Testar localização e redirecionamentos         |
+| Falhas na pesquisa de estabelecimentos     | Média         | Médio   | 🟠 Médio       | Testar diferentes nomes e resultados de busca  |
+| Dados incorretos dos restaurantes          | Média         | Alto    | 🔴 Alto        | Revisar informações cadastradas                |            
