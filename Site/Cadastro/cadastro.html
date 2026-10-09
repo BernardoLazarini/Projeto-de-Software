@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criar conta — noPonto</title>
+<link rel="stylesheet" href="../conta-estilo.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Painel de marca -->
+  <aside class="brand-panel">
+    <div class="brand-top">
+      <img src="../logoNoPonto.png" alt="noPonto">
+      <span>noPonto</span>
+    </div>
+
+    <div class="brand-mid">
+      <h1>Descubra onde comer na PUC-Rio sem perder tempo de aula.</h1>
+      <p>Cardápios atualizados, avaliações por estrelas e todos os restaurantes do campus em um só lugar.</p>
+
+      <div class="brand-points">
+        <div class="brand-point">
+          <span class="dot">★</span>
+          Avalie restaurantes e veja a nota de quem já provou.
+        </div>
+        <div class="brand-point">
+          <span class="dot">☰</span>
+          Filtre por categoria de comida e restrição alimentar.
+        </div>
+        <div class="brand-point">
+          <span class="dot">◉</span>
+          Cardápio do dia sempre atualizado pelos restaurantes.
+        </div>
+      </div>
+    </div>
+
+    <p class="brand-foot">noPonto — projeto de alunos da PUC-Rio · campus Gávea</p>
+  </aside>
+
+  <!-- Painel de formulário -->
+  <main class="form-panel">
+    <div class="form-card">
+      <span class="eyebrow">Novo por aqui</span>
+      <h2>Crie sua conta</h2>
+      <p class="subtitle">Leva menos de um minuto — e você já sai sabendo onde almoçar hoje.</p>
+
+      <div class="alert alert-success" id="successAlert">
+        ✓ Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.
+      </div>
+
+      <form id="registroForm" novalidate>
+
+        <div class="field">
+          <label for="nome">Nome completo</label>
+          <input class="input" type="text" id="nome" name="nome" placeholder="Ex: Lucas Silveira" required minlength="3">
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail institucional <span class="hint">(@aluno.puc-rio.br)</span></label>
+          <input class="input" type="email" id="email" name="email" placeholder="seunome@aluno.puc-rio.br" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$">
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="curso">Curso</label>
+            <select class="input" id="curso" name="curso" required>
+              <option value="" disabled selected>Selecione</option>
+              <option>Engenharia</option>
+              <option>Administração</option>
+              <option>Direito</option>
+              <option>Design</option>
+              <option>Comunicação Social</option>
+              <option>Psicologia</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="matricula">Matrícula <span class="hint">(opcional)</span></label>
+            <input class="input" type="text" id="matricula" name="matricula" placeholder="Ex: 2311234">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha</label>
+          <div class="password-field">
+            <input class="input" type="password" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required minlength="8">
+            <button type="button" class="toggle-password" data-toggle-password="senha">Mostrar</button>
+          </div>
+          <div class="strength-meter" id="strengthMeter">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+        </div>
+
+        <div class="field">
+          <label for="confirmarSenha">Confirmar senha</label>
+          <div class="password-field">
+            <input class="input" type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a senha" required>
+            <button type="button" class="toggle-password" data-toggle-password="confirmarSenha">Mostrar</button>
+          </div>
+          <div class="field-error" id="confirmarSenhaErro">As senhas não coincidem.</div>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="aceiteTermos" name="aceiteTermos" required>
+          <label for="aceiteTermos">Li e aceito o <a href="../TermoDeUso/termodeuso.html">Termo de Uso</a> e a Política de Privacidade do noPonto.</label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Criar conta</button>
+      </form>
+
+      <p class="form-foot">Já tem conta? <a href="../Login/login.html">Entrar</a></p>
+    </div>
+  </main>
+
+</div>
+
+<script>
+/* noPonto — comportamento da página de cadastro. Vanilla JS, sem dependências.
+   Validações client-side; a submissão real deve ser conectada ao backend/API do projeto. */
+(function () {
+  'use strict';
+
+  document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-toggle-password');
+      var input = document.getElementById(targetId);
+      if (!input) return;
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'Ocultar' : 'Mostrar';
+    });
+  });
+
+  var strengthInput = document.getElementById('senha');
+  var strengthMeter = document.getElementById('strengthMeter');
+  var strengthLabel = document.getElementById('strengthLabel');
+
+  function scorePassword(value) {
+    var score = 0;
+    if (value.length >= 8) score++;
+    if (value.length >= 12) score++;
+    if (/[A-Z]/.test(value) && /[a-z]/.test(value)) score++;
+    if (/\d/.test(value)) score++;
+    if (/[^A-Za-z0-9]/.test(value)) score++;
+    return Math.min(score, 4);
+  }
+
+  if (strengthInput && strengthMeter && strengthLabel) {
+    var bars = strengthMeter.querySelectorAll('span');
+    var labels = ['Muito fraca', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+    var colors = ['#C85238', '#C85238', '#C38D28', '#2E7D52', '#2E7D52'];
+
+    strengthInput.addEventListener('input', function () {
+      var value = strengthInput.value;
+      var score = value ? scorePassword(value) : -1;
+      bars.forEach(function (bar, i) {
+        bar.style.background = i <= score ? colors[score] : '#E3DED3';
+      });
+      strengthLabel.textContent = value ? 'Força da senha: ' + labels[score] : '';
+    });
+  }
+
+  var senha = document.getElementById('senha');
+  var confirmarSenha = document.getElementById('confirmarSenha');
+  var confirmarErro = document.getElementById('confirmarSenhaErro');
+
+  function checkPasswordsMatch() {
+    if (!senha || !confirmarSenha || !confirmarErro) return true;
+    if (!confirmarSenha.value) {
+      confirmarSenha.classList.remove('has-error');
+      confirmarErro.classList.remove('show');
+      return true;
+    }
+    var matches = senha.value === confirmarSenha.value;
+    confirmarSenha.classList.toggle('has-error', !matches);
+    confirmarErro.classList.toggle('show', !matches);
+    return matches;
+  }
+
+  if (confirmarSenha) {
+    confirmarSenha.addEventListener('input', checkPasswordsMatch);
+    if (senha) senha.addEventListener('input', checkPasswordsMatch);
+  }
+
+  var registroForm = document.getElementById('registroForm');
+  if (registroForm) {
+    registroForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var valid = registroForm.checkValidity() && checkPasswordsMatch();
+      if (!valid) {
+        registroForm.reportValidity();
+        return;
+      }
+      var alertBox = document.getElementById('successAlert');
+      if (alertBox) {
+        alertBox.classList.add('show');
+        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      // TODO: enviar os dados do formulário para a API de cadastro do noPonto.
+      // fetch('/api/usuarios', { method: 'POST', body: new FormData(registroForm) })
+    });
+  }
+})();
+</script>
+</body>
+</html>

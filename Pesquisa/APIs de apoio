@@ -1,0 +1,16 @@
+-> APIs encontradas para apoio do projeto:
+
+1. Google maps javascript API
+-> https://developers.google.com/maps/documentation/javascript/overview
+
+-> Nos permitirá usar mapas do próprio google maps sem que precisemos por exemplo criar um mapa próprio.
+
+2. Google Places API
+-> https://developers.google.com/maps/documentation/places/web-service/overview
+
+-> Irá possibilitar que usemos páginas dos estabelecimentos que iremos catalogar no site apenas exportando das páginas dos estebelcimentos feitas pelo google maps.
+
+3. Open Food Facts API
+-> https://openfoodfacts.github.io/openfoodfacts-server/api/
+
+-> Permitirá que tenhamos mais informações nutricionais e dos ingredientes dos pratos oferecidos em cada estabelecimento para maior detalhamento ao usuário.

@@ -1,10 +1,9 @@
 Matriz de Riscos
 
-| Risco                                        | Probabilidade | Impacto | Nível de risco | Prevenção                                                  |
-| -------------------------------------------- | ------------- | ------- | -------------- | ---------------------------------------------------------- |
-| Atraso no desenvolvimento                    | Média         | Alto    | 🔴 Alto        | Dividir tarefas e definir prazos                           |
-| Bugs no sistema                              | Alta          | Alto    | 🔴 Crítico     | Realizar testes durante o desenvolvimento                  |
-| Conflitos de código entre integrantes        | Média         | Alto    | 🔴 Alto        | Usar GitHub e organizar commits/branches                   |
-| Dificuldade para implementar funcionalidades | Média         | Médio   | 🟠 Médio       | Priorizar funcionalidades essenciais                       |
-| Mudanças nos requisitos do projeto           | Baixa         | Médio   | 🟡 Baixo       | Definir e registrar os requisitos antes do desenvolvimento |
-
+| Risco                                      | Probabilidade | Impacto | Nível de risco | Prevenção                                      |
+|--------------------------------------------|---------------|---------|----------------|------------------------------------------------|
+| Falhas no login e criação de conta         | Média         | Alto    | 🔴 Alto        | Realizar testes de autenticação                |
+| Erros em avaliações e comentários          | Alta          | Alto    | 🔴 Crítico     | Testar notas, comentários e imagens            |
+| Problemas na integração do mapa            | Média         | Alto    | 🔴 Alto        | Testar localização e redirecionamentos         |
+| Falhas na pesquisa de estabelecimentos     | Média         | Médio   | 🟠 Médio       | Testar diferentes nomes e resultados de busca  |
+| Dados incorretos dos restaurantes          | Média         | Alto    | 🔴 Alto        | Revisar informações cadastradas                |            
