@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "restaurantes",
 ]
 
 MIDDLEWARE = [
@@ -125,3 +126,9 @@ MAILERS = {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.app.github.dev",
+    "https://localhost:8000",
+]
+
