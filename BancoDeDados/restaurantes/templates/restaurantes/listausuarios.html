@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuários — noPonto</title>
+<link rel="stylesheet" href="{% static 'restaurantes/conta-estilo.css' %}">
+<style>
+  /* Estilos específicos da listagem de usuários.
+     Reaproveita as variáveis e componentes de conta-estilo.css. */
+  .lista-wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .lista-topo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .lista-topo h1 { margin: 0 0 4px; font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+  .lista-topo p { margin: 0; font-size: 14.5px; color: var(--muted); }
+
+  .lista-ferramentas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .lista-contagem { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+
+  .usuarios { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+  .usuario {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+  }
+
+  .usuario .avatar-circle { width: 46px; height: 46px; font-size: 16px; }
+
+  .usuario-info { min-width: 0; }
+  .usuario-info strong { display: block; font-size: 15px; color: var(--navy); }
+  .usuario-info span {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .usuario-acoes { display: flex; gap: 12px; font-size: 13.5px; }
+  .usuario-acoes a { color: var(--navy); font-weight: 600; text-decoration: none; }
+  .usuario-acoes a:hover { text-decoration: underline; }
+
+  .lista-vazia {
+    display: none;
+    text-align: center;
+    background: var(--white);
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius-md);
+    padding: 36px 20px;
+    color: var(--muted);
+    font-size: 14.5px;
+  }
+  .lista-vazia.show { display: block; }
+  .lista-vazia strong { display: block; color: var(--navy); margin-bottom: 4px; }
+
+  @media (max-width: 640px) {
+    .usuario { grid-template-columns: auto minmax(0, 1fr); }
+    .usuario-acoes { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <img src="{% static 'restaurantes/logoNoPonto.png' %}" alt="noPonto">
+  <span>noPonto</span>
+</header>
+
+<main class="lista-wrap">
+
+  <div class="lista-topo">
+    <div>
+      <h1>Usuários cadastrados</h1>
+      <p>Alunos que já criaram conta no noPonto.</p>
+    </div>
+  </div>
+
+  <div class="lista-ferramentas">
+    <div class="field" style="margin:0">
+      <label class="sr-only" for="busca" style="position:absolute;left:-9999px">Buscar usuário</label>
+      <input class="input" type="search" id="busca" placeholder="Buscar por nome ou e-mail" autocomplete="off">
+    </div>
+  </div>
+
+  <p class="lista-contagem" id="contagem" aria-live="polite"></p>
+
+  <ul class="usuarios" id="listaUsuarios">
+    {% for aluno in alunos %}
+    <li class="usuario" data-busca="{{ aluno.nome }} {{ aluno.username }}">
+      <div class="avatar-circle" aria-hidden="true">{{ aluno.nome|first|upper }}</div>
+      <div class="usuario-info">
+        <strong>{{ aluno.nome }}</strong>
+        <span>{{ aluno.username }}</span>
+      </div>
+      <div class="usuario-acoes">
+        <a href="{% url 'editar' aluno.id %}">Editar</a>
+        <a href="{% url 'excluir' aluno.id %}">Excluir</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="lista-vazia" id="listaVazia">
+    <strong>Nenhum usuário encontrado</strong>
+    Tente outro nome ou e-mail.
+  </div>
+
+</main>
+
+<script>
+/* noPonto — listagem de usuários. Vanilla JS, sem dependências.
+   Os usuários vêm do banco (Django). O JS só filtra o que já está na página. */
+(function () {
+  'use strict';
+
+  var itens = document.querySelectorAll('#listaUsuarios .usuario');
+  var vazia = document.getElementById('listaVazia');
+  var contagem = document.getElementById('contagem');
+  var busca = document.getElementById('busca');
+
+  function normalizar(texto) {
+    return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  function render() {
+    var termo = normalizar(busca.value);
+    var visiveis = 0;
+
+    itens.forEach(function (li) {
+      var bate = !termo || normalizar(li.getAttribute('data-busca')).indexOf(termo) !== -1;
+      li.style.display = bate ? '' : 'none';
+      if (bate) visiveis++;
+    });
+
+    vazia.classList.toggle('show', visiveis === 0);
+    contagem.textContent = visiveis === 1 ? '1 usuário' : visiveis + ' usuários';
+  }
+
+  busca.addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>
