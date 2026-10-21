@@ -1,0 +1,32 @@
+
+**Objetivo:** Definir quais condições as principais funcionalidades do NoPonto! precisam atender para serem consideradas prontas e funcionando corretamente.
+
+### 1. Pesquisa de restaurantes
+- O usuário deve conseguir pesquisar restaurantes pelo nome.
+- O sistema deve mostrar apenas os restaurantes que correspondem à pesquisa.
+- Caso nenhum restaurante seja encontrado, deve aparecer uma mensagem informando isso.
+
+### 2. Filtros por categoria
+- O usuário deve conseguir filtrar restaurantes por tipo de comida.
+- As categorias devem incluir lanches, almoço executivo, vegetariano, pizzaria, café e self-service.
+- Ao selecionar uma categoria, apenas os restaurantes correspondentes devem aparecer.
+
+### 3. Avaliações dos restaurantes
+- O usuário deve conseguir visualizar a nota média dos restaurantes.
+- Usuários logados devem poder avaliar os estabelecimentos de 1 a 5 estrelas.
+- As avaliações devem ser utilizadas para atualizar a nota média do restaurante.
+
+### 4. Visualização dos cardápios
+- Cada restaurante deve possuir uma seção de cardápio.
+- O usuário deve conseguir consultar os produtos e preços disponíveis.
+- Caso o cardápio não esteja cadastrado, o sistema deve informar isso.
+
+### 5. Localização dos restaurantes
+- O usuário deve conseguir visualizar onde cada restaurante fica.
+- A localização deve apresentar informações como prédio ou ponto de referência.
+- O sistema deve permitir acessar a localização pela seção correspondente.
+
+### Conclusão
+
+A definição dos critérios de aceitação ajuda a organizar o desenvolvimento do NoPonto! e facilita a identificação de possíveis erros. Com esses critérios, 
+conseguimos verificar se as funcionalidades estão atendendo às necessidades dos alunos e professores da PUC-Rio.
