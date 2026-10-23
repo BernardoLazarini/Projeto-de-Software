@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurantes — noPonto</title>
+<link rel="stylesheet" href="../conta-estilo.css">
+<link rel="stylesheet" href="restaurantes.css">
+</head>
+<body>
+
+<header class="doc-header">
+  <img src="../logoNoPonto.png" alt="noPonto">
+  <span>noPonto</span>
+</header>
+
+<main class="rest-wrap">
+
+  <div class="rest-topo">
+    <h1>Restaurantes do campus</h1>
+    <p>Veja onde comer e a nota de quem já provou.</p>
+  </div>
+
+  <div class="rest-ferramentas">
+    <input class="input" type="search" placeholder="Buscar restaurante" autocomplete="off">
+    <select class="input">
+      <option value="">Todos os estilos</option>
+      <option>Brasileira</option>
+      <option>Japonesa</option>
+      <option>Italiana</option>
+      <option>Lanches</option>
+    </select>
+  </div>
+
+  <ul class="rest-lista">
+
+    <li>
+      <a class="rest-card" href="restaurante.html">
+        <h2>Cantina Central</h2>
+        <span class="rest-estilo">Brasileira</span>
+        <p class="rest-local">Prédio Padre Leonel Franca, térreo</p>
+        <div class="rest-nota">
+          <span class="estrelas" aria-label="4 de 5 estrelas">★★★★☆</span>
+          <span class="nota">4,0 · 12 avaliações</span>
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a class="rest-card" href="restaurante.html">
+        <h2>Sushi do Campus</h2>
+        <span class="rest-estilo">Japonesa</span>
+        <p class="rest-local">Prédio Cardeal Leme, 2º andar</p>
+        <div class="rest-nota">
+          <span class="estrelas" aria-label="5 de 5 estrelas">★★★★★</span>
+          <span class="nota">4,8 · 7 avaliações</span>
+        </div>
+      </a>
+    </li>
+
+    <li>
+      <a class="rest-card" href="restaurante.html">
+        <h2>Pizza no Ponto</h2>
+        <span class="rest-estilo">Italiana</span>
+        <p class="rest-local">Vila dos Diretórios</p>
+        <div class="rest-nota">
+          <span class="estrelas" aria-label="3 de 5 estrelas">★★★☆☆</span>
+          <span class="nota">3,2 · 5 avaliações</span>
+        </div>
+      </a>
+    </li>
+
+  </ul>
+
+</main>
+
+</body>
+</html>
