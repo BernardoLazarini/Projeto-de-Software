@@ -1,0 +1,244 @@
+:root {
+    --fundo: #F5F5F0;
+    --teal: #024861;
+    --azul: #06416b;
+    --creme: #FDFBD4;
+    --texto: #1c2b33;
+    --texto-suave: #5a6b73;
+    --borda: #cfd8db;
+}
+ 
+* {
+    box-sizing: border-box;
+}
+ 
+body {
+    background-color: var(--fundo);
+    font-family: Arial, sans-serif;
+    color: var(--texto);
+    margin: 0;
+    padding: 24px;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+}
+ 
+
+ 
+.pref-container {
+    width: 100%;
+    max-width: 640px;
+    background-color: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow:
+        0 1px 2px rgba(2, 72, 97, 0.08),
+        0 12px 32px rgba(2, 72, 97, 0.14);
+}
+ 
+.pref-container h1 {
+    margin: 0;
+    padding: 22px 32px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    text-align: center;
+    color: var(--creme);
+    background-color: var(--teal);
+    border-bottom: 4px solid var(--azul);
+}
+ 
+.pref-container img {
+    display: block;
+    width: 100%;
+    max-width: 130px;
+    height: auto;
+    margin: 28px auto 4px;
+}
+ 
+.pref-container form {
+    padding: 8px 32px 32px;
+}
+ 
+.pref-intro {
+    margin: 0 0 20px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--texto-suave);
+}
+ 
+
+ 
+.opcoes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+ 
+.opcao-item {
+    position: relative;
+}
+ 
+/* Checkbox real fica escondido, mas continua acessível pelo teclado */
+.opcao-item input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+    z-index: 1;
+}
+ 
+.opcao {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px 10px;
+    min-height: 96px;
+    background-color: var(--fundo);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    text-align: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+ 
+.opcao-icone {
+    font-size: 1.7rem;
+    line-height: 1;
+}
+ 
+.opcao-nome {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--teal);
+    transition: color 0.2s ease;
+}
+ 
+.opcao-item input:hover + .opcao {
+    border-color: var(--teal);
+}
+ 
+
+.opcao-item input:checked + .opcao {
+    background-color: var(--teal);
+    border-color: var(--azul);
+}
+ 
+.opcao-item input:checked + .opcao .opcao-nome {
+    color: var(--creme);
+}
+ 
+.opcao-item input:checked + .opcao::after {
+    content: "✓";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--teal);
+    background-color: var(--creme);
+    border-radius: 50%;
+}
+ 
+/* Foco do teclado */
+.opcao-item input:focus-visible + .opcao {
+    outline: 3px solid rgba(2, 72, 97, 0.35);
+    outline-offset: 2px;
+}
+ 
+
+ 
+.pref-contador {
+    margin: 20px 0 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--texto-suave);
+}
+ 
+.btn-submit {
+    width: 100%;
+    padding: 13px 16px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--creme);
+    background-color: var(--teal);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+ 
+.btn-submit:hover:not(:disabled) {
+    background-color: var(--azul);
+}
+ 
+.btn-submit:active:not(:disabled) {
+    transform: translateY(1px);
+}
+ 
+.btn-submit:focus-visible {
+    outline: 3px solid rgba(2, 72, 97, 0.35);
+    outline-offset: 2px;
+}
+ 
+.btn-submit:disabled {
+    background-color: #9fb3ba;
+    color: #eef2f3;
+    cursor: not-allowed;
+}
+ 
+.pref-pular {
+    display: block;
+    margin-top: 16px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--teal);
+    text-decoration: none;
+}
+ 
+.pref-pular:hover {
+    text-decoration: underline;
+}
+ 
+
+ 
+@media (max-width: 480px) {
+    body {
+        padding: 16px;
+        align-items: start;
+    }
+ 
+    .pref-container h1 {
+        padding: 18px 24px;
+        font-size: 1.15rem;
+    }
+ 
+    .pref-container form {
+        padding: 8px 20px 28px;
+    }
+ 
+    .opcoes {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+}
+ 
+
+ 
+@media (prefers-reduced-motion: reduce) {
+    .opcao,
+    .opcao-nome,
+    .btn-submit {
+        transition: none;
+    }
+}

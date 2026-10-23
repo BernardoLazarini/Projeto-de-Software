@@ -1,0 +1,157 @@
+file:///C:/Users/rafao/AppData/Local/Temp/b43f8fb2-265a-4b5b-85d6-725f25d09069_NoPonto_Sprint6_Simples.zip.069/NoPonto_Sprint6_Simples/index.html
+
+
+/* Cores e fonte da página */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f8f4ef;
+    color: #222;
+}
+
+/* Parte azul do topo */
+header {
+    background-color: #102d5a;
+    color: white;
+    padding: 18px;
+}
+
+.cabecalho {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1 { margin: 0; }
+header p { margin: 5px 0; font-size: 13px; }
+
+button {
+    background-color: #d65336;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: bold;
+}
+
+/* Menu */
+nav {
+    background-color: white;
+    padding: 22px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    margin: 0 25px;
+    font-weight: bold;
+}
+
+nav a:first-child { color: #d65336; }
+
+/* Conteúdo principal */
+main {
+    max-width: 1200px;
+    margin: 35px auto;
+    padding: 0 20px;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 30px;
+}
+
+.filtros span {
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    padding: 12px 18px;
+    background-color: white;
+    font-size: 14px;
+}
+
+.filtros span:first-child {
+    background-color: #102d5a;
+    color: white;
+}
+
+.quantidade { margin-bottom: 25px; }
+
+/* Cards dos restaurantes */
+.restaurantes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.imagem {
+    height: 190px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 80px;
+}
+
+.imagem1 { background-color: #d4d9dd; }
+.imagem2 { background-color: #e8d8a9; }
+.imagem3 { background-color: #e9c3ad; }
+.imagem4 { background-color: #e4e9e7; }
+.imagem5 { background-color: #cbded7; }
+.imagem6 { background-color: #c9dfb8; }
+
+.informacoes { padding: 17px; }
+
+h2 {
+    color: #102d5a;
+    font-family: Georgia, serif;
+    font-size: 22px;
+    margin: 0 0 8px;
+}
+
+.informacoes p { font-size: 13px; line-height: 1.5; }
+.nota { color: #c58b00; }
+.nota small { color: #555; }
+
+.abas {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+}
+
+.abas span:first-child { color: #d65336; }
+.descricao { min-height: 85px; font-size: 14px !important; }
+.avaliar { margin-bottom: 0; }
+.estrelas { color: #ccc; font-size: 25px !important; margin: 0; }
+
+/* Ajuste para telas menores */
+@media (max-width: 850px) {
+    .restaurantes { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 550px) {
+    .restaurantes { grid-template-columns: 1fr; }
+    nav a { display: inline-block; margin: 7px; }
+}

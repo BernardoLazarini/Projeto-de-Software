@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estilos de Comida Favoritos</title>
+    <link rel="stylesheet" href="EscolhaFavoritos.css">
+</head>
+ 
+<body>
+ 
+    <div class="pref-container">
+        <h1>Escolha seus estilos favoritos de comidas</h1>
+ 
+        <img src="../logoNoPonto.png" alt="NoPonto!">
+ 
+        <form action="" method="POST">
+ 
+            <h3 class="pref-intro">
+                As suas escolhas serão salvas como favoritas no site.
+            </h3>
+ 
+            <div class="opcoes">
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="prato-feito" name="estilos" value="prato-feito">
+                    <label class="opcao" for="prato-feito">
+                        <span class="opcao-icone" aria-hidden="true">🍛</span>
+                        <span class="opcao-nome">Prato Feito</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="brasileira" name="estilos" value="brasileira">
+                    <label class="opcao" for="brasileira">
+                        <span class="opcao-icone" aria-hidden="true">🥘</span>
+                        <span class="opcao-nome">Brasileira</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="japonesa" name="estilos" value="japonesa">
+                    <label class="opcao" for="japonesa">
+                        <span class="opcao-icone" aria-hidden="true">🍣</span>
+                        <span class="opcao-nome">Japonesa</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="fast-food" name="estilos" value="fast-food">
+                    <label class="opcao" for="fast-food">
+                        <span class="opcao-icone" aria-hidden="true">🍟</span>
+                        <span class="opcao-nome">Fast Food</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="lanches" name="estilos" value="lanches">
+                    <label class="opcao" for="lanches">
+                        <span class="opcao-icone" aria-hidden="true">🥪</span>
+                        <span class="opcao-nome">Lanches</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="pizza" name="estilos" value="pizza">
+                    <label class="opcao" for="pizza">
+                        <span class="opcao-icone" aria-hidden="true">🍕</span>
+                        <span class="opcao-nome">Pizza</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="italiana" name="estilos" value="italiana">
+                    <label class="opcao" for="italiana">
+                        <span class="opcao-icone" aria-hidden="true">🍝</span>
+                        <span class="opcao-nome">Italiana</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="churrasco" name="estilos" value="churrasco">
+                    <label class="opcao" for="churrasco">
+                        <span class="opcao-icone" aria-hidden="true">🥩</span>
+                        <span class="opcao-nome">Churrasco</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="chinesa" name="estilos" value="chinesa">
+                    <label class="opcao" for="chinesa">
+                        <span class="opcao-icone" aria-hidden="true">🥡</span>
+                        <span class="opcao-nome">Chinesa</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="arabe" name="estilos" value="arabe">
+                    <label class="opcao" for="arabe">
+                        <span class="opcao-icone" aria-hidden="true">🥙</span>
+                        <span class="opcao-nome">Árabe</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="saudavel" name="estilos" value="saudavel">
+                    <label class="opcao" for="saudavel">
+                        <span class="opcao-icone" aria-hidden="true">🥗</span>
+                        <span class="opcao-nome">Saudável</span>
+                    </label>
+                </div>
+ 
+                <div class="opcao-item">
+                    <input type="checkbox" id="sobremesas" name="estilos" value="sobremesas">
+                    <label class="opcao" for="sobremesas">
+                        <span class="opcao-icone" aria-hidden="true">🍰</span>
+                        <span class="opcao-nome">Sobremesas</span>
+                    </label>
+                </div>
+ 
+            </div>
+ 
+            <p class="pref-contador" id="contador" aria-live="polite">Nenhum estilo selecionado</p>
+ 
+            <button type="submit" class="btn-submit" id="btn-salvar" disabled>Salvar favoritos</button>
+            <a href="#" class="pref-pular">Pular por enquanto</a>
+ 
+        </form>
+    </div>
+ 
+    <script>
+        const caixas = document.querySelectorAll('input[name="estilos"]');
+        const contador = document.getElementById('contador');
+        const botao = document.getElementById('btn-salvar');
+ 
+        function atualizar() {
+            const total = document.querySelectorAll('input[name="estilos"]:checked').length;
+            botao.disabled = total === 0;
+            contador.textContent =
+                total === 0 ? 'Nenhum estilo selecionado' :
+                total === 1 ? '1 estilo selecionado' :
+                total + ' estilos selecionados';
+        }
+ 
+        caixas.forEach(c => c.addEventListener('change', atualizar));
+    </script>
+ 
+</body>
+ 
+</html>
