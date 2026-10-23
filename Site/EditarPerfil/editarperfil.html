@@ -3,8 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Criar conta — noPonto</title>
+<title>Editar perfil — noPonto</title>
 <link rel="stylesheet" href="../conta-estilo.css">
+<style>
+  /* Ajustes específicos desta página (o design system não cobre foto, campo somente leitura e link de exclusão). */
+  .avatar-row { flex-wrap: wrap; }
+  .avatar-circle { overflow: hidden; }
+  .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+  .input[readonly] { background: var(--cream); color: var(--muted); cursor: not-allowed; }
+  .photo-error { margin: -16px 0 22px; }
+  .delete-link { color: var(--danger); font-weight: 700; }
+</style>
 </head>
 <body>
 
@@ -18,23 +27,8 @@
     </div>
 
     <div class="brand-mid">
-      <h1>Descubra onde comer na PUC-Rio sem perder tempo de aula.</h1>
-      <p>Cardápios atualizados, avaliações por estrelas e todos os restaurantes do campus em um só lugar.</p>
-
-      <div class="brand-points">
-        <div class="brand-point">
-          <span class="dot">★</span>
-          Avalie restaurantes e veja a nota de quem já provou.
-        </div>
-        <div class="brand-point">
-          <span class="dot">☰</span>
-          Filtre por categoria de comida e restrição alimentar.
-        </div>
-        <div class="brand-point">
-          <span class="dot">◉</span>
-          Cardápio do dia sempre atualizado pelos restaurantes.
-        </div>
-      </div>
+      <h1>Seu perfil, do seu jeito.</h1>
+      <p>Atualize seus dados, troque sua foto e mantenha sua conta segura. Suas avaliações continuam as mesmas.</p>
     </div>
 
     <p class="brand-foot">noPonto — projeto de alunos da PUC-Rio · campus Gávea</p>
@@ -43,31 +37,52 @@
   <!-- Painel de formulário -->
   <main class="form-panel">
     <div class="form-card">
-      <span class="eyebrow">Novo por aqui</span>
-      <h2>Crie sua conta</h2>
-      <p class="subtitle">Leva menos de um minuto — e você já sai sabendo onde almoçar hoje.</p>
+      <span class="eyebrow">Minha conta</span>
+      <h2>Editar perfil</h2>
+      <p class="subtitle">Atualize seus dados e sua foto. A senha só muda se você preencher a seção de senha.</p>
 
       <div class="alert alert-success" id="successAlert">
-        ✓ Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.
+        ✓ Alterações salvas com sucesso.
       </div>
 
-      <form id="registroForm" novalidate>
+      <form id="perfilForm" novalidate>
+
+        <!-- Foto de perfil -->
+        <div class="avatar-row">
+          <div class="avatar-circle" id="avatarCircle" aria-label="Foto de perfil">
+            <span id="avatarIniciais"></span>
+          </div>
+          <div class="avatar-meta">
+            <strong id="avatarNome"></strong>
+            <span id="avatarEmail"></span>
+          </div>
+          <div class="avatar-actions">
+            <button type="button" class="btn-ghost" id="btnTrocarFoto">Trocar foto</button>
+            <button type="button" class="btn-ghost danger-ghost" id="btnRemoverFoto" hidden>Remover</button>
+          </div>
+          <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp" hidden>
+        </div>
+        <div class="field-error photo-error" id="fotoErro"></div>
+
+        <!-- Dados pessoais -->
+        <p class="section-label">Dados pessoais</p>
 
         <div class="field">
           <label for="nome">Nome completo</label>
-          <input class="input" type="text" id="nome" name="nome" placeholder="Ex: Lucas Silveira" required minlength="3">
+          <input class="input" type="text" id="nome" name="nome" required minlength="3">
+          <div class="field-error" id="nomeErro">Informe seu nome completo (mínimo 3 caracteres).</div>
         </div>
 
         <div class="field">
-          <label for="email">E-mail institucional <span class="hint">(@aluno.puc-rio.br)</span></label>
-          <input class="input" type="email" id="email" name="email" placeholder="seunome@aluno.puc-rio.br" required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$">
+          <label for="email">E-mail institucional <span class="hint">(não pode ser alterado)</span></label>
+          <input class="input" type="email" id="email" name="email" readonly>
         </div>
 
         <div class="row-2">
           <div class="field">
             <label for="curso">Curso</label>
             <select class="input" id="curso" name="curso" required>
-              <option value="" disabled selected>Selecione</option>
+              <option value="" disabled>Selecione</option>
               <option>Engenharia</option>
               <option>Administração</option>
               <option>Direito</option>
@@ -83,61 +98,203 @@
           </div>
         </div>
 
+        <hr class="section-divider">
+
+        <!-- Alterar senha -->
+        <p class="section-label">Alterar senha</p>
+
         <div class="field">
-          <label for="senha">Senha</label>
+          <label for="senhaAtual">Senha atual</label>
           <div class="password-field">
-            <input class="input" type="password" id="senha" name="senha" placeholder="Mínimo 8 caracteres" required minlength="8">
-            <button type="button" class="toggle-password" data-toggle-password="senha">Mostrar</button>
+            <input class="input" type="password" id="senhaAtual" name="senhaAtual" placeholder="Sua senha atual" autocomplete="current-password">
+            <button type="button" class="toggle-password" data-toggle-password="senhaAtual">Mostrar</button>
+          </div>
+          <div class="field-error" id="senhaAtualErro">Informe a senha atual para trocar de senha.</div>
+        </div>
+
+        <div class="field">
+          <label for="novaSenha">Nova senha</label>
+          <div class="password-field">
+            <input class="input" type="password" id="novaSenha" name="novaSenha" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+            <button type="button" class="toggle-password" data-toggle-password="novaSenha">Mostrar</button>
           </div>
           <div class="strength-meter" id="strengthMeter">
             <span></span><span></span><span></span><span></span>
           </div>
           <div class="strength-label" id="strengthLabel"></div>
+          <div class="field-error" id="novaSenhaErro">A nova senha precisa ter no mínimo 8 caracteres.</div>
         </div>
 
         <div class="field">
-          <label for="confirmarSenha">Confirmar senha</label>
+          <label for="confirmarSenha">Confirmar nova senha</label>
           <div class="password-field">
-            <input class="input" type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a senha" required>
+            <input class="input" type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a nova senha" autocomplete="new-password">
             <button type="button" class="toggle-password" data-toggle-password="confirmarSenha">Mostrar</button>
           </div>
           <div class="field-error" id="confirmarSenhaErro">As senhas não coincidem.</div>
         </div>
 
-        <div class="checkbox-row">
-          <input type="checkbox" id="aceiteTermos" name="aceiteTermos" required>
-          <label for="aceiteTermos">Li e aceito o <a href="../TermoDeUso/termodeuso.html">Termo de Uso</a> e a Política de Privacidade do noPonto.</label>
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar alterações</button>
         </div>
-
-        <button type="submit" class="btn btn-primary">Criar conta</button>
       </form>
 
-      <p class="form-foot">Já tem conta? <a href="../Login/login.html">Entrar</a></p>
+      <p class="form-foot">Não quer mais usar o noPonto? <a class="delete-link" href="../ExcluirConta/excluirconta.html">Excluir minha conta</a></p>
     </div>
   </main>
 
 </div>
 
 <script>
-/* noPonto — comportamento da página de cadastro. Vanilla JS, sem dependências.
-   Validações client-side; a submissão real deve ser conectada ao backend/API do projeto. */
+/* noPonto — comportamento da página de editar perfil. Vanilla JS, sem dependências.
+   Validações client-side; o carregamento e o envio reais devem ser conectados ao backend/API do projeto. */
 (function () {
   'use strict';
 
+  // TODO: substituir este objeto pelos dados reais do usuário logado (GET /api/usuarios/me).
+  var usuario = {
+    nome: 'Lucas Silveira',
+    email: 'lucas.silveira@aluno.puc-rio.br',
+    curso: 'Engenharia',
+    matricula: '2311234'
+  };
+
+  var FOTO_TIPOS = ['image/jpeg', 'image/png', 'image/webp'];
+  var FOTO_MAX_BYTES = 2 * 1024 * 1024; // 2 MB
+
+  var form = document.getElementById('perfilForm');
+  var nome = document.getElementById('nome');
+  var email = document.getElementById('email');
+  var curso = document.getElementById('curso');
+  var matricula = document.getElementById('matricula');
+  var senhaAtual = document.getElementById('senhaAtual');
+  var novaSenha = document.getElementById('novaSenha');
+  var confirmarSenha = document.getElementById('confirmarSenha');
+
+  var avatarCircle = document.getElementById('avatarCircle');
+  var avatarIniciais = document.getElementById('avatarIniciais');
+  var avatarNome = document.getElementById('avatarNome');
+  var avatarEmail = document.getElementById('avatarEmail');
+  var fotoInput = document.getElementById('foto');
+  var btnTrocarFoto = document.getElementById('btnTrocarFoto');
+  var btnRemoverFoto = document.getElementById('btnRemoverFoto');
+  var fotoErro = document.getElementById('fotoErro');
+
+  var fotoUrl = null;        // URL temporária da pré-visualização
+  var removerFoto = false;   // sinaliza ao backend que a foto atual deve ser apagada
+
+  /* ---------- preencher dados ---------- */
+
+  function iniciais(texto) {
+    var partes = texto.trim().split(/\s+/).filter(Boolean);
+    if (!partes.length) return '?';
+    var primeira = partes[0].charAt(0);
+    var ultima = partes.length > 1 ? partes[partes.length - 1].charAt(0) : '';
+    return (primeira + ultima).toUpperCase();
+  }
+
+  function atualizarAvatarTexto() {
+    avatarIniciais.textContent = iniciais(nome.value);
+    avatarNome.textContent = nome.value.trim() || 'Seu nome';
+  }
+
+  nome.value = usuario.nome;
+  email.value = usuario.email;
+  curso.value = usuario.curso;
+  matricula.value = usuario.matricula;
+  avatarEmail.textContent = usuario.email;
+  atualizarAvatarTexto();
+
+  nome.addEventListener('input', function () {
+    atualizarAvatarTexto();
+    mostrarErro(nome, 'nomeErro', false);
+  });
+
+  /* ---------- helpers de erro ---------- */
+
+  function mostrarErro(input, erroId, mostrar) {
+    var erro = document.getElementById(erroId);
+    if (input) input.classList.toggle('has-error', mostrar);
+    if (erro) erro.classList.toggle('show', mostrar);
+  }
+
+  /* ---------- foto de perfil ---------- */
+
+  function limparFotoErro() {
+    fotoErro.textContent = '';
+    fotoErro.classList.remove('show');
+  }
+
+  function erroFoto(mensagem) {
+    fotoErro.textContent = mensagem;
+    fotoErro.classList.add('show');
+  }
+
+  function mostrarIniciais() {
+    if (fotoUrl) { URL.revokeObjectURL(fotoUrl); fotoUrl = null; }
+    avatarCircle.innerHTML = '';
+    avatarCircle.appendChild(avatarIniciais);
+    btnRemoverFoto.hidden = true;
+  }
+
+  btnTrocarFoto.addEventListener('click', function () { fotoInput.click(); });
+
+  fotoInput.addEventListener('change', function () {
+    limparFotoErro();
+    var arquivo = fotoInput.files && fotoInput.files[0];
+    if (!arquivo) return;
+
+    if (FOTO_TIPOS.indexOf(arquivo.type) === -1) {
+      erroFoto('Formato não aceito. Use uma imagem JPG, PNG ou WebP.');
+      fotoInput.value = '';
+      return;
+    }
+    if (arquivo.size > FOTO_MAX_BYTES) {
+      erroFoto('A imagem é grande demais. O limite é 2 MB.');
+      fotoInput.value = '';
+      return;
+    }
+
+    if (fotoUrl) URL.revokeObjectURL(fotoUrl);
+    fotoUrl = URL.createObjectURL(arquivo);
+
+    var img = document.createElement('img');
+    img.src = fotoUrl;
+    img.alt = 'Nova foto de perfil';
+    avatarCircle.innerHTML = '';
+    avatarCircle.appendChild(img);
+
+    removerFoto = false;
+    btnRemoverFoto.hidden = false;
+  });
+
+  btnRemoverFoto.addEventListener('click', function () {
+    fotoInput.value = '';
+    removerFoto = true;
+    limparFotoErro();
+    mostrarIniciais();
+  });
+
+  /* ---------- mostrar / ocultar senha ---------- */
+
   document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      var targetId = btn.getAttribute('data-toggle-password');
-      var input = document.getElementById(targetId);
+      var input = document.getElementById(btn.getAttribute('data-toggle-password'));
       if (!input) return;
-      var isHidden = input.type === 'password';
-      input.type = isHidden ? 'text' : 'password';
-      btn.textContent = isHidden ? 'Ocultar' : 'Mostrar';
+      var oculta = input.type === 'password';
+      input.type = oculta ? 'text' : 'password';
+      btn.textContent = oculta ? 'Ocultar' : 'Mostrar';
     });
   });
 
-  var strengthInput = document.getElementById('senha');
+  /* ---------- medidor de força da nova senha ---------- */
+
   var strengthMeter = document.getElementById('strengthMeter');
   var strengthLabel = document.getElementById('strengthLabel');
+  var bars = strengthMeter.querySelectorAll('span');
+  var labels = ['Muito fraca', 'Fraca', 'Razoável', 'Boa', 'Forte'];
+  var colors = ['#C85238', '#C85238', '#C38D28', '#2E7D52', '#2E7D52'];
 
   function scorePassword(value) {
     var score = 0;
@@ -149,61 +306,106 @@
     return Math.min(score, 4);
   }
 
-  if (strengthInput && strengthMeter && strengthLabel) {
-    var bars = strengthMeter.querySelectorAll('span');
-    var labels = ['Muito fraca', 'Fraca', 'Razoável', 'Boa', 'Forte'];
-    var colors = ['#C85238', '#C85238', '#C38D28', '#2E7D52', '#2E7D52'];
-
-    strengthInput.addEventListener('input', function () {
-      var value = strengthInput.value;
-      var score = value ? scorePassword(value) : -1;
-      bars.forEach(function (bar, i) {
-        bar.style.background = i <= score ? colors[score] : '#E3DED3';
-      });
-      strengthLabel.textContent = value ? 'Força da senha: ' + labels[score] : '';
+  function atualizarForca() {
+    var value = novaSenha.value;
+    var score = value ? scorePassword(value) : -1;
+    bars.forEach(function (bar, i) {
+      bar.style.background = i <= score ? colors[score] : '#E3DED3';
     });
+    strengthLabel.textContent = value ? 'Força da senha: ' + labels[score] : '';
   }
 
-  var senha = document.getElementById('senha');
-  var confirmarSenha = document.getElementById('confirmarSenha');
-  var confirmarErro = document.getElementById('confirmarSenhaErro');
+  /* ---------- validação da seção de senha ---------- */
 
-  function checkPasswordsMatch() {
-    if (!senha || !confirmarSenha || !confirmarErro) return true;
-    if (!confirmarSenha.value) {
-      confirmarSenha.classList.remove('has-error');
-      confirmarErro.classList.remove('show');
+  // A troca de senha é opcional: só é validada se algum dos três campos for preenchido.
+  function senhaFoiPreenchida() {
+    return !!(senhaAtual.value || novaSenha.value || confirmarSenha.value);
+  }
+
+  function validarSenhas() {
+    var ok = true;
+
+    if (!senhaFoiPreenchida()) {
+      mostrarErro(senhaAtual, 'senhaAtualErro', false);
+      mostrarErro(novaSenha, 'novaSenhaErro', false);
+      mostrarErro(confirmarSenha, 'confirmarSenhaErro', false);
       return true;
     }
-    var matches = senha.value === confirmarSenha.value;
-    confirmarSenha.classList.toggle('has-error', !matches);
-    confirmarErro.classList.toggle('show', !matches);
-    return matches;
+
+    var faltaAtual = !senhaAtual.value;
+    mostrarErro(senhaAtual, 'senhaAtualErro', faltaAtual);
+    if (faltaAtual) ok = false;
+
+    var novaInvalida = novaSenha.value.length < 8;
+    mostrarErro(novaSenha, 'novaSenhaErro', novaInvalida);
+    if (novaInvalida) ok = false;
+
+    var diferentes = novaSenha.value !== confirmarSenha.value;
+    mostrarErro(confirmarSenha, 'confirmarSenhaErro', diferentes);
+    if (diferentes) ok = false;
+
+    return ok;
   }
 
-  if (confirmarSenha) {
-    confirmarSenha.addEventListener('input', checkPasswordsMatch);
-    if (senha) senha.addEventListener('input', checkPasswordsMatch);
-  }
+  novaSenha.addEventListener('input', function () {
+    atualizarForca();
+    if (confirmarSenha.value) validarSenhas();
+  });
+  confirmarSenha.addEventListener('input', validarSenhas);
+  senhaAtual.addEventListener('input', function () {
+    mostrarErro(senhaAtual, 'senhaAtualErro', false);
+  });
 
-  var registroForm = document.getElementById('registroForm');
-  if (registroForm) {
-    registroForm.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var valid = registroForm.checkValidity() && checkPasswordsMatch();
-      if (!valid) {
-        registroForm.reportValidity();
-        return;
-      }
-      var alertBox = document.getElementById('successAlert');
-      if (alertBox) {
-        alertBox.classList.add('show');
-        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      // TODO: enviar os dados do formulário para a API de cadastro do noPonto.
-      // fetch('/api/usuarios', { method: 'POST', body: new FormData(registroForm) })
-    });
-  }
+  /* ---------- envio ---------- */
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var nomeValido = nome.value.trim().length >= 3;
+    mostrarErro(nome, 'nomeErro', !nomeValido);
+
+    var cursoValido = !!curso.value;
+    curso.classList.toggle('has-error', !cursoValido);
+
+    var senhasValidas = validarSenhas();
+
+    if (!nomeValido || !cursoValido || !senhasValidas) {
+      var primeiroErro = form.querySelector('.has-error');
+      if (primeiroErro) primeiroErro.focus();
+      return;
+    }
+
+    var dados = new FormData();
+    dados.append('nome', nome.value.trim());
+    dados.append('curso', curso.value);
+    dados.append('matricula', matricula.value.trim());
+    if (fotoInput.files && fotoInput.files[0]) dados.append('foto', fotoInput.files[0]);
+    if (removerFoto) dados.append('removerFoto', 'true');
+    if (senhaFoiPreenchida()) {
+      dados.append('senhaAtual', senhaAtual.value);
+      dados.append('novaSenha', novaSenha.value);
+    }
+
+    // TODO: enviar para a API de edição do noPonto e tratar os erros do servidor
+    // (por exemplo, "senha atual incorreta").
+    // fetch('/api/usuarios/me', { method: 'PUT', body: dados })
+
+    senhaAtual.value = '';
+    novaSenha.value = '';
+    confirmarSenha.value = '';
+    atualizarForca();
+
+    var alertBox = document.getElementById('successAlert');
+    alertBox.classList.add('show');
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+
+  /* ---------- cancelar ---------- */
+
+  document.getElementById('btnCancelar').addEventListener('click', function () {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = '../Login/login.html';
+  });
 })();
 </script>
 </body>
