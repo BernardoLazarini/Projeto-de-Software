@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cantina Central — noPonto</title>
+<link rel="stylesheet" href="../conta-estilo.css">
+<link rel="stylesheet" href="restaurantes.css">
+</head>
+<body>
+
+<header class="doc-header">
+  <img src="../logoNoPonto.png" alt="noPonto">
+  <span>noPonto</span>
+</header>
+
+<main class="rest-wrap">
+
+  <a class="det-voltar" href="restaurantes.html">← Voltar para os restaurantes</a>
+
+  <div class="det-topo">
+    <div>
+      <h1>Cantina Central</h1>
+      <span class="rest-estilo">Brasileira</span>
+      <p class="rest-local">Prédio Padre Leonel Franca, térreo</p>
+    </div>
+    <div class="det-nota">
+      <span class="estrelas" aria-label="4 de 5 estrelas">★★★★☆</span>
+      <span class="nota">4,0 · 12 avaliações</span>
+    </div>
+  </div>
+
+  <section class="secao">
+    <h2>Sobre</h2>
+    <p>Comida caseira do dia a dia, com prato feito, salgados e sucos. Aberta das 7h às 19h.</p>
+  </section>
+
+  <section class="secao">
+    <h2>Cardápio</h2>
+    <ul class="pratos">
+      <li><span>Prato feito do dia</span><strong>R$ 22,00</strong></li>
+      <li><span>Strogonoff com arroz</span><strong>R$ 25,00</strong></li>
+      <li><span>Salada completa</span><strong>R$ 18,00</strong></li>
+      <li><span>Suco natural</span><strong>R$ 8,00</strong></li>
+    </ul>
+  </section>
+
+  <section class="secao">
+    <h2>Avaliações</h2>
+
+    <ul class="avaliacoes">
+      <li class="avaliacao">
+        <div class="avaliacao-topo">
+          <strong>Marina D.</strong>
+          <span class="estrelas" aria-label="5 de 5 estrelas">★★★★★</span>
+        </div>
+        <p>Comida muito boa e rápida, perfeita para o intervalo.</p>
+      </li>
+      <li class="avaliacao">
+        <div class="avaliacao-topo">
+          <strong>Rafael V.</strong>
+          <span class="estrelas" aria-label="3 de 5 estrelas">★★★☆☆</span>
+        </div>
+        <p>Boa, mas a fila no horário do almoço é grande.</p>
+      </li>
+    </ul>
+
+    <form class="form-avaliar">
+      <h3>Avalie este restaurante</h3>
+
+      <div class="field">
+        <label for="estrelas">Nota</label>
+        <select class="input" id="estrelas" name="estrelas" required>
+          <option value="" disabled selected>Selecione</option>
+          <option value="5">5 estrelas</option>
+          <option value="4">4 estrelas</option>
+          <option value="3">3 estrelas</option>
+          <option value="2">2 estrelas</option>
+          <option value="1">1 estrela</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="comentario">Comentário</label>
+        <textarea class="input" id="comentario" name="comentario" rows="3" placeholder="Conte como foi"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Enviar avaliação</button>
+    </form>
+  </section>
+
+</main>
+
+</body>
+</html>
