@@ -5,69 +5,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ restaurante.nome }} — noPonto</title>
-<link rel="stylesheet" href="../conta-estilo.css">
-<link rel="stylesheet" href="restaurantes.css">
+<link rel="stylesheet" href="{% static 'restaurantes/conta-estilo.css' %}">
+<link rel="stylesheet" href="{% static 'restaurantes/restaurantes.css' %}">
 </head>
 <body>
 
 <header class="doc-header">
-  <img src="../logoNoPonto.png" alt="noPonto">
+  <img src="{% static 'restaurantes/logoNoPonto.png' %}" alt="noPonto">
   <span>noPonto</span>
+  <a href="{% url 'sair' %}" style="margin-left:auto; color:inherit; font-size:14px;">Sair</a>
 </header>
 
 <main class="rest-wrap">
 
-  <a class="det-voltar" href="restaurantes.html">← Voltar para os restaurantes</a>
+  <a class="det-voltar" href="{% url 'restaurantes' %}">← Voltar para os restaurantes</a>
 
   <div class="det-topo">
     <div>
-      <h1>Cantina Central</h1>
-      <span class="rest-estilo">Brasileira</span>
-      <p class="rest-local">Prédio Padre Leonel Franca, térreo</p>
+      <h1>{{ restaurante.nome }}</h1>
+      {% if restaurante.estilo %}<span class="rest-estilo">{{ restaurante.estilo.nome }}</span>{% endif %}
+      <p class="rest-local">{{ restaurante.localizacao }}</p>
     </div>
     <div class="det-nota">
-      <span class="estrelas" aria-label="4 de 5 estrelas">★★★★☆</span>
-      <span class="nota">4,0 · 12 avaliações</span>
+      {% if total %}
+        <span class="estrelas" aria-label="{{ media_int }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= media_int %}★{% else %}☆{% endif %}{% endfor %}</span>
+        <span class="nota">{{ media|floatformat:1 }} · {{ total }} avaliaç{{ total|pluralize:"ão,ões" }}</span>
+      {% else %}
+        <span class="nota">Ainda sem avaliações</span>
+      {% endif %}
     </div>
   </div>
 
   <section class="secao">
     <h2>Sobre</h2>
-    <p>Comida caseira do dia a dia, com prato feito, salgados e sucos. Aberta das 7h às 19h.</p>
+    <p>{{ restaurante.descricao }}</p>
   </section>
 
   <section class="secao">
     <h2>Cardápio</h2>
+    {% if pratos %}
     <ul class="pratos">
-      <li><span>Prato feito do dia</span><strong>R$ 22,00</strong></li>
-      <li><span>Strogonoff com arroz</span><strong>R$ 25,00</strong></li>
-      <li><span>Salada completa</span><strong>R$ 18,00</strong></li>
-      <li><span>Suco natural</span><strong>R$ 8,00</strong></li>
+      {% for p in pratos %}
+      <li><span>{{ p.nome }}</span><strong>R$ {{ p.preco|floatformat:2 }}</strong></li>
+      {% endfor %}
     </ul>
+    {% else %}
+      <p>Cardápio ainda não cadastrado.</p>
+    {% endif %}
   </section>
 
   <section class="secao">
     <h2>Avaliações</h2>
 
     <ul class="avaliacoes">
+      {% for a in avaliacoes %}
       <li class="avaliacao">
         <div class="avaliacao-topo">
-          <strong>Marina D.</strong>
-          <span class="estrelas" aria-label="5 de 5 estrelas">★★★★★</span>
+          <strong>{{ a.aluno.nome }}</strong>
+          <span class="estrelas" aria-label="{{ a.estrela }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= a.estrela %}★{% else %}☆{% endif %}{% endfor %}</span>
         </div>
-        <p>Comida muito boa e rápida, perfeita para o intervalo.</p>
+        {% if a.comentario %}<p>{{ a.comentario }}</p>{% endif %}
       </li>
-      <li class="avaliacao">
-        <div class="avaliacao-topo">
-          <strong>Rafael V.</strong>
-          <span class="estrelas" aria-label="3 de 5 estrelas">★★★☆☆</span>
-        </div>
-        <p>Boa, mas a fila no horário do almoço é grande.</p>
-      </li>
+      {% empty %}
+      <li class="avaliacao"><p>Ainda não há avaliações. Seja o primeiro!</p></li>
+      {% endfor %}
     </ul>
 
-    <form class="form-avaliar">
+    <form class="form-avaliar" method="post">
+      {% csrf_token %}
       <h3>Avalie este restaurante</h3>
+
+      {% if erro %}<div class="field-error show">{{ erro }}</div>{% endif %}
 
       <div class="field">
         <label for="estrelas">Nota</label>

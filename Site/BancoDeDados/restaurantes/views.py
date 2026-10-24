@@ -50,7 +50,7 @@ def cadastrar(request):
 @login_obrigatorio
 def listar_usuarios(request):
     alunos = Aluno.objects.all()
-    return render(request, "restaurantes/usuarios.html", {
+    return render(request, "restaurantes/listausuarios.html", {
         "alunos": alunos,
         "meu_id": request.session["aluno_id"],
     })

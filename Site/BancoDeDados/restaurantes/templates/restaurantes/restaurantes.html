@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ restaurante.nome }} — noPonto</title>
+<title>Restaurantes — noPonto</title>
 <link rel="stylesheet" href="{% static 'restaurantes/conta-estilo.css' %}">
 <link rel="stylesheet" href="{% static 'restaurantes/restaurantes.css' %}">
 </head>
@@ -18,85 +18,42 @@
 
 <main class="rest-wrap">
 
-  <a class="det-voltar" href="{% url 'restaurantes' %}">← Voltar para os restaurantes</a>
-
-  <div class="det-topo">
-    <div>
-      <h1>{{ restaurante.nome }}</h1>
-      {% if restaurante.estilo %}<span class="rest-estilo">{{ restaurante.estilo.nome }}</span>{% endif %}
-      <p class="rest-local">{{ restaurante.localizacao }}</p>
-    </div>
-    <div class="det-nota">
-      {% if total %}
-        <span class="estrelas" aria-label="{{ media_int }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= media_int %}★{% else %}☆{% endif %}{% endfor %}</span>
-        <span class="nota">{{ media|floatformat:1 }} · {{ total }} avaliaç{{ total|pluralize:"ão,ões" }}</span>
-      {% else %}
-        <span class="nota">Ainda sem avaliações</span>
-      {% endif %}
-    </div>
+  <div class="rest-topo">
+    <h1>Restaurantes do campus</h1>
+    <p>Veja onde comer e a nota de quem já provou.</p>
   </div>
 
-  <section class="secao">
-    <h2>Sobre</h2>
-    <p>{{ restaurante.descricao }}</p>
-  </section>
-
-  <section class="secao">
-    <h2>Cardápio</h2>
-    {% if pratos %}
-    <ul class="pratos">
-      {% for p in pratos %}
-      <li><span>{{ p.nome }}</span><strong>R$ {{ p.preco|floatformat:2 }}</strong></li>
+  <form class="rest-ferramentas" method="get">
+    <input class="input" type="search" name="q" value="{{ busca }}" placeholder="Buscar restaurante" autocomplete="off">
+    <select class="input" name="estilo" onchange="this.form.submit()">
+      <option value="">Todos os estilos</option>
+      {% for e in estilos %}
+        <option value="{{ e.id }}" {% if estilo_id == e.id|stringformat:"s" %}selected{% endif %}>{{ e.nome }}</option>
       {% endfor %}
-    </ul>
-    {% else %}
-      <p>Cardápio ainda não cadastrado.</p>
-    {% endif %}
-  </section>
+    </select>
+  </form>
 
-  <section class="secao">
-    <h2>Avaliações</h2>
-
-    <ul class="avaliacoes">
-      {% for a in avaliacoes %}
-      <li class="avaliacao">
-        <div class="avaliacao-topo">
-          <strong>{{ a.aluno.nome }}</strong>
-          <span class="estrelas" aria-label="{{ a.estrela }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= a.estrela %}★{% else %}☆{% endif %}{% endfor %}</span>
+  <ul class="rest-lista">
+    {% for r in restaurantes %}
+    <li>
+      <a class="rest-card" href="{% url 'detalhe_restaurante' r.id %}">
+        <h2>{{ r.nome }}</h2>
+        {% if r.estilo %}<span class="rest-estilo">{{ r.estilo.nome }}</span>{% endif %}
+        <p class="rest-local">{{ r.localizacao }}</p>
+        <div class="rest-nota">
+          {% if r.total %}
+            <span class="estrelas" aria-label="{{ r.media_int }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= r.media_int %}★{% else %}☆{% endif %}{% endfor %}</span>
+            <span class="nota">{{ r.media|floatformat:1 }} · {{ r.total }} avaliaç{{ r.total|pluralize:"ão,ões" }}</span>
+          {% else %}
+            <span class="nota">Ainda sem avaliações</span>
+          {% endif %}
         </div>
-        {% if a.comentario %}<p>{{ a.comentario }}</p>{% endif %}
-      </li>
-      {% empty %}
-      <li class="avaliacao"><p>Ainda não há avaliações. Seja o primeiro!</p></li>
-      {% endfor %}
-    </ul>
-
-    <form class="form-avaliar" method="post">
-      {% csrf_token %}
-      <h3>Avalie este restaurante</h3>
-
-      {% if erro %}<div class="field-error show">{{ erro }}</div>{% endif %}
-
-      <div class="field">
-        <label for="estrelas">Nota</label>
-        <select class="input" id="estrelas" name="estrelas" required>
-          <option value="" disabled selected>Selecione</option>
-          <option value="5">5 estrelas</option>
-          <option value="4">4 estrelas</option>
-          <option value="3">3 estrelas</option>
-          <option value="2">2 estrelas</option>
-          <option value="1">1 estrela</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="comentario">Comentário</label>
-        <textarea class="input" id="comentario" name="comentario" rows="3" placeholder="Conte como foi"></textarea>
-      </div>
-
-      <button type="submit" class="btn btn-primary">Enviar avaliação</button>
-    </form>
-  </section>
+      </a>
+    </li>
+    {% empty %}
+    <li>Nenhum restaurante encontrado.</li>
+    {% endfor %}
+  </ul>
 
 </main>
 
