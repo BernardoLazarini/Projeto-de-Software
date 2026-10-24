@@ -1,0 +1,11 @@
+# Banco de dados e fotos enviadas pelos usuários: não vão para o GitHub
+noponto.db
+uploads/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Segredos
+.env
