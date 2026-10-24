@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from .models import Aluno
 from django.shortcuts import render, redirect, get_object_or_404
 
+
 def login(request):
     erro = None
     if request.method == "POST":
@@ -34,9 +35,11 @@ def cadastrar(request):
             return redirect("login")
     return render(request, "restaurantes/cadastro.html", {"erro": erro})
 
+
 def listar_usuarios(request):
     alunos = Aluno.objects.all()
     return render(request, "restaurantes/listausuarios.html", {"alunos": alunos})
+
 
 def editar(request, id):
     aluno = get_object_or_404(Aluno, id=id)
@@ -55,7 +58,9 @@ def editar(request, id):
                 aluno.password = make_password(nova_senha)
             aluno.save()
             return redirect("listar_usuarios")
-    return render(request, "restaurantes/editarperfil.html", {"aluno": aluno, "erro": erro})
+    return render(
+        request, "restaurantes/editarperfil.html", {"aluno": aluno, "erro": erro}
+    )
 
 
 def excluir(request, id):
@@ -66,4 +71,6 @@ def excluir(request, id):
             aluno.delete()
             return redirect("listar_usuarios")
         erro = "Senha incorreta."
-    return render(request, "restaurantes/excluirconta.html", {"aluno": aluno, "erro": erro})
+    return render(
+        request, "restaurantes/excluirconta.html", {"aluno": aluno, "erro": erro}
+    )
