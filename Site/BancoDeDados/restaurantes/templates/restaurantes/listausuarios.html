@@ -61,6 +61,10 @@
   .usuario-acoes a { color: var(--navy); font-weight: 600; text-decoration: none; }
   .usuario-acoes a:hover { text-decoration: underline; }
 
+  .header-links { margin-left: auto; display: flex; gap: 16px; font-size: 14px; }
+  .header-links a { color: inherit; text-decoration: none; }
+  .header-links a:hover { text-decoration: underline; }
+
   .lista-vazia {
     display: none;
     text-align: center;
@@ -85,6 +89,10 @@
 <header class="doc-header">
   <img src="{% static 'restaurantes/logoNoPonto.png' %}" alt="noPonto">
   <span>noPonto</span>
+  <nav class="header-links">
+    <a href="{% url 'restaurantes' %}">Restaurantes</a>
+    <a href="{% url 'sair' %}">Sair</a>
+  </nav>
 </header>
 
 <main class="lista-wrap">
@@ -113,10 +121,12 @@
         <strong>{{ aluno.nome }}</strong>
         <span>{{ aluno.username }}</span>
       </div>
+      {% if aluno.id == meu_id %}
       <div class="usuario-acoes">
         <a href="{% url 'editar' aluno.id %}">Editar</a>
         <a href="{% url 'excluir' aluno.id %}">Excluir</a>
       </div>
+      {% endif %}
     </li>
     {% endfor %}
   </ul>

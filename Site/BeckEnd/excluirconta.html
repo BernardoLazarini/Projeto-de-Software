@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excluir conta — noPonto</title>
+<link rel="stylesheet" href="../conta-estilo.css">
+<style>
+  .alert-error { background: var(--danger-tint); color: var(--danger); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Painel de marca -->
+  <aside class="brand-panel">
+    <div class="brand-top">
+      <img src="../logoNoPonto.png" alt="noPonto">
+      <span>noPonto</span>
+    </div>
+
+    <div class="brand-mid">
+      <h1>Sentiremos sua falta no campus.</h1>
+      <p>Antes de ir, confira o que acontece com seus dados e avaliações ao excluir sua conta do noPonto.</p>
+    </div>
+
+    <p class="brand-foot">noPonto — projeto de alunos da PUC-Rio · campus Gávea</p>
+  </aside>
+
+  <!-- Painel de formulário -->
+  <main class="form-panel">
+    <div class="form-card">
+      <span class="eyebrow">Minha conta</span>
+      <h2>Excluir minha conta</h2>
+      <p class="subtitle">Essa ação é permanente. Leia com atenção antes de confirmar.</p>
+
+      <div class="alert alert-success" id="successAlert">
+        ✓ Conta excluída. Sentiremos sua falta — você pode criar uma nova conta quando quiser.
+      </div>
+
+      <div class="alert alert-error" id="errorAlert" role="alert"></div>
+
+      <div class="danger-card">
+        <span class="icon">!</span>
+        <div>
+          <h3>Esta ação não pode ser desfeita</h3>
+          <p>Ao excluir sua conta, todos os seus dados pessoais são apagados permanentemente dos servidores do noPonto, conforme a nossa Política de Privacidade e a LGPD.</p>
+        </div>
+      </div>
+
+      <ul class="consequence-list">
+        <li>Seu perfil, nome e e-mail deixam de existir na plataforma.</li>
+        <li>Suas avaliações e comentários publicados são removidos dos restaurantes.</li>
+        <li>Você perde o histórico de restaurantes favoritados e visitados.</li>
+        <li>Não é possível recuperar a conta depois de confirmada a exclusão.</li>
+      </ul>
+
+      <form id="remocaoForm" novalidate>
+
+        <div class="field">
+          <label for="senhaAtual">Confirme sua senha</label>
+          <div class="password-field">
+            <input class="input" type="password" id="senhaAtual" name="senhaAtual" placeholder="Sua senha atual" required autocomplete="current-password">
+            <button type="button" class="toggle-password" data-toggle-password="senhaAtual">Mostrar</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="motivo">Por que está saindo? <span class="hint">(opcional)</span></label>
+          <select class="input" id="motivo" name="motivo">
+            <option value="" selected>Prefiro não dizer</option>
+            <option>Não uso mais o aplicativo</option>
+            <option>Não encontrei o que precisava</option>
+            <option>Preocupações com privacidade</option>
+            <option>Vou me formar / deixar a PUC-Rio</option>
+            <option>Outro motivo</option>
+          </select>
+        </div>
+
+        <div class="confirm-type">
+          <p>Para confirmar, digite <code>EXCLUIR</code> no campo abaixo.</p>
+          <input class="input" type="text" id="confirmarExclusao" placeholder="Digite EXCLUIR" autocomplete="off" required>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+          <button type="submit" class="btn btn-danger" id="btnExcluir" disabled>Excluir minha conta</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+</div>
+
+<script>
+/* noPonto — comportamento da página de exclusão de conta. Vanilla JS, sem dependências.
+   Envia a senha para a API (DELETE /api/usuarios/me); o servidor confere a senha antes de apagar. */
+(function () {
+  'use strict';
+
+  document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-toggle-password');
+      var input = document.getElementById(targetId);
+      if (!input) return;
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'Ocultar' : 'Mostrar';
+    });
+  });
+
+  var senhaAtual = document.getElementById('senhaAtual');
+  var confirmField = document.getElementById('confirmarExclusao');
+  var deleteBtn = document.getElementById('btnExcluir');
+  var errorAlert = document.getElementById('errorAlert');
+  var CONFIRM_WORD = 'EXCLUIR';
+
+  function palavraConfirmada() {
+    return confirmField.value.trim().toUpperCase() === CONFIRM_WORD;
+  }
+
+  function atualizarBotao() {
+    deleteBtn.disabled = !(palavraConfirmada() && senhaAtual.value);
+  }
+
+  if (confirmField && deleteBtn && senhaAtual) {
+    confirmField.addEventListener('input', atualizarBotao);
+    senhaAtual.addEventListener('input', function () {
+      senhaAtual.classList.remove('has-error');
+      atualizarBotao();
+    });
+  }
+
+  function mostrarErro(mensagem, destacarSenha) {
+    errorAlert.textContent = mensagem;
+    errorAlert.classList.add('show');
+    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    senhaAtual.classList.toggle('has-error', !!destacarSenha);
+  }
+
+  var remocaoForm = document.getElementById('remocaoForm');
+  if (remocaoForm) {
+    remocaoForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!palavraConfirmada() || !senhaAtual.value) return;
+
+      var alertBox = document.getElementById('successAlert');
+      errorAlert.classList.remove('show');
+      deleteBtn.disabled = true;
+
+      // O motivo é opcional e, por privacidade, não é enviado nem guardado.
+      fetch('/api/usuarios/me', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senha: senhaAtual.value })
+      })
+        .then(function (resp) {
+          return resp.json().catch(function () { return {}; }).then(function (corpo) {
+            return { ok: resp.ok, status: resp.status, corpo: corpo };
+          });
+        })
+        .then(function (res) {
+          if (res.status === 401) {
+            window.location.href = '../Login/login.html';
+            return;
+          }
+          if (!res.ok) {
+            mostrarErro(res.corpo.erro || 'Não foi possível excluir a conta. Tente novamente.', res.corpo.campo === 'senha');
+            atualizarBotao();
+            return;
+          }
+          alertBox.classList.add('show');
+          alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(function () { window.location.href = '../Login/login.html'; }, 2000);
+        })
+        .catch(function () {
+          mostrarErro('Não foi possível conectar ao servidor. Verifique se ele está rodando.', false);
+          atualizarBotao();
+        });
+    });
+  }
+
+  var btnCancelar = document.getElementById('btnCancelar');
+  if (btnCancelar) {
+    btnCancelar.addEventListener('click', function () {
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../Login/login.html';
+    });
+  }
+})();
+</script>
+</body>
+</html>
