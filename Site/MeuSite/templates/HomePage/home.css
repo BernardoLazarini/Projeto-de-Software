@@ -2,10 +2,12 @@
   --navy: #192c5a;
   --terracotta: #c25a40;
   --terracotta-dark: #a94b34;
+  --gold: #c38d28;
   --white: #ffffff;
   --ink: #2b2f3a;
   --muted: #6f7480;
   --line: #e6e0d6;
+  --star-off: #d9d2c5;
   --font-body: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Fraunces", Georgia, serif;
 }
@@ -16,17 +18,29 @@ body {
   margin: 0;
   font-family: var(--font-body);
   line-height: 1.5;
+  color: var(--ink);
   background: #f7f4ef;
 }
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1464px;
   margin-inline: auto;
   padding-inline: 2rem;
 }
 
-a:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
 /* ---------- Cabeçalho ---------- */
 .site-header {
@@ -56,10 +70,8 @@ a:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
   flex: none;
   width: 3rem;
   height: 3rem;
-  font-size: 1.4rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
 }
+.brand-icon svg { width: 100%; height: 100%; }
 
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 
@@ -123,7 +135,281 @@ a:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
   border-bottom-color: var(--terracotta);
 }
 
-/* ---------- Mobile ---------- */
+/* ---------- Conteúdo ---------- */
+.conteudo { padding-block: 2.5rem 4rem; }
+
+/* Busca */
+.busca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0 1.25rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.busca:focus-within {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(25, 44, 90, 0.12);
+}
+.busca-icone { font-size: 1.1rem; }
+.busca input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  padding: 0.95rem 0;
+  font: inherit;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.busca input::placeholder { color: #9a9ea8; }
+.busca input:focus { outline: none; }
+
+/* Filtros */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin: 1.25rem 0 2.25rem;
+}
+
+.chip {
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.chip:hover { border-color: var(--navy); }
+.chip.ativo {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+}
+
+.quantidade {
+  margin: 0 0 1.5rem;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+/* ---------- Cards ---------- */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -20px rgba(25, 44, 90, 0.45);
+}
+
+/* Foto (placeholder colorido; troque por uma <img> quando tiver as fotos reais) */
+.foto {
+  position: relative;
+  height: 220px;
+  display: grid;
+  place-items: center;
+}
+.foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.foto-emoji { font-size: 4.5rem; }
+
+.foto-selfservice  { background: linear-gradient(135deg, #d9dde2, #b9c1cb); }
+.foto-executivo    { background: linear-gradient(135deg, #f1e3b4, #dcc27e); }
+.foto-cafe         { background: linear-gradient(135deg, #efcdb7, #d79a7a); }
+.foto-lanches      { background: linear-gradient(135deg, #f3e1c4, #e2b98a); }
+.foto-vegetariano  { background: linear-gradient(135deg, #d6e8c6, #a9cc8f); }
+.foto-pizzaria     { background: linear-gradient(135deg, #f2cdbd, #d98d6f); }
+
+.categoria {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+}
+
+.favoritar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--terracotta);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+.favoritar:hover { transform: scale(1.08); }
+
+.card-corpo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.card h2 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  line-height: 1.2;
+  color: var(--navy);
+}
+
+.local {
+  margin: 0 0 0.4rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.avaliacao {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+.avaliacao strong { color: var(--gold); font-weight: 600; margin-left: 0.25rem; }
+.avaliacao .total { color: var(--muted); }
+
+/* Estrelas parciais: a camada dourada é cortada na largura da nota */
+.estrelas {
+  position: relative;
+  display: inline-block;
+  font-size: 1.05rem;
+  letter-spacing: 2px;
+  line-height: 1;
+  color: var(--star-off);
+}
+.estrelas::before { content: "★★★★★"; }
+.estrelas::after {
+  content: "★★★★★";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--nota) / 5 * 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--gold);
+}
+
+/* Abas do card (Sobre / Cardápio / Localização) — funcionam só com CSS */
+.aba-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.abas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+
+.aba {
+  padding: 0.6rem 0.25rem;
+  margin-bottom: -1px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.aba:hover { color: var(--ink); }
+
+.r-sobre:checked    ~ .abas .l-sobre,
+.r-cardapio:checked ~ .abas .l-cardapio,
+.r-local:checked    ~ .abas .l-local {
+  color: var(--terracotta);
+  border-bottom-color: var(--terracotta);
+}
+
+.r-sobre:focus-visible    ~ .abas .l-sobre,
+.r-cardapio:focus-visible ~ .abas .l-cardapio,
+.r-local:focus-visible    ~ .abas .l-local {
+  outline: 3px solid var(--terracotta);
+  outline-offset: -3px;
+}
+
+.paineis { min-height: 7.5rem; padding-top: 1rem; }
+
+.painel { display: none; margin: 0; }
+.r-sobre:checked    ~ .paineis .p-sobre,
+.r-cardapio:checked ~ .paineis .p-cardapio,
+.r-local:checked    ~ .paineis .p-local { display: block; }
+
+p.painel {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+ul.painel {
+  list-style: none;
+  padding: 0;
+}
+ul.painel li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed var(--line);
+  font-size: 1rem;
+}
+ul.painel li:last-child { border-bottom: none; }
+ul.painel strong { color: var(--navy); font-weight: 600; }
+
+.avaliar {
+  margin: auto 0 0.35rem;
+  padding-top: 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.estrelas-vazias {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 4px;
+  line-height: 1;
+  color: var(--star-off);
+}
+
+/* ---------- Telas menores ---------- */
+@media (max-width: 1100px) {
+  .grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 @media (max-width: 720px) {
   .container { padding-inline: 1.25rem; }
   .brand-icon { width: 2.5rem; height: 2.5rem; }
@@ -132,4 +418,16 @@ a:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 3px; }
   .btn-entrar { padding: 0.6rem 1.4rem; font-size: 1rem; }
   .tabs-list { gap: 1.5rem; }
   .tab { padding-block: 1.1rem 1rem; font-size: 0.95rem; }
+
+  .conteudo { padding-block: 1.75rem 3rem; }
+  .filtros {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: -1.25rem;
+    padding-inline: 1.25rem;
+  }
+  .filtros::-webkit-scrollbar { display: none; }
+  .chip { flex: none; font-size: 0.95rem; }
+  .grade { grid-template-columns: 1fr; gap: 1.5rem; }
 }
