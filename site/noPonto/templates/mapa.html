@@ -1,0 +1,76 @@
+<!-- DADOS DE EXEMPLO: nomes, notas e posições dos marcadores são fictícios.
+     Serão substituídos pelos restaurantes reais do banco na tarefa de integração. -->
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapa — noPonto</title>
+<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
+<link rel="stylesheet" href="{% static 'css/mapa.css' %}">
+</head>
+<body>
+
+<header class="doc-header">
+  <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
+  <span>noPonto</span>
+</header>
+
+<main class="mapa-wrap">
+
+  <div class="mapa-topo">
+    <h1>Mapa do campus</h1>
+    <p>Encontre os restaurantes perto de você.</p>
+  </div>
+
+  <div class="mapa-layout">
+
+    <!-- Mapa com os marcadores -->
+    <section class="mapa-canvas" aria-label="Mapa do campus">
+      <img src="{% static 'img/mapa-campus.png' %}" alt="Mapa do campus da PUC-Rio">
+
+      <a class="pino" href="#" data-nome="Cantina Central" style="top: 40%; left: 28%;" aria-label="Cantina Central"></a>
+      <a class="pino" href="#" data-nome="Sushi do Campus" style="top: 62%; left: 55%;" aria-label="Sushi do Campus"></a>
+      <a class="pino" href="#" data-nome="Pizza no Ponto" style="top: 25%; left: 72%;" aria-label="Pizza no Ponto"></a>
+    </section>
+
+    <!-- Lista ao lado do mapa -->
+    <aside class="mapa-lista">
+      <h2>Restaurantes</h2>
+      <ul>
+        <li>
+          <a class="rest-item" href="#">
+            <strong>Cantina Central</strong>
+            <span class="rest-estilo">Brasileira</span>
+            <span class="rest-local">Prédio Padre Leonel Franca, térreo</span>
+            <span class="estrelas" aria-label="4 de 5 estrelas">★★★★☆</span>
+          </a>
+        </li>
+        <li>
+          <a class="rest-item" href="#">
+            <strong>Sushi do Campus</strong>
+            <span class="rest-estilo">Japonesa</span>
+            <span class="rest-local">Prédio Cardeal Leme, 2º andar</span>
+            <span class="estrelas" aria-label="5 de 5 estrelas">★★★★★</span>
+          </a>
+        </li>
+        <li>
+          <a class="rest-item" href="#">
+            <strong>Pizza no Ponto</strong>
+            <span class="rest-estilo">Italiana</span>
+            <span class="rest-local">Vila dos Diretórios</span>
+            <span class="estrelas" aria-label="3 de 5 estrelas">★★★☆☆</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+  </div>
+
+</main>
+
+</body>
+</html>
