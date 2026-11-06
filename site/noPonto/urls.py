@@ -27,4 +27,5 @@ urlpatterns = [
     path("usuarios/<int:id>/excluir/", views.excluir, name="excluir"),
     path("restaurantes/", views.listar_restaurantes, name="restaurantes"),
     path("restaurantes/<int:id>/", views.detalhe_restaurante, name="detalhe_restaurante"),
+    path("mapa/", views.mapa, name="mapa"),
 ]

@@ -158,3 +158,6 @@ def detalhe_restaurante(request, id):
         "total": resumo["total"],
         "erro": erro,
     })
+
+def mapa(request):
+    return render(request, "mapa.html")
