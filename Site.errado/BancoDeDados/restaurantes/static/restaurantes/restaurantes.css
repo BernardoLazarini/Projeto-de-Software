@@ -1,0 +1,115 @@
+/* Estilos das telas de restaurantes.
+   Reaproveita as variáveis de conta-estilo.css (--navy, --muted, --line, etc.). */
+
+.rest-wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ---------- Lista ---------- */
+.rest-topo { margin-bottom: 24px; }
+.rest-topo h1 { margin: 0 0 4px; font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+.rest-topo p { margin: 0; font-size: 14.5px; color: var(--muted); }
+
+.rest-ferramentas {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.rest-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.rest-card {
+  display: block;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.rest-card:hover { border-color: var(--navy); transform: translateY(-2px); }
+.rest-card h2 { margin: 0 0 8px; font-size: 18px; color: var(--navy); }
+
+.rest-estilo {
+  display: inline-block;
+  background: var(--navy-tint);
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+.rest-local { margin: 10px 0; font-size: 13.5px; color: var(--muted); }
+
+.estrelas { color: #C38D28; letter-spacing: 2px; }
+.nota { font-size: 13px; color: var(--muted); margin-left: 6px; }
+
+/* ---------- Detalhe ---------- */
+.det-voltar {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: none;
+}
+.det-voltar:hover { text-decoration: underline; }
+
+.det-topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.det-topo h1 { margin: 0 0 10px; font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+.det-nota { text-align: right; }
+
+.secao { margin-top: 32px; }
+.secao h2 { margin: 0 0 12px; font-size: 20px; color: var(--navy); }
+.secao p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--muted); }
+
+.pratos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.pratos li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  font-size: 15px;
+}
+.pratos strong { color: var(--navy); }
+
+.avaliacoes { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.avaliacao {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+}
+.avaliacao-topo { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.avaliacao-topo strong { color: var(--navy); font-size: 15px; }
+
+.form-avaliar {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+.form-avaliar h3 { margin: 0 0 16px; font-size: 17px; color: var(--navy); }
+
+/* ---------- Celular ---------- */
+@media (max-width: 640px) {
+  .rest-ferramentas { grid-template-columns: 1fr; }
+  .det-nota { text-align: left; }
+}

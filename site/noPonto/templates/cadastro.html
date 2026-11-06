@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Criar conta — noPonto</title>
-<link rel="stylesheet" href="../conta-estilo.css">
+<link rel="stylesheet" href="{% static 'restaurantes/conta-estilo.css' %}">
 </head>
 <body>
 
@@ -13,7 +14,7 @@
   <!-- Painel de marca -->
   <aside class="brand-panel">
     <div class="brand-top">
-      <img src="../logoNoPonto.png" alt="noPonto">
+      <img src="{% static 'restaurantes/logoNoPonto.png' %}" alt="noPonto">
       <span>noPonto</span>
     </div>
 
@@ -47,11 +48,12 @@
       <h2>Crie sua conta</h2>
       <p class="subtitle">Leva menos de um minuto — e você já sai sabendo onde almoçar hoje.</p>
 
-      <div class="alert alert-success" id="successAlert">
-        ✓ Conta criada com sucesso! Verifique seu e-mail para confirmar o cadastro.
-      </div>
+      {% if erro %}
+        <div class="field-error show">{{ erro }}</div>
+      {% endif %}
 
-      <form id="registroForm" novalidate>
+      <form id="registroForm" method="post" novalidate>
+        {% csrf_token %}
 
         <div class="field">
           <label for="nome">Nome completo</label>
@@ -106,13 +108,13 @@
 
         <div class="checkbox-row">
           <input type="checkbox" id="aceiteTermos" name="aceiteTermos" required>
-          <label for="aceiteTermos">Li e aceito o <a href="../TermoDeUso/termodeuso.html">Termo de Uso</a> e a Política de Privacidade do noPonto.</label>
+          <label for="aceiteTermos">Li e aceito o <a href="#">Termo de Uso</a> e a Política de Privacidade do noPonto.</label>
         </div>
 
         <button type="submit" class="btn btn-primary">Criar conta</button>
       </form>
 
-      <p class="form-foot">Já tem conta? <a href="../Login/login.html">Entrar</a></p>
+      <p class="form-foot">Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
     </div>
   </main>
 
@@ -120,7 +122,7 @@
 
 <script>
 /* noPonto — comportamento da página de cadastro. Vanilla JS, sem dependências.
-   Validações client-side; a submissão real deve ser conectada ao backend/API do projeto. */
+   Validações client-side; o envio real é feito pelo Django (view cadastrar). */
 (function () {
   'use strict';
 
@@ -186,22 +188,16 @@
     if (senha) senha.addEventListener('input', checkPasswordsMatch);
   }
 
+  // Só bloqueia o envio se algo estiver inválido; se estiver tudo certo,
+  // o formulário segue para o Django.
   var registroForm = document.getElementById('registroForm');
   if (registroForm) {
     registroForm.addEventListener('submit', function (e) {
-      e.preventDefault();
       var valid = registroForm.checkValidity() && checkPasswordsMatch();
       if (!valid) {
+        e.preventDefault();
         registroForm.reportValidity();
-        return;
       }
-      var alertBox = document.getElementById('successAlert');
-      if (alertBox) {
-        alertBox.classList.add('show');
-        alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      // TODO: enviar os dados do formulário para a API de cadastro do noPonto.
-      // fetch('/api/usuarios', { method: 'POST', body: new FormData(registroForm) })
     });
   }
 })();

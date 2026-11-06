@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuários — noPonto</title>
+<link rel="stylesheet" href="../conta-estilo.css">
+<style>
+  /* Estilos específicos da listagem de usuários.
+     Reaproveita as variáveis e componentes de conta-estilo.css. */
+  .lista-wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .lista-topo {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .lista-topo h1 { margin: 0 0 4px; font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+  .lista-topo p { margin: 0; font-size: 14.5px; color: var(--muted); }
+
+  .lista-ferramentas {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .lista-contagem { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+
+  .usuarios { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+  .usuario {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+  }
+
+  .usuario .avatar-circle { width: 46px; height: 46px; font-size: 16px; }
+
+  .usuario-info { min-width: 0; }
+  .usuario-info strong { display: block; font-size: 15px; color: var(--navy); }
+  .usuario-info span {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .usuario-meta { text-align: right; font-size: 13px; color: var(--muted); }
+  .usuario-meta .curso {
+    display: inline-block;
+    background: var(--navy-tint);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 4px;
+  }
+  .usuario-meta .matricula { display: block; }
+
+  .lista-vazia {
+    display: none;
+    text-align: center;
+    background: var(--white);
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius-md);
+    padding: 36px 20px;
+    color: var(--muted);
+    font-size: 14.5px;
+  }
+  .lista-vazia.show { display: block; }
+  .lista-vazia strong { display: block; color: var(--navy); margin-bottom: 4px; }
+
+  @media (max-width: 640px) {
+    .lista-ferramentas { grid-template-columns: 1fr; }
+    .usuario { grid-template-columns: auto minmax(0, 1fr); }
+    .usuario-meta { grid-column: 2; text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <img src="../logoNoPonto.png" alt="noPonto">
+  <span>noPonto</span>
+</header>
+
+<main class="lista-wrap">
+
+  <div class="lista-topo">
+    <div>
+      <h1>Usuários cadastrados</h1>
+      <p>Alunos que já criaram conta no noPonto.</p>
+    </div>
+  </div>
+
+  <div class="lista-ferramentas">
+    <div class="field" style="margin:0">
+      <label class="sr-only" for="busca" style="position:absolute;left:-9999px">Buscar usuário</label>
+      <input class="input" type="search" id="busca" placeholder="Buscar por nome ou e-mail" autocomplete="off">
+    </div>
+    <div class="field" style="margin:0">
+      <label class="sr-only" for="filtroCurso" style="position:absolute;left:-9999px">Filtrar por curso</label>
+      <select class="input" id="filtroCurso">
+        <option value="">Todos os cursos</option>
+      </select>
+    </div>
+  </div>
+
+  <p class="lista-contagem" id="contagem" aria-live="polite"></p>
+
+  <ul class="usuarios" id="listaUsuarios"></ul>
+
+  <div class="lista-vazia" id="listaVazia">
+    <strong>Nenhum usuário encontrado</strong>
+    Tente outro nome ou limpe o filtro de curso.
+  </div>
+
+</main>
+
+<script>
+/* noPonto — listagem de usuários. Vanilla JS, sem dependências.
+   Os dados abaixo são de exemplo; troque por uma chamada à API do projeto. */
+(function () {
+  'use strict';
+
+  var usuarios = [
+    { nome: 'Lucas Silveira',   email: 'lucas.silveira@aluno.puc-rio.br',  curso: 'Engenharia',          matricula: '2311234' },
+    { nome: 'Marina Duarte',    email: 'marina.duarte@aluno.puc-rio.br',   curso: 'Design',              matricula: '2312088' },
+    { nome: 'Rafael Vilela',    email: 'rafael.vilela@aluno.puc-rio.br',   curso: 'Engenharia',          matricula: '2310456' },
+    { nome: 'João Pedro Simas', email: 'joao.simas@aluno.puc-rio.br',      curso: 'Administração',       matricula: '2313921' },
+    { nome: 'Beatriz Nogueira', email: 'beatriz.nogueira@aluno.puc-rio.br', curso: 'Direito',            matricula: '' },
+    { nome: 'Camila Prado',     email: 'camila.prado@aluno.puc-rio.br',    curso: 'Comunicação Social',  matricula: '2314407' }
+  ];
+  // TODO: substituir por fetch('/api/usuarios').then(r => r.json())
+
+  var lista = document.getElementById('listaUsuarios');
+  var vazia = document.getElementById('listaVazia');
+  var contagem = document.getElementById('contagem');
+  var busca = document.getElementById('busca');
+  var filtroCurso = document.getElementById('filtroCurso');
+
+  function iniciais(nome) {
+    var partes = nome.trim().split(/\s+/);
+    var a = partes[0].charAt(0);
+    var b = partes.length > 1 ? partes[partes.length - 1].charAt(0) : '';
+    return (a + b).toUpperCase();
+  }
+
+  function normalizar(texto) {
+    return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  // popula o filtro de cursos a partir dos dados
+  var cursos = usuarios.map(function (u) { return u.curso; })
+    .filter(function (c, i, arr) { return arr.indexOf(c) === i; })
+    .sort();
+  cursos.forEach(function (c) {
+    var op = document.createElement('option');
+    op.textContent = c;
+    filtroCurso.appendChild(op);
+  });
+
+  function criarItem(u) {
+    var li = document.createElement('li');
+    li.className = 'usuario';
+
+    var avatar = document.createElement('div');
+    avatar.className = 'avatar-circle';
+    avatar.textContent = iniciais(u.nome);
+    avatar.setAttribute('aria-hidden', 'true');
+
+    var info = document.createElement('div');
+    info.className = 'usuario-info';
+    var nome = document.createElement('strong');
+    nome.textContent = u.nome;
+    var email = document.createElement('span');
+    email.textContent = u.email;
+    info.appendChild(nome);
+    info.appendChild(email);
+
+    var meta = document.createElement('div');
+    meta.className = 'usuario-meta';
+    var curso = document.createElement('span');
+    curso.className = 'curso';
+    curso.textContent = u.curso;
+    meta.appendChild(curso);
+    if (u.matricula) {
+      var mat = document.createElement('span');
+      mat.className = 'matricula';
+      mat.textContent = 'Matrícula ' + u.matricula;
+      meta.appendChild(mat);
+    }
+
+    li.appendChild(avatar);
+    li.appendChild(info);
+    li.appendChild(meta);
+    return li;
+  }
+
+  function render() {
+    var termo = normalizar(busca.value);
+    var curso = filtroCurso.value;
+
+    var filtrados = usuarios.filter(function (u) {
+      var bateBusca = !termo ||
+        normalizar(u.nome).indexOf(termo) !== -1 ||
+        normalizar(u.email).indexOf(termo) !== -1;
+      var bateCurso = !curso || u.curso === curso;
+      return bateBusca && bateCurso;
+    });
+
+    lista.innerHTML = '';
+    filtrados.forEach(function (u) { lista.appendChild(criarItem(u)); });
+
+    vazia.classList.toggle('show', filtrados.length === 0);
+    contagem.textContent = filtrados.length === 1
+      ? '1 usuário'
+      : filtrados.length + ' usuários';
+  }
+
+  busca.addEventListener('input', render);
+  filtroCurso.addEventListener('change', render);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+/* Estilos da tela do mapa.
+   Reaproveita as variáveis de conta-estilo.css (--navy, --muted, --line...). */
+
+.mapa-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.mapa-topo { margin-bottom: 24px; }
+.mapa-topo h1 { margin: 0 0 4px; font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+.mapa-topo p { margin: 0; font-size: 14.5px; color: var(--muted); }
+
+/* Mapa à esquerda, lista à direita */
+.mapa-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ---------- Mapa ---------- */
+.mapa-canvas {
+  position: relative;                 /* os marcadores se posicionam em relação a esta caixa */
+  min-height: 320px;
+  background: var(--navy-tint);       /* aparece enquanto a imagem não existe */
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.mapa-canvas img { display: block; width: 100%; height: auto; }
+
+/* ---------- Marcadores ---------- */
+.pino {
+  position: absolute;                 /* usa o top e o left do style de cada marcador */
+  width: 28px;
+  height: 28px;
+  background: var(--navy);
+  border: 3px solid var(--white);
+  border-radius: 50% 50% 50% 0;       /* forma de gota */
+  transform: translate(-50%, -100%) rotate(-45deg);   /* a ponta fica na coordenada */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s;
+}
+.pino:hover,
+.pino:focus-visible {
+  transform: translate(-50%, -100%) rotate(-45deg) scale(1.2);
+  outline: none;
+}
+
+/* Nome do restaurante ao passar o mouse */
+.pino::after {
+  content: attr(data-nome);
+  position: absolute;
+  left: 50%;
+  bottom: 140%;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--navy);
+  color: var(--white);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.pino:hover::after,
+.pino:focus-visible::after { opacity: 1; }
+
+/* ---------- Lista ---------- */
+.mapa-lista h2 { margin: 0 0 12px; font-size: 20px; color: var(--navy); }
+.mapa-lista ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.rest-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s;
+}
+.rest-item:hover { border-color: var(--navy); }
+.rest-item strong { font-size: 15px; color: var(--navy); }
+.rest-local { font-size: 13px; color: var(--muted); }
+
+.rest-estilo {
+  align-self: flex-start;
+  background: var(--navy-tint);
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+.estrelas { color: #C38D28; letter-spacing: 2px; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 800px) {
+  .mapa-layout { grid-template-columns: 1fr; }   /* a lista passa para baixo do mapa */
+}
