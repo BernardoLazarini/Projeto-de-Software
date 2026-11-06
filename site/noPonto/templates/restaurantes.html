@@ -18,54 +18,62 @@
 
   <div class="rest-topo">
     <h1>Restaurantes do campus</h1>
-    <p>Veja onde comer e a nota de quem já provou.</p>
+    <p>Veja o cardápio e o horário de funcionamento de cada restaurante.</p>
   </div>
 
   <div class="rest-ferramentas">
-    <input class="input" type="search" placeholder="Buscar restaurante" autocomplete="off">
-    <select class="input">
+    <input class="input" id="busca" type="search" placeholder="Buscar restaurante" autocomplete="off">
+    <select class="input" id="estilo">
       <option value="">Todos os estilos</option>
-      <option>Brasileira</option>
-      <option>Japonesa</option>
-      <option>Italiana</option>
-      <option>Lanches</option>
+      <option>Mate e bebidas</option>
+      <option>Hamburgueria</option>
+      <option>Salgados e açaí</option>
+      <option>Refeições e lanches</option>
     </select>
   </div>
 
   <ul class="rest-lista">
 
-    <li>
-      <a class="rest-card" href="restaurante.html">
-        <h2>Cantina Central</h2>
-        <span class="rest-estilo">Brasileira</span>
-        <p class="rest-local">Prédio Padre Leonel Franca, térreo</p>
+    <li data-estilo="Mate e bebidas">
+      <a class="rest-card" href="restaurante.html#mega-mate">
+        <h2>Mega Mate</h2>
+        <span class="rest-estilo">Mate e bebidas</span>
+        <p class="rest-local">Aberto das 6h30 às 21h30</p>
         <div class="rest-nota">
-          <span class="estrelas" aria-label="4 de 5 estrelas">★★★★☆</span>
-          <span class="nota">4,0 · 12 avaliações</span>
+          <span class="nota">Ainda sem avaliações</span>
         </div>
       </a>
     </li>
 
-    <li>
-      <a class="rest-card" href="restaurante.html">
-        <h2>Sushi do Campus</h2>
-        <span class="rest-estilo">Japonesa</span>
-        <p class="rest-local">Prédio Cardeal Leme, 2º andar</p>
+    <li data-estilo="Hamburgueria">
+      <a class="rest-card" href="restaurante.html#lemax-burgers">
+        <h2>Lemax Burgers</h2>
+        <span class="rest-estilo">Hamburgueria</span>
+        <p class="rest-local">Aberto das 11h às 22h30</p>
         <div class="rest-nota">
-          <span class="estrelas" aria-label="5 de 5 estrelas">★★★★★</span>
-          <span class="nota">4,8 · 7 avaliações</span>
+          <span class="nota">Ainda sem avaliações</span>
         </div>
       </a>
     </li>
 
-    <li>
-      <a class="rest-card" href="restaurante.html">
-        <h2>Pizza no Ponto</h2>
-        <span class="rest-estilo">Italiana</span>
-        <p class="rest-local">Vila dos Diretórios</p>
+    <li data-estilo="Salgados e açaí">
+      <a class="rest-card" href="restaurante.html#porto-do-sabor">
+        <h2>Porto do Sabor</h2>
+        <span class="rest-estilo">Salgados e açaí</span>
+        <p class="rest-local">Aberto das 8h às 18h30</p>
         <div class="rest-nota">
-          <span class="estrelas" aria-label="3 de 5 estrelas">★★★☆☆</span>
-          <span class="nota">3,2 · 5 avaliações</span>
+          <span class="nota">Ainda sem avaliações</span>
+        </div>
+      </a>
+    </li>
+
+    <li data-estilo="Refeições e lanches">
+      <a class="rest-card" href="restaurante.html#na-medida">
+        <h2>Na Medida</h2>
+        <span class="rest-estilo">Refeições e lanches</span>
+        <p class="rest-local">Aberto das 9h às 15h</p>
+        <div class="rest-nota">
+          <span class="nota">Ainda sem avaliações</span>
         </div>
       </a>
     </li>
@@ -73,6 +81,25 @@
   </ul>
 
 </main>
+
+<script>
+  var busca = document.getElementById("busca");
+  var estilo = document.getElementById("estilo");
+  var itens = document.querySelectorAll(".rest-lista > li");
+
+  function filtrar() {
+    var texto = busca.value.trim().toLowerCase();
+    itens.forEach(function (li) {
+      var nome = li.querySelector("h2").textContent.toLowerCase();
+      var okNome = nome.indexOf(texto) !== -1;
+      var okEstilo = !estilo.value || li.getAttribute("data-estilo") === estilo.value;
+      li.hidden = !(okNome && okEstilo);
+    });
+  }
+
+  busca.addEventListener("input", filtrar);
+  estilo.addEventListener("change", filtrar);
+</script>
 
 </body>
 </html>
