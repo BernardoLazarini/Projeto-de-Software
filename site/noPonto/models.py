@@ -55,7 +55,7 @@ class Aluno(models.Model):
         related_name="aluno", null=True, blank=True,
     )
     nome = models.CharField(max_length=100)
-    username = models.CharField(max_length=50, unique=True)   # sai no passo 3
+    username = models.CharField(max_length=150, unique=True)  # sai no passo 3
     password = models.CharField(max_length=128)               # sai no passo 3
     estilos_favoritos = models.ManyToManyField(EstiloComida, blank=True)
 

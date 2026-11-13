@@ -1,5 +1,5 @@
 """
-ASGI config for noPonto project.
+ASGI config for NoPonto! project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

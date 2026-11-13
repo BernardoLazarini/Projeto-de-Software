@@ -4,15 +4,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restaurantes — noPonto</title>
+<title>Restaurantes — NoPonto!</title>
 <link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
 <link rel="stylesheet" href="{% static 'css/restaurantes.css' %}">
 </head>
 <body>
 
 <header class="doc-header">
-  <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
-  <span>noPonto</span>
+  <img src="{% static 'img/logoNoPonto.png' %}" alt="NoPonto!">
+  <span>NoPonto!</span>
 </header>
 
 <main class="rest-wrap">
@@ -22,16 +22,19 @@
     <p>Veja o cardápio e o horário de funcionamento de cada restaurante.</p>
   </div>
 
-  <div class="rest-ferramentas">
-    <input class="input" id="busca" type="search" placeholder="Buscar restaurante"
-           autocomplete="off" value="{{ busca }}">
-    <select class="input" id="estilo">
-      <option value="">Todos os estilos</option>
-      {% for e in estilos %}
-        <option value="{{ e.nome }}">{{ e.nome }}</option>
-      {% endfor %}
-    </select>
-  </div>
+  <form method="get" class="rest-ferramentas">
+  <input class="input" name="q" type="search" placeholder="Buscar restaurante"
+         autocomplete="off" value="{{ busca }}">
+
+  <select class="input" name="estilo" onchange="this.form.submit()">
+    <option value="">Todos os estilos</option>
+    {% for e in estilos %}
+      <option value="{{ e.id }}" {% if e.id|stringformat:"s" == estilo_id %}selected{% endif %}>
+        {{ e.nome }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
 
   <ul class="rest-lista">
     {% for r in restaurantes %}

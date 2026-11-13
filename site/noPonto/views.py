@@ -16,6 +16,15 @@ def aluno_atual(request):
     )
     return aluno
 
+def restaurante_detalhe(request, pk):
+    restaurante = get_object_or_404(Restaurante.objects.select_related("estilo"), pk=pk)
+    cardapio = Cardapio.objects.filter(restaurante=restaurante).first()
+    pratos = cardapio.prato_set.order_by("id") if cardapio else []
+    return render(request, "restaurante.html", {
+        "restaurante": restaurante,
+        "cardapio": cardapio,
+        "pratos": pratos,})
+
 # ---------- Login, cadastro e sair ----------
 
 def login(request):
@@ -45,12 +54,19 @@ def cadastrar(request):
         senha = request.POST["senha"]
         if senha != request.POST["confirmarSenha"]:
             erro = "As senhas não coincidem."
-        elif User.objects.filter(username=email).exists():
+        elif (
+            User.objects.filter(username=email).exists()
+            or Aluno.objects.filter(username=email).exists()
+        ):
             erro = "Esse e-mail já está cadastrado."
         else:
             with transaction.atomic():
                 user = User.objects.create_user(username=email, email=email, password=senha)
-                Aluno.objects.create(user=user, nome=request.POST["nome"])
+                Aluno.objects.create(
+                    user=user,
+                    nome=request.POST["nome"],
+                    username=email,
+                )
             return redirect("login")
     return render(request, "cadastro.html", {"erro": erro})
 
@@ -141,7 +157,7 @@ def listar_restaurantes(request):
 
     return render(request, "restaurantes.html", {
         "restaurantes": restaurantes,
-        "estilos": EstiloComida.objects.all(),
+        "estilos": EstiloComida.objects.filter(restaurante__isnull=False).distinct().order_by("nome"),
         "busca": busca,
         "estilo_id": estilo_id,
     })

@@ -223,6 +223,7 @@ img {
     .login-links:last-child {
         padding-bottom: 28px;
     }
+
 }
  
 /* ---------- Acessibilidade: respeita quem reduz animações ---------- */
@@ -232,4 +233,38 @@ img {
     .btn-submit {
         transition: none;
     }
+}
+
+/* ---------- Botão Secundário (Criar conta) ---------- */
+.btn-secondary {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px 16px;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--teal);
+    background-color: transparent;
+    border: 2px solid var(--teal);
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(2, 72, 97, 0.08);
+    color: var(--teal);
+    text-decoration: none;
+}
+
+.btn-secondary:active {
+    transform: translateY(1px);
+}
+
+.btn-secondary:focus-visible {
+    outline: 3px solid rgba(2, 72, 97, 0.35);
+    outline-offset: 2px;
 }

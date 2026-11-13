@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Usuários — noPonto</title>
-<link rel="stylesheet" href="{% static 'conta-estilo.css' %}">
+<title>Usuários — NoPonto!</title>
+<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
 <style>
   /* Estilos específicos da listagem de usuários.
      Reaproveita as variáveis e componentes de conta-estilo.css. */
@@ -87,8 +87,8 @@
 <body>
 
 <header class="doc-header">
-  <img src="{% static 'restaurantes/logoNoPonto.png' %}" alt="noPonto">
-  <span>noPonto</span>
+  <img src="{% static 'restaurantes/logoNoPonto.png' %}" alt="NoPonto!">
+  <span>NoPonto!</span>
   <nav class="header-links">
     <a href="{% url 'restaurantes' %}">Restaurantes</a>
     <a href="{% url 'sair' %}">Sair</a>
@@ -100,7 +100,7 @@
   <div class="lista-topo">
     <div>
       <h1>Usuários cadastrados</h1>
-      <p>Alunos que já criaram conta no noPonto.</p>
+      <p>Alunos que já criaram conta no NoPonto!</p>
     </div>
   </div>
 
@@ -139,7 +139,7 @@
 </main>
 
 <script>
-/* noPonto — listagem de usuários. Vanilla JS, sem dependências.
+/* NoPonto! — listagem de usuários. Vanilla JS, sem dependências.
    Os usuários vêm do banco (Django). O JS só filtra o que já está na página. */
 (function () {
   'use strict';

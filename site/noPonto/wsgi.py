@@ -1,5 +1,5 @@
 """
-WSGI config for noPonto project.
+WSGI config for NoPonto! project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
