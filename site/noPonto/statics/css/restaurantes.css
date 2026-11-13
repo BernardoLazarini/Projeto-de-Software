@@ -179,7 +179,7 @@
 
 /* Entrada suave ao trocar de restaurante */
 @media (prefers-reduced-motion: no-preference) {
-  main > article { animation: rest-entrada 0.25s ease-out; }
+  main > .restaurante { animation: rest-entrada 0.25s ease-out; }
   @keyframes rest-entrada {
     from { opacity: 0; transform: translateY(6px); }
     to   { opacity: 1; transform: none; }
