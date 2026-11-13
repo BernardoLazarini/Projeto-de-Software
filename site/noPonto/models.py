@@ -1,8 +1,8 @@
-from django.db import models
 
 # Create your models here.
 
 from django.db import models
+from django.conf import settings
 
 
 class EstiloComida(models.Model):
@@ -25,6 +25,9 @@ class Restaurante(models.Model):
     localizacao = models.CharField(max_length=200)
     mapa = models.ForeignKey(Mapa, on_delete=models.SET_NULL, null=True, blank=True)
     estilo = models.ForeignKey(EstiloComida, on_delete=models.SET_NULL, null=True)
+    horario_abertura = models.TimeField(null=True, blank=True)
+    horario_fechamento = models.TimeField(null=True, blank=True)
+
 
     def __str__(self):
         return self.nome
@@ -47,9 +50,13 @@ class Prato(models.Model):
 
 
 class Aluno(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name="aluno", null=True, blank=True,
+    )
     nome = models.CharField(max_length=100)
-    username = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=128)
+    username = models.CharField(max_length=50, unique=True)   # sai no passo 3
+    password = models.CharField(max_length=128)               # sai no passo 3
     estilos_favoritos = models.ManyToManyField(EstiloComida, blank=True)
 
     def __str__(self):

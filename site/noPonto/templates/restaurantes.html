@@ -23,84 +23,38 @@
   </div>
 
   <div class="rest-ferramentas">
-    <input class="input" id="busca" type="search" placeholder="Buscar restaurante" autocomplete="off">
+    <input class="input" id="busca" type="search" placeholder="Buscar restaurante"
+           autocomplete="off" value="{{ busca }}">
     <select class="input" id="estilo">
       <option value="">Todos os estilos</option>
-      <option>Mate e bebidas</option>
-      <option>Hamburgueria</option>
-      <option>Salgados e açaí</option>
-      <option>Refeições e lanches</option>
+      {% for e in estilos %}
+        <option value="{{ e.nome }}">{{ e.nome }}</option>
+      {% endfor %}
     </select>
   </div>
 
   <ul class="rest-lista">
-
-    <li data-estilo="Mate e bebidas">
-      <a class="rest-card" href="restaurante.html#mega-mate">
-        <h2>Mega Mate</h2>
-        <span class="rest-estilo">Mate e bebidas</span>
-        <p class="rest-local">Aberto das 6h30 às 21h30</p>
-        <div class="rest-nota">
-          <span class="nota">Ainda sem avaliações</span>
-        </div>
-      </a>
-    </li>
-
-    <li data-estilo="Hamburgueria">
-      <a class="rest-card" href="restaurante.html#lemax-burgers">
-        <h2>Lemax Burgers</h2>
-        <span class="rest-estilo">Hamburgueria</span>
-        <p class="rest-local">Aberto das 11h às 22h30</p>
-        <div class="rest-nota">
-          <span class="nota">Ainda sem avaliações</span>
-        </div>
-      </a>
-    </li>
-
-    <li data-estilo="Salgados e açaí">
-      <a class="rest-card" href="restaurante.html#porto-do-sabor">
-        <h2>Porto do Sabor</h2>
-        <span class="rest-estilo">Salgados e açaí</span>
-        <p class="rest-local">Aberto das 8h às 18h30</p>
-        <div class="rest-nota">
-          <span class="nota">Ainda sem avaliações</span>
-        </div>
-      </a>
-    </li>
-
-    <li data-estilo="Refeições e lanches">
-      <a class="rest-card" href="restaurante.html#na-medida">
-        <h2>Na Medida</h2>
-        <span class="rest-estilo">Refeições e lanches</span>
-        <p class="rest-local">Aberto das 9h às 15h</p>
-        <div class="rest-nota">
-          <span class="nota">Ainda sem avaliações</span>
-        </div>
-      </a>
-    </li>
-
+    {% for r in restaurantes %}
+      <li data-estilo="{{ r.estilo.nome }}">
+        <a class="rest-card" href="{% url 'detalhe_restaurante' r.id %}">
+          <h2>{{ r.nome }}</h2>
+          <span class="rest-estilo">{{ r.estilo.nome }}</span>
+          <p class="rest-local">Aberto das {{ r.horario_abertura|time:"G\hi" }} às {{ r.horario_fechamento|time:"G\hi" }}</p>
+          <div class="rest-nota">
+            {% if r.total %}
+              <span class="nota">
+                {% for i in "12345" %}{% if forloop.counter <= r.media_int %}★{% else %}☆{% endif %}{% endfor %}
+                {{ r.media|floatformat:1 }} ({{ r.total }})
+              </span>
+            {% else %}
+              <span class="nota">Ainda sem avaliações</span>
+            {% endif %}
+          </div>
+        </a>
+      </li>
+    {% empty %}
+      <li>Nenhum restaurante cadastrado.</li>
+    {% endfor %}
   </ul>
 
 </main>
-
-<script>
-  var busca = document.getElementById("busca");
-  var estilo = document.getElementById("estilo");
-  var itens = document.querySelectorAll(".rest-lista > li");
-
-  function filtrar() {
-    var texto = busca.value.trim().toLowerCase();
-    itens.forEach(function (li) {
-      var nome = li.querySelector("h2").textContent.toLowerCase();
-      var okNome = nome.indexOf(texto) !== -1;
-      var okEstilo = !estilo.value || li.getAttribute("data-estilo") === estilo.value;
-      li.hidden = !(okNome && okEstilo);
-    });
-  }
-
-  busca.addEventListener("input", filtrar);
-  estilo.addEventListener("change", filtrar);
-</script>
-
-</body>
-</html>

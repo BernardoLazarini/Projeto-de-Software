@@ -115,11 +115,11 @@
 
   <ul class="usuarios" id="listaUsuarios">
     {% for aluno in alunos %}
-    <li class="usuario" data-busca="{{ aluno.nome }} {{ aluno.username }}">
+    <li class="usuario" data-busca="{{ aluno.nome }} {{ user.aluno.username }}">
       <div class="avatar-circle" aria-hidden="true">{{ aluno.nome|first|upper }}</div>
       <div class="usuario-info">
         <strong>{{ aluno.nome }}</strong>
-        <span>{{ aluno.username }}</span>
+        <span>{{ user.aluno.username }}</span>
       </div>
       {% if aluno.id == meu_id %}
       <div class="usuario-acoes">

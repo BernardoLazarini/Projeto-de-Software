@@ -1,28 +1,40 @@
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth import authenticate, login as auth_login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required as login_obrigatorio
+from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Avg, Count
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
-from .decorators import login_obrigatorio
 from .models import Aluno, Avaliacao, Cardapio, EstiloComida, Restaurante
 
+
+def aluno_atual(request):
+    """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
+    aluno, _ = Aluno.objects.get_or_create(
+        user=request.user,
+        defaults={"nome": request.user.get_full_name() or request.user.username},
+    )
+    return aluno
 
 # ---------- Login, cadastro e sair ----------
 
 def login(request):
     erro = None
     if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        aluno = Aluno.objects.filter(username=username).first()
-        if aluno and check_password(password, aluno.password):
-            request.session["aluno_id"] = aluno.id
+        user = authenticate(
+            request,
+            username=request.POST["username"],
+            password=request.POST["password"],
+        )
+        if user is not None:
+            auth_login(request, user)
             return redirect("restaurantes")
         erro = "Usuário ou senha incorretos."
     return render(request, "login.html", {"erro": erro})
 
 
 def sair(request):
-    request.session.flush()
+    logout(request)
     return redirect("login")
 
 
@@ -33,65 +45,78 @@ def cadastrar(request):
         senha = request.POST["senha"]
         if senha != request.POST["confirmarSenha"]:
             erro = "As senhas não coincidem."
-        elif Aluno.objects.filter(username=email).exists():
+        elif User.objects.filter(username=email).exists():
             erro = "Esse e-mail já está cadastrado."
         else:
-            Aluno.objects.create(
-                nome=request.POST["nome"],
-                username=email,
-                password=make_password(senha),
-            )
+            with transaction.atomic():
+                user = User.objects.create_user(username=email, email=email, password=senha)
+                Aluno.objects.create(user=user, nome=request.POST["nome"])
             return redirect("login")
     return render(request, "cadastro.html", {"erro": erro})
 
 
-# ---------- Usuários (editar e excluir só a própria conta) ----------
-
 @login_obrigatorio
 def listar_usuarios(request):
-    alunos = Aluno.objects.all()
     return render(request, "listausuarios.html", {
-        "alunos": alunos,
-        "meu_id": request.session["aluno_id"],
+        "alunos": Aluno.objects.select_related("user"),
+        "meu_id": aluno_atual(request).id,
     })
 
 
 @login_obrigatorio
 def editar(request, id):
-    if request.session["aluno_id"] != id:
+    aluno = aluno_atual(request)
+    if aluno.id != id:
         return HttpResponseForbidden("Você só pode editar a sua própria conta.")
-    aluno = get_object_or_404(Aluno, id=id)
     erro = None
     if request.method == "POST":
         email = request.POST["email"]
         nova_senha = request.POST.get("senha", "")
-        if Aluno.objects.filter(username=email).exclude(id=aluno.id).exists():
+        if User.objects.filter(username=email).exclude(id=aluno.user_id).exists():
             erro = "Esse e-mail já está cadastrado."
         elif nova_senha and nova_senha != request.POST.get("confirmarSenha", ""):
             erro = "As senhas não coincidem."
         else:
             aluno.nome = request.POST["nome"]
-            aluno.username = email
-            if nova_senha:
-                aluno.password = make_password(nova_senha)
             aluno.save()
+            user = aluno.user
+            user.username = email
+            user.email = email
+            if nova_senha:
+                user.set_password(nova_senha)
+            user.save()
+            if nova_senha:
+                update_session_auth_hash(request, user)  # mantém logado após trocar a senha
             return redirect("listar_usuarios")
     return render(request, "editar.html", {"aluno": aluno, "erro": erro})
 
 
 @login_obrigatorio
 def excluir(request, id):
-    if request.session["aluno_id"] != id:
+    aluno = aluno_atual(request)
+    if aluno.id != id:
         return HttpResponseForbidden("Você só pode excluir a sua própria conta.")
-    aluno = get_object_or_404(Aluno, id=id)
     erro = None
     if request.method == "POST":
-        if check_password(request.POST.get("senhaAtual", ""), aluno.password):
-            aluno.delete()
-            request.session.flush()
+        if aluno.user.check_password(request.POST.get("senhaAtual", "")):
+            user = aluno.user
+            logout(request)
+            user.delete()  # apaga o Aluno junto (CASCADE)
             return redirect("login")
         erro = "Senha incorreta."
     return render(request, "excluir.html", {"aluno": aluno, "erro": erro})
+
+
+# ---------- Usuários (editar e excluir só a própria conta) ----------
+def aluno_atual(request):
+    """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
+    aluno, _ = Aluno.objects.get_or_create(
+        user=request.user,
+        defaults={"nome": request.user.get_full_name() or request.user.username},
+    )
+    return aluno
+
+
 
 
 # ---------- Restaurantes ----------
@@ -135,13 +160,13 @@ def detalhe_restaurante(request, id):
         if estrelas < 1 or estrelas > 5:
             erro = "Escolha uma nota de 1 a 5."
         else:
-            Avaliacao.objects.create(
+                Avaliacao.objects.create(
                 estrela=estrelas,
                 comentario=request.POST.get("comentario", "").strip(),
-                aluno_id=request.session["aluno_id"],
+                aluno=aluno_atual(request),
                 restaurante=restaurante,
-            )
-            return redirect("detalhe_restaurante", id=restaurante.id)
+                )
+        return redirect("detalhe_restaurante", id=restaurante.id)
 
     cardapio = Cardapio.objects.filter(restaurante=restaurante).first()
     pratos = cardapio.prato_set.all() if cardapio else []
@@ -163,8 +188,9 @@ def mapa(request):
     return render(request, "mapa.html")
 
 @login_obrigatorio
+@login_obrigatorio
 def perfil(request):
-    aluno = get_object_or_404(Aluno, id=request.session["aluno_id"])
+    aluno = aluno_atual(request)
     avaliacoes = aluno.avaliacao_set.select_related("restaurante").order_by("-id")
     return render(request, "perfil.html", {
         "aluno": aluno,
