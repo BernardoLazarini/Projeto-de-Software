@@ -1,0 +1,98 @@
+
+.perfil-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.perfil-topo { margin-bottom: 24px; }
+.perfil-topo h1 { margin: 0 0 4px; font-size: 28px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+.perfil-topo p { margin: 0; font-size: 14.5px; color: var(--muted); }
+
+
+.header-links { margin-left: auto; display: flex; gap: 16px; font-size: 14px; }
+.header-links a { color: inherit; text-decoration: none; }
+.header-links a:hover { text-decoration: underline; }
+
+
+.perfil-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ---------- Cartão do perfil ---------- */
+.perfil-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+}
+.perfil-card .avatar-circle { width: 80px; height: 80px; font-size: 30px; margin-bottom: 12px; }
+.perfil-card h2 { margin: 0 0 4px; font-size: 20px; color: var(--navy); }
+.perfil-email { margin: 0 0 20px; font-size: 13.5px; color: var(--muted); word-break: break-all; }
+.perfil-card h3 { margin: 0 0 10px; font-size: 14px; color: var(--navy); }
+
+.chips { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.chips li {
+  background: var(--navy-tint);
+  color: var(--navy);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.perfil-acoes { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+
+/* ---------- Avaliações ---------- */
+.perfil-avaliacoes h2 { margin: 0 0 14px; font-size: 20px; color: var(--navy); }
+.contagem {
+  display: inline-block;
+  margin-left: 6px;
+  background: var(--navy-tint);
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+
+.lista-avaliacoes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+
+.avaliacao {
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+}
+.avaliacao-topo { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.avaliacao-topo strong { font-size: 15px; color: var(--navy); }
+.avaliacao p { margin: 0 0 8px; font-size: 14.5px; line-height: 1.5; color: var(--muted); }
+.estrelas { color: #C38D28; letter-spacing: 2px; }
+.data { font-size: 12.5px; color: var(--muted); }
+
+/* ---------- Estado vazio ---------- */
+.perfil-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  background: var(--white);
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius-md);
+  padding: 36px 20px;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+.perfil-vazio[hidden] { display: none; }   
+.perfil-vazio strong { color: var(--navy); }
+
+/* ---------- Celular ---------- */
+@media (max-width: 800px) {
+  .perfil-layout { grid-template-columns: 1fr; }   
+}
+.chips .chip-vazio { background: transparent; color: var(--muted); font-weight: 400; }

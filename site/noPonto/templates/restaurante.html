@@ -5,22 +5,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Restaurante — noPonto</title>
-<link rel="stylesheet" href="../conta-estilo.css">
-<link rel="stylesheet" href="restaurantes.css">
+<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
+<link rel="stylesheet" href="{% static 'css/restaurantes.css' %}">
 </head>
 <body>
 
 <header class="doc-header">
-  <img src="../logoNoPonto.png" alt="noPonto">
+  <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
   <span>noPonto</span>
 </header>
 
 <main class="rest-wrap">
 
-  <a class="det-voltar" href="restaurantes.html">← Voltar aos restaurantes</a>
+  <a class="det-voltar" href="{% url 'restaurantes' %}">← Voltar aos restaurantes</a>
 
   <!-- ================= MEGA MATE ================= -->
-  <article id="mega-mate" hidden>
+  <section class="restaurante" id="mega-mate" hidden>
     <div class="det-topo">
       <div>
         <h1>Mega Mate</h1>
@@ -40,10 +40,10 @@
         <a href="https://drive.google.com/file/d/1cyyJHu4_RQD19tXq02c0O2aPuFfa6NKC/view?usp=drivesdk" target="_blank" rel="noopener">cardápio (parte 2)</a>.
       </p>
     </section>
-  </article>
+  </section>
 
   <!-- ================= LEMAX BURGERS ================= -->
-  <article id="lemax-burgers" hidden>
+  <section class="restaurante" id="lemax-burgers" hidden>
     <div class="det-topo">
       <div>
         <h1>Lemax Burgers</h1>
@@ -171,10 +171,10 @@
         <li><span><strong>Sundae de chocolate</strong></span><strong>R$ 19,99</strong></li>
       </ul>
     </section>
-  </article>
+  </section>
 
   <!-- ================= PORTO DO SABOR ================= -->
-  <article id="porto-do-sabor" hidden>
+  <section class="restaurante" id="porto-do-sabor" hidden>
     <div class="det-topo">
       <div>
         <h1>Porto do Sabor</h1>
@@ -274,10 +274,10 @@
         <li><span><strong>Mate da casa</strong> 300 ml</span><strong>R$ 8,90</strong></li>
       </ul>
     </section>
-  </article>
+  </section>
 
   <!-- ================= NA MEDIDA ================= -->
-  <article id="na-medida" hidden>
+  <section class="restaurante" id="na-medida" hidden>
     <div class="det-topo">
       <div>
         <h1>Na Medida</h1>
@@ -351,13 +351,13 @@
       <h2>Contato</h2>
       <p>Telefone: (21) 2511-5000 · WhatsApp: (21) 97652-5155 · Instagram: @namedidapuc</p>
     </section>
-  </article>
+  </section>
 
 </main>
 
 <script>
   // Mostra apenas o restaurante indicado no endereço (#mega-mate, #lemax-burgers, #porto-do-sabor)
-  var restaurantes = document.querySelectorAll("main > article");
+  var restaurantes = document.querySelectorAll("main > .restaurante");
 
   function mostrar() {
     var id = location.hash.slice(1);

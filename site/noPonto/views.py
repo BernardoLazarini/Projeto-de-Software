@@ -18,7 +18,7 @@ def login(request):
             request.session["aluno_id"] = aluno.id
             return redirect("restaurantes")
         erro = "Usuário ou senha incorretos."
-    return render(request, "restaurantes/login.html", {"erro": erro})
+    return render(request, "login.html", {"erro": erro})
 
 
 def sair(request):
@@ -42,7 +42,7 @@ def cadastrar(request):
                 password=make_password(senha),
             )
             return redirect("login")
-    return render(request, "restaurantes/cadastro.html", {"erro": erro})
+    return render(request, "cadastro.html", {"erro": erro})
 
 
 # ---------- Usuários (editar e excluir só a própria conta) ----------
@@ -50,7 +50,7 @@ def cadastrar(request):
 @login_obrigatorio
 def listar_usuarios(request):
     alunos = Aluno.objects.all()
-    return render(request, "restaurantes/listausuarios.html", {
+    return render(request, "listausuarios.html", {
         "alunos": alunos,
         "meu_id": request.session["aluno_id"],
     })
@@ -76,7 +76,7 @@ def editar(request, id):
                 aluno.password = make_password(nova_senha)
             aluno.save()
             return redirect("listar_usuarios")
-    return render(request, "restaurantes/editar.html", {"aluno": aluno, "erro": erro})
+    return render(request, "editar.html", {"aluno": aluno, "erro": erro})
 
 
 @login_obrigatorio
@@ -91,7 +91,7 @@ def excluir(request, id):
             request.session.flush()
             return redirect("login")
         erro = "Senha incorreta."
-    return render(request, "restaurantes/excluir.html", {"aluno": aluno, "erro": erro})
+    return render(request, "excluir.html", {"aluno": aluno, "erro": erro})
 
 
 # ---------- Restaurantes ----------
@@ -114,7 +114,7 @@ def listar_restaurantes(request):
     for r in restaurantes:
         r.media_int = int((r.media or 0) + 0.5)  # nota arredondada, para as estrelas
 
-    return render(request, "restaurantes/restaurantes.html", {
+    return render(request, "restaurantes.html", {
         "restaurantes": restaurantes,
         "estilos": EstiloComida.objects.all(),
         "busca": busca,
@@ -161,3 +161,14 @@ def detalhe_restaurante(request, id):
 
 def mapa(request):
     return render(request, "mapa.html")
+
+@login_obrigatorio
+def perfil(request):
+    aluno = get_object_or_404(Aluno, id=request.session["aluno_id"])
+    avaliacoes = aluno.avaliacao_set.select_related("restaurante").order_by("-id")
+    return render(request, "perfil.html", {
+        "aluno": aluno,
+        "estilos": aluno.estilos_favoritos.all(),
+        "avaliacoes": avaliacoes,
+    })
+
