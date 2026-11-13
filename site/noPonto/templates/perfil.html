@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu perfil — noPonto</title>
+<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
+<body>
+
+<header class="doc-header">
+  <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
+  <span>noPonto</span>
+  <nav class="header-links">
+    <a href="{% url 'restaurantes' %}">Restaurantes</a>
+    <a href="{% url 'sair' %}">Sair</a>
+  </nav>
+</header>
+
+<main class="perfil-wrap">
+
+  <div class="perfil-topo">
+    <h1>Meu perfil</h1>
+    <p>Seus dados e as avaliações que você já fez.</p>
+  </div>
+
+  <div class="perfil-layout">
+
+    <!-- Resumo do perfil -->
+    <aside class="perfil-card">
+      <div class="avatar-circle" aria-hidden="true">{{ aluno.nome|first|upper }}</div>
+      <h2>{{ aluno.nome }}</h2>
+      <p class="perfil-email">{{ aluno.username }}</p>
+
+      <h3>Estilos favoritos</h3>
+      <ul class="chips">
+        {% for e in estilos %}
+          <li>{{ e.nome }}</li>
+        {% empty %}
+          <li class="chip-vazio">Nenhum estilo escolhido</li>
+        {% endfor %}
+      </ul>
+
+      <div class="perfil-acoes">
+        <a class="btn btn-primary" href="{% url 'editar' aluno.id %}">Editar perfil</a>
+        <a class="btn btn-secondary" href="{% url 'excluir' aluno.id %}">Excluir conta</a>
+      </div>
+    </aside>
+
+    <!-- Avaliações do aluno -->
+    <section class="perfil-avaliacoes">
+      <h2>Minhas avaliações <span class="contagem">{{ avaliacoes|length }}</span></h2>
+
+      {% if avaliacoes %}
+      <ul class="lista-avaliacoes">
+        {% for a in avaliacoes %}
+        <li class="avaliacao">
+          <div class="avaliacao-topo">
+            <strong><a href="{% url 'detalhe_restaurante' a.restaurante.id %}">{{ a.restaurante.nome }}</a></strong>
+            <span class="estrelas" aria-label="{{ a.estrela }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= a.estrela %}★{% else %}☆{% endif %}{% endfor %}</span>
+          </div>
+          {% if a.comentario %}<p>{{ a.comentario }}</p>{% endif %}
+          <span class="data">{{ a.criado_em|date:"d/m/Y" }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <div class="perfil-vazio">
+        <strong>Você ainda não avaliou nenhum restaurante</strong>
+        Escolha um restaurante e conte como foi.
+        <a class="btn btn-primary" href="{% url 'restaurantes' %}">Ver restaurantes</a>
+      </div>
+      {% endif %}
+    </section>
+
+  </div>
+
+</main>
+
+</body>
+</html>

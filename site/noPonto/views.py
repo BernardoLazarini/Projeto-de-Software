@@ -161,3 +161,14 @@ def detalhe_restaurante(request, id):
 
 def mapa(request):
     return render(request, "mapa.html")
+
+@login_obrigatorio
+def perfil(request):
+    aluno = get_object_or_404(Aluno, id=request.session["aluno_id"])
+    avaliacoes = aluno.avaliacao_set.select_related("restaurante").order_by("-id")
+    return render(request, "perfil.html", {
+        "aluno": aluno,
+        "estilos": aluno.estilos_favoritos.all(),
+        "avaliacoes": avaliacoes,
+    })
+
