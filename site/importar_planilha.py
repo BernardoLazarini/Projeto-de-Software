@@ -76,7 +76,7 @@ def ler_aba(wb, nome_aba, colunas):
 def importar(caminho):
     wb = load_workbook(caminho, data_only=True)
     resumo = {"estilos_novos": 0, "rest_novos": 0, "rest_atualizados": 0,
-              "pratos_novos": 0, "pratos_atualizados": 0}
+              "pratos_novos": 0, "pratos_atualizados": 0, "pratos_sem_preco": 0}
     avisos = []
 
     # ---------- Estilos ----------
@@ -129,10 +129,13 @@ def importar(caminho):
     # ---------- Pratos ----------
     for num, d in ler_aba(wb, "Pratos", ["restaurante", "prato", "preco"]):
         nome_rest, nome_prato = texto(d["restaurante"]), texto(d["prato"])
-        preco = ler_preco(d["preco"])
         if not nome_rest or not nome_prato:
             avisos.append(f"Pratos, linha {num}: falta o restaurante ou o nome do prato. Linha ignorada.")
             continue
+        if texto(d["preco"]) == "":
+            resumo["pratos_sem_preco"] += 1   # ainda falta descobrir o preço: pula sem avisar
+            continue
+        preco = ler_preco(d["preco"])
         if preco is None:
             avisos.append(f'Pratos, linha {num}: preço "{texto(d["preco"])}" inválido. Linha ignorada.')
             continue
@@ -226,6 +229,8 @@ def main():
     print(f"  Restaurantes atualizados: {resumo['rest_atualizados']}")
     print(f"  Pratos novos:             {resumo['pratos_novos']}")
     print(f"  Preços atualizados:       {resumo['pratos_atualizados']}")
+    if resumo["pratos_sem_preco"]:
+        print(f"  Pratos sem preço (pulados, preencha na planilha): {resumo['pratos_sem_preco']}")
     if avisos:
         print(f"\nAvisos ({len(avisos)}):")
         for a in avisos:
