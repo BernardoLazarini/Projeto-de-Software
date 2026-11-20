@@ -24,7 +24,7 @@
   border-radius: var(--radius-md);
   overflow: hidden;
 }
-.mapa-canvas img { display: block; width: 100%; height: auto; }
+.mapa-canvas > img { display: block; width: 100%; height: auto; }
 
 /* ---------- Marcadores ---------- */
 .pino {
@@ -99,4 +99,11 @@
 /* ---------- Celular ---------- */
 @media (max-width: 800px) {
   .mapa-layout { grid-template-columns: 1fr; }   /* a lista passa para baixo do mapa */
+}
+
+/* Mapa interativo (Leaflet): */
+#mapa { width: 100%; height: 480px; }
+
+@media (max-width: 800px) {
+  #mapa { height: 360px; }
 }

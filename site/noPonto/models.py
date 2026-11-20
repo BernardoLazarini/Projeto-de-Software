@@ -27,6 +27,8 @@ class Restaurante(models.Model):
     estilo = models.ForeignKey(EstiloComida, on_delete=models.SET_NULL, null=True)
     horario_abertura = models.TimeField(null=True, blank=True)
     horario_fechamento = models.TimeField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
 
     def __str__(self):
