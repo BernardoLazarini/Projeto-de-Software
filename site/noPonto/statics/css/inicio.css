@@ -1,0 +1,162 @@
+
+
+:root {
+  --accent: #C8442E;                   
+  --gold: #C38D28;                    
+  --star-off: #D9D2C5;                  
+  --texto: #3D4350;
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+}
+
+/* ---------- Cabeçalho ---------- */
+.topo { background: var(--navy); color: #fff; }
+.topo-inner {
+  max-width: 1200px; margin: 0 auto; padding: 18px 24px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.marca { display: flex; align-items: center; gap: 14px; color: inherit; text-decoration: none; }
+.marca img { width: 46px; height: 46px; object-fit: contain; }
+.marca-texto { display: flex; flex-direction: column; line-height: 1.2; }
+.marca-texto strong { font-family: var(--serif); font-size: 26px; font-weight: 700; }
+.marca-texto small { font-size: 13px; opacity: 0.75; }
+
+.topo-conta { display: flex; align-items: center; gap: 16px; }
+.topo-nome { color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
+.topo-nome:hover { text-decoration: underline; }
+.btn-entrar {
+  background: var(--accent); color: #fff; font-weight: 700; font-size: 15px;
+  padding: 10px 24px; border-radius: 999px; text-decoration: none;
+  transition: filter 0.15s;
+}
+.btn-entrar:hover { filter: brightness(1.08); }
+
+/* ---------- Abas principais ---------- */
+.abas { background: #fff; border-bottom: 1px solid var(--line); }
+.abas-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; gap: 8px; overflow-x: auto; }
+.aba {
+  padding: 18px 20px; font-size: 14px; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; text-decoration: none; white-space: nowrap;
+  color: var(--muted); border-bottom: 3px solid transparent;
+}
+.aba:hover { color: var(--navy); }
+.aba.ativa { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ---------- Conteúdo ---------- */
+.home-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
+
+.busca { position: relative; }
+.busca-icone { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; }
+.busca .input { width: 100%; height: 50px; padding-left: 46px; border-radius: 12px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 16px; }
+.chip {
+  background: #fff; color: var(--navy); border: 1.5px solid var(--line);
+  padding: 9px 18px; border-radius: 999px; font-size: 14.5px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.chip:hover { border-color: var(--navy); }
+.chip.ativo { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+.contagem { margin: 0 0 18px; font-size: 14px; color: var(--muted); }
+
+/* ---------- Cartões ---------- */
+.cards {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;
+}
+.cards > li[hidden] { display: none; }
+
+.card {
+  height: 100%; display: flex; flex-direction: column;
+  background: #fff; border: 1.5px solid var(--line); border-radius: 16px; overflow: hidden;
+}
+
+.card-foto { position: relative; aspect-ratio: 16 / 10; background: var(--navy-tint); }
+.card-foto > a { display: block; width: 100%; height: 100%; }
+.card-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-foto-vazia {
+  display: flex !important; align-items: center; justify-content: center;
+  font-size: 44px; text-decoration: none;
+  background: linear-gradient(135deg, var(--navy) 0%, #2D4F82 100%);
+}
+
+.card-selo {
+  position: absolute; left: 12px; bottom: 12px;
+  background: var(--navy); color: #fff; font-size: 12.5px; font-weight: 700;
+  padding: 5px 12px; border-radius: 999px;
+}
+.coracao {
+  position: absolute; top: 12px; right: 12px; width: 36px; height: 36px;
+  border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.92);
+  color: var(--accent); font-size: 19px; line-height: 1; cursor: pointer;
+  transition: transform 0.15s;
+}
+.coracao:hover { transform: scale(1.1); }
+
+.card-corpo { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+.card-corpo h2 { margin: 0 0 4px; font-family: var(--serif); font-size: 21px; font-weight: 700; }
+.card-corpo h2 a { color: var(--navy); text-decoration: none; }
+.card-corpo h2 a:hover { text-decoration: underline; }
+.card-local { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+
+.card-nota { display: flex; align-items: center; gap: 8px; min-height: 22px; }
+.nota-num { font-size: 14px; color: var(--gold); }
+.nota-total { font-size: 13.5px; color: var(--muted); }
+
+/* Estrelas com preenchimento proporcional à nota (aceita meias estrelas) */
+.estrelas-medida {
+  position: relative; display: inline-block; white-space: nowrap;
+  font-size: 15px; letter-spacing: 2px; color: var(--star-off);
+}
+.estrelas-medida::before {
+  content: "★★★★★";
+  position: absolute; left: 0; top: 0;
+  width: var(--pct, 0%); overflow: hidden; white-space: nowrap;
+  color: var(--gold);
+}
+
+/* ---------- Abas dentro do cartão ---------- */
+.card-abas { display: flex; border-bottom: 1.5px solid var(--line); margin: 14px 0 12px; }
+.card-aba {
+  flex: 1; background: none; border: 0; border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px; padding: 10px 0; font-size: 14px; font-weight: 600;
+  color: var(--muted); cursor: pointer;
+}
+.card-aba:hover { color: var(--navy); }
+.card-aba.ativa { color: var(--accent); border-bottom-color: var(--accent); }
+
+.card-painel { font-size: 14.5px; line-height: 1.55; color: var(--texto); min-height: 72px; }
+.card-painel p { margin: 0 0 8px; }
+
+.card-pratos { list-style: none; margin: 0; padding: 0; }
+.card-pratos li {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 6px 0; border-bottom: 1px dashed var(--line);
+}
+.card-pratos li:last-child { border-bottom: 0; }
+.card-pratos strong { color: var(--navy); }
+
+.link-mapa { color: var(--accent); font-weight: 600; text-decoration: none; }
+.link-mapa:hover { text-decoration: underline; }
+
+.card-avaliar { margin-top: auto; padding-top: 14px; display: flex; flex-direction: column; gap: 4px; }
+.card-avaliar a { font-size: 13.5px; color: var(--muted); text-decoration: none; }
+.card-avaliar a:hover { color: var(--accent); text-decoration: underline; }
+.estrelas-vazias { font-size: 24px; letter-spacing: 4px; color: var(--star-off); }
+
+/* ---------- Estado vazio ---------- */
+.home-vazio {
+  text-align: center; background: #fff; border: 1.5px dashed var(--line);
+  border-radius: var(--radius-md); padding: 36px 20px; color: var(--muted); font-size: 14.5px;
+}
+.home-vazio[hidden] { display: none; }
+.home-vazio strong { display: block; color: var(--navy); margin-bottom: 4px; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 640px) {
+  .topo-inner { padding: 14px 16px; }
+  .marca-texto strong { font-size: 22px; }
+  .topo-nome { display: none; }
+  .abas-inner, .home-wrap { padding-left: 16px; padding-right: 16px; }
+  .cards { grid-template-columns: 1fr; }
+}

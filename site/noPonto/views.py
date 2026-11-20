@@ -8,6 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Aluno, Avaliacao, Cardapio, EstiloComida, Restaurante
 from django.db.models import Avg, Count
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 def aluno_atual(request):
     """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
@@ -138,31 +139,21 @@ def aluno_atual(request):
 
 # ---------- Restaurantes ----------
 
-@login_obrigatorio
+@login_required   # mantenha o decorador que a função já tem
 def listar_restaurantes(request):
-    restaurantes = Restaurante.objects.select_related("estilo").annotate(
-        media=Avg("avaliacao__estrela"),
-        total=Count("avaliacao"),
+    restaurantes = list(
+        Restaurante.objects.select_related("estilo", "cardapio")
+        .prefetch_related("cardapio__prato_set")
+        .annotate(media=Avg("avaliacao__estrela"), total=Count("avaliacao"))
+        .order_by("nome")
     )
-
-    busca = request.GET.get("q", "").strip()
-    estilo_id = request.GET.get("estilo", "")
-    if busca:
-        restaurantes = restaurantes.filter(nome__icontains=busca)
-    if estilo_id:
-        restaurantes = restaurantes.filter(estilo_id=estilo_id)
-
-    restaurantes = list(restaurantes.order_by("nome"))
     for r in restaurantes:
-        r.media_int = int((r.media or 0) + 0.5)  # nota arredondada, para as estrelas
+        r.pct = round((r.media or 0) / 5 * 100)   # largura das estrelas douradas (0 a 100)
 
     return render(request, "restaurantes.html", {
         "restaurantes": restaurantes,
-        "estilos": EstiloComida.objects.filter(restaurante__isnull=False).distinct().order_by("nome"),
-        "busca": busca,
-        "estilo_id": estilo_id,
+        "estilos": EstiloComida.objects.all().order_by("nome"),
     })
-
 
 @login_obrigatorio
 def detalhe_restaurante(request, id):

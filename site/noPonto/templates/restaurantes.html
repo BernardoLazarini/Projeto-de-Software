@@ -4,60 +4,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restaurantes — NoPonto!</title>
+<title>noPonto — Restaurantes da PUC-Rio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
-<link rel="stylesheet" href="{% static 'css/restaurantes.css' %}">
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
 </head>
 <body>
 
-<header class="doc-header">
-  <img src="{% static 'img/logoNoPonto.png' %}" alt="NoPonto!">
-  <span>NoPonto!</span>
+<header class="topo">
+  <div class="topo-inner">
+    <a class="marca" href="{% url 'home' %}">
+      <img src="{% static 'img/logoNoPonto.png' %}" alt="">
+      <span class="marca-texto">
+        <strong>NoPonto!</strong>
+        <small>Restaurantes da PUC-Rio</small>
+      </span>
+    </a>
+    <div class="topo-conta">
+      {% if aluno %}
+        <a class="topo-nome" href="{% url 'perfil' %}">{{ aluno.nome }}</a>
+        <a class="btn-entrar" href="{% url 'sair' %}">Sair</a>
+      {% else %}
+        <a class="btn-entrar" href="{% url 'login' %}">Entrar</a>
+      {% endif %}
+    </div>
+  </div>
 </header>
 
-<main class="rest-wrap">
+<nav class="abas" aria-label="Navegação principal">
+  <div class="abas-inner">
+    <a class="aba ativa" href="{% url 'home' %}" aria-current="page">🍽️ Restaurantes</a>
+    <a class="aba" href="{% url 'mapa' %}">📍 Mapa</a>
+    <a class="aba" href="{% url 'perfil' %}">⭐ Avaliações</a>
+  </div>
+</nav>
 
-  <div class="rest-topo">
-    <h1>Restaurantes do campus</h1>
-    <p>Veja o cardápio e o horário de funcionamento de cada restaurante.</p>
+<main class="home-wrap">
+
+  <div class="busca">
+    <span class="busca-icone" aria-hidden="true">🔍</span>
+    <input class="input" type="search" id="busca" placeholder="Buscar restaurante por nome..." autocomplete="off">
   </div>
 
-  <form method="get" class="rest-ferramentas">
-  <input class="input" name="q" type="search" placeholder="Buscar restaurante"
-         autocomplete="off" value="{{ busca }}">
-
-  <select class="input" name="estilo" onchange="this.form.submit()">
-    <option value="">Todos os estilos</option>
+  <div class="chips" role="group" aria-label="Filtrar por categoria">
+    <button type="button" class="chip ativo" data-estilo="">Todos</button>
     {% for e in estilos %}
-      <option value="{{ e.id }}" {% if e.id|stringformat:"s" == estilo_id %}selected{% endif %}>
-        {{ e.nome }}
-      </option>
+    <button type="button" class="chip" data-estilo="{{ e.id }}">{{ e.nome }}</button>
     {% endfor %}
-  </select>
-</form>
+  </div>
 
-  <ul class="rest-lista">
+  <p class="contagem" id="contagem" aria-live="polite"></p>
+
+  <ul class="cards">
     {% for r in restaurantes %}
-      <li data-estilo="{{ r.estilo.nome }}">
-        <a class="rest-card" href="{% url 'detalhe_restaurante' r.id %}">
-          <h2>{{ r.nome }}</h2>
-          <span class="rest-estilo">{{ r.estilo.nome }}</span>
-          <p class="rest-local">Aberto das {{ r.horario_abertura|time:"G\hi" }} às {{ r.horario_fechamento|time:"G\hi" }}</p>
-          <div class="rest-nota">
+    <li>
+      <article class="card" data-nome="{{ r.nome }}" data-estilo="{% if r.estilo %}{{ r.estilo.id }}{% endif %}">
+
+        <div class="card-foto">
+          {% if r.foto %}
+            <a href="{% url 'detalhe_restaurante' r.id %}"><img src="{% static 'img/restaurantes/'|add:r.foto %}" alt="Foto de {{ r.nome }}" loading="lazy"></a>
+          {% else %}
+            <a class="card-foto-vazia" href="{% url 'detalhe_restaurante' r.id %}" aria-hidden="true" tabindex="-1">🍽️</a>
+          {% endif %}
+          {% if r.estilo %}<span class="card-selo">{{ r.estilo.nome }}</span>{% endif %}
+          <button type="button" class="coracao" data-id="{{ r.id }}" aria-pressed="false" aria-label="Favoritar {{ r.nome }}">♡</button>
+        </div>
+
+        <div class="card-corpo">
+          <h2><a href="{% url 'detalhe_restaurante' r.id %}">{{ r.nome }}</a></h2>
+          <p class="card-local">📍 {{ r.localizacao }}</p>
+
+          <div class="card-nota">
             {% if r.total %}
-              <span class="nota">
-                {% for i in "12345" %}{% if forloop.counter <= r.media_int %}★{% else %}☆{% endif %}{% endfor %}
-                {{ r.media|floatformat:1 }} ({{ r.total }})
-              </span>
+              <span class="estrelas-medida" role="img" style="--pct: {{ r.pct }}%" aria-label="Nota {{ r.media|floatformat:1 }} de 5">★★★★★</span>
+              <strong class="nota-num">{{ r.media|floatformat:1 }}</strong>
+              <span class="nota-total">({{ r.total }} avaliaç{{ r.total|pluralize:"ão,ões" }})</span>
             {% else %}
-              <span class="nota">Ainda sem avaliações</span>
+              <span class="nota-total">Ainda sem avaliações</span>
             {% endif %}
           </div>
-        </a>
-      </li>
-    {% empty %}
-      <li>Nenhum restaurante cadastrado.</li>
+
+          <div class="card-abas" role="tablist">
+            <button type="button" role="tab" class="card-aba ativa" data-painel="sobre" aria-selected="true">Sobre</button>
+            <button type="button" role="tab" class="card-aba" data-painel="cardapio" aria-selected="false">Cardápio</button>
+            <button type="button" role="tab" class="card-aba" data-painel="local" aria-selected="false">Localização</button>
+          </div>
+
+          <div class="card-painel" role="tabpanel" data-painel="sobre">
+            {{ r.descricao }}
+          </div>
+
+          <div class="card-painel" role="tabpanel" data-painel="cardapio" hidden>
+            {% if r.cardapio %}
+              <ul class="card-pratos">
+                {% for p in r.cardapio.prato_set.all %}
+                <li><span>{{ p.nome }}</span><strong>R$ {{ p.preco|floatformat:2 }}</strong></li>
+                {% empty %}
+                <li>Cardápio ainda não cadastrado.</li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              Cardápio ainda não cadastrado.
+            {% endif %}
+          </div>
+
+          <div class="card-painel" role="tabpanel" data-painel="local" hidden>
+            <p>{{ r.localizacao }}</p>
+            <a class="link-mapa" href="{% url 'mapa' %}">Ver no mapa →</a>
+          </div>
+
+          <div class="card-avaliar">
+            {% if aluno %}
+              <a href="{% url 'detalhe_restaurante' r.id %}">Avaliar este restaurante</a>
+            {% else %}
+              <a href="{% url 'login' %}">Faça login para avaliar</a>
+            {% endif %}
+            <span class="estrelas-vazias" aria-hidden="true">★★★★★</span>
+          </div>
+        </div>
+
+      </article>
+    </li>
     {% endfor %}
   </ul>
 
+  <div class="home-vazio" id="vazio" hidden>
+    <strong>Nenhum restaurante encontrado</strong>
+    Tente outro nome ou outra categoria.
+  </div>
+
 </main>
+
+<script>
+/* noPonto — página inicial. Vanilla JS, sem dependências.
+   Os restaurantes vêm do banco (Django). O JS só filtra o que já está na página. */
+(function () {
+  'use strict';
+
+  var cards = document.querySelectorAll('.card');
+  var chips = document.querySelectorAll('.chip');
+  var busca = document.getElementById('busca');
+  var contagem = document.getElementById('contagem');
+  var vazio = document.getElementById('vazio');
+  var estiloAtivo = '';
+
+  function normalizar(texto) {
+    return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  // ----- Busca por nome + filtro por categoria -----
+  function filtrar() {
+    var termo = normalizar(busca.value.trim());
+    var visiveis = 0;
+
+    cards.forEach(function (card) {
+      var bateNome = !termo || normalizar(card.getAttribute('data-nome')).indexOf(termo) !== -1;
+      var bateEstilo = !estiloAtivo || card.getAttribute('data-estilo') === estiloAtivo;
+      var mostrar = bateNome && bateEstilo;
+      card.parentElement.hidden = !mostrar;   // esconde o <li> inteiro
+      if (mostrar) visiveis++;
+    });
+
+    contagem.textContent = visiveis + (visiveis === 1 ? ' restaurante encontrado' : ' restaurantes encontrados');
+    vazio.hidden = visiveis !== 0;
+  }
+
+  busca.addEventListener('input', filtrar);
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      estiloAtivo = chip.getAttribute('data-estilo');
+      chips.forEach(function (c) { c.classList.toggle('ativo', c === chip); });
+      filtrar();
+    });
+  });
+
+  // ----- Abas dentro de cada cartão (Sobre / Cardápio / Localização) -----
+  document.querySelector('.cards').addEventListener('click', function (e) {
+    var aba = e.target.closest('.card-aba');
+    if (!aba) return;
+    var card = aba.closest('.card');
+    var painel = aba.getAttribute('data-painel');
+
+    card.querySelectorAll('.card-aba').forEach(function (a) {
+      var ativa = a === aba;
+      a.classList.toggle('ativa', ativa);
+      a.setAttribute('aria-selected', ativa ? 'true' : 'false');
+    });
+    card.querySelectorAll('.card-painel').forEach(function (p) {
+      p.hidden = p.getAttribute('data-painel') !== painel;
+    });
+  });
+
+  // ----- Favoritos (guardados só neste navegador) -----
+  var CHAVE = 'noponto_favoritos';
+  function lerFavoritos() {
+    try { return JSON.parse(localStorage.getItem(CHAVE)) || []; } catch (e) { return []; }
+  }
+  function salvarFavoritos(lista) {
+    try { localStorage.setItem(CHAVE, JSON.stringify(lista)); } catch (e) { /* sem armazenamento: ignora */ }
+  }
+  var favoritos = lerFavoritos();
+
+  document.querySelectorAll('.coracao').forEach(function (botao) {
+    var id = botao.getAttribute('data-id');
+    function pintar() {
+      var ligado = favoritos.indexOf(id) !== -1;
+      botao.setAttribute('aria-pressed', ligado ? 'true' : 'false');
+      botao.textContent = ligado ? '♥' : '♡';
+    }
+    pintar();
+    botao.addEventListener('click', function () {
+      var i = favoritos.indexOf(id);
+      if (i === -1) { favoritos.push(id); } else { favoritos.splice(i, 1); }
+      salvarFavoritos(favoritos);
+      pintar();
+    });
+  });
+
+  filtrar();
+})();
+</script>
+
+</body>
+</html>

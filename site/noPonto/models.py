@@ -29,6 +29,7 @@ class Restaurante(models.Model):
     horario_fechamento = models.TimeField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    foto = models.CharField(max_length=200, blank=True)
 
 
     def __str__(self):
