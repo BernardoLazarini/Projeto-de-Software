@@ -131,3 +131,5 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.app.github.dev",
     "https://localhost:8000",
 ]
+
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"

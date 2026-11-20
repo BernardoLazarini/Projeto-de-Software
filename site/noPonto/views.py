@@ -6,7 +6,8 @@ from django.db.models import Avg, Count
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Aluno, Avaliacao, Cardapio, EstiloComida, Restaurante
-
+from django.db.models import Avg, Count
+from django.urls import reverse
 
 def aluno_atual(request):
     """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
@@ -200,8 +201,32 @@ def detalhe_restaurante(request, id):
         "erro": erro,
     })
 
+@login_obrigatorio
 def mapa(request):
-    return render(request, "mapa.html")
+    restaurantes = list(
+        Restaurante.objects.select_related("estilo")
+        .filter(latitude__isnull=False, longitude__isnull=False)
+        .annotate(media=Avg("avaliacao__estrela"), total=Count("avaliacao"))
+        .order_by("nome")
+    )
+    for r in restaurantes:
+        r.media_int = int((r.media or 0) + 0.5)
+
+    pontos = [
+        {
+            "nome": r.nome,
+            "localizacao": r.localizacao,
+            "lat": r.latitude,
+            "lng": r.longitude,
+            "url": reverse("detalhe_restaurante", args=[r.id]),
+        }
+        for r in restaurantes
+    ]
+
+    return render(request, "mapa.html", {
+        "restaurantes": restaurantes,
+        "pontos": pontos,
+    })
 
 @login_obrigatorio
 @login_obrigatorio

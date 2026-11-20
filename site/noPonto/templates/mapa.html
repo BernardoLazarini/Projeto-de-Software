@@ -1,22 +1,20 @@
-<!-- DADOS DE EXEMPLO: nomes, notas e posições dos marcadores são fictícios.
-     Serão substituídos pelos restaurantes reais do banco na tarefa de integração. -->
-
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mapa — NoPonto!</title>
+<title>Mapa — noPonto</title>
 <link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="stylesheet" href="{% static 'css/mapa.css' %}">
 </head>
 <body>
 
 <header class="doc-header">
-  <img src="{% static 'img/logoNoPonto.png' %}" alt="NoPonto!">
-  <span>NoPonto!</span>
+  <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
+  <span>noPonto</span>
 </header>
 
 <main class="mapa-wrap">
@@ -28,49 +26,87 @@
 
   <div class="mapa-layout">
 
-    <!-- Mapa com os marcadores -->
     <section class="mapa-canvas" aria-label="Mapa do campus">
-      <img src="{% static 'img/mapa-campus.png' %}" alt="Mapa do campus da PUC-Rio">
-
-      <a class="pino" href="#" data-nome="Cantina Central" style="top: 40%; left: 28%;" aria-label="Cantina Central"></a>
-      <a class="pino" href="#" data-nome="Sushi do Campus" style="top: 62%; left: 55%;" aria-label="Sushi do Campus"></a>
-      <a class="pino" href="#" data-nome="Pizza no Ponto" style="top: 25%; left: 72%;" aria-label="Pizza no Ponto"></a>
+      <div id="mapa"></div>
     </section>
 
-    <!-- Lista ao lado do mapa -->
     <aside class="mapa-lista">
       <h2>Restaurantes</h2>
       <ul>
+        {% for r in restaurantes %}
         <li>
-          <a class="rest-item" href="#">
-            <strong>Cantina Central</strong>
-            <span class="rest-estilo">Brasileira</span>
-            <span class="rest-local">Prédio Padre Leonel Franca, térreo</span>
-            <span class="estrelas" aria-label="4 de 5 estrelas">★★★★☆</span>
+          <a class="rest-item" href="{% url 'detalhe_restaurante' r.id %}">
+            <strong>{{ r.nome }}</strong>
+            {% if r.estilo %}<span class="rest-estilo">{{ r.estilo.nome }}</span>{% endif %}
+            <span class="rest-local">{{ r.localizacao }}</span>
+            {% if r.total %}
+              <span class="estrelas" aria-label="{{ r.media_int }} de 5 estrelas">{% for i in "12345" %}{% if forloop.counter <= r.media_int %}★{% else %}☆{% endif %}{% endfor %}</span>
+            {% else %}
+              <span class="rest-local">Ainda sem avaliações</span>
+            {% endif %}
           </a>
         </li>
-        <li>
-          <a class="rest-item" href="#">
-            <strong>Sushi do Campus</strong>
-            <span class="rest-estilo">Japonesa</span>
-            <span class="rest-local">Prédio Cardeal Leme, 2º andar</span>
-            <span class="estrelas" aria-label="5 de 5 estrelas">★★★★★</span>
-          </a>
-        </li>
-        <li>
-          <a class="rest-item" href="#">
-            <strong>Pizza no Ponto</strong>
-            <span class="rest-estilo">Italiana</span>
-            <span class="rest-local">Vila dos Diretórios</span>
-            <span class="estrelas" aria-label="3 de 5 estrelas">★★★☆☆</span>
-          </a>
-        </li>
+        {% empty %}
+        <li>Nenhum restaurante com localização cadastrada.</li>
+        {% endfor %}
       </ul>
     </aside>
 
   </div>
 
 </main>
+
+{{ pontos|json_script:"dados-restaurantes" }}
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+(function () {
+  'use strict';
+
+  var pontos = JSON.parse(document.getElementById('dados-restaurantes').textContent);
+
+  // Centro aproximado do campus Gávea: confira no openstreetmap.org e ajuste se precisar
+  var centro = [-22.9790, -43.2330];
+
+  var mapa = L.map('mapa').setView(centro, 16);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    referrerPolicy: 'strict-origin-when-cross-origin',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(mapa);
+
+  var posicoes = [];
+
+  pontos.forEach(function (p) {
+    var posicao = [p.lat, p.lng];
+    posicoes.push(posicao);
+
+    // O conteúdo é montado com textContent (e não com HTML) para o nome vindo do banco ser sempre tratado como texto
+    var conteudo = document.createElement('div');
+    var titulo = document.createElement('strong');
+    titulo.textContent = p.nome;
+    var local = document.createElement('div');
+    local.textContent = p.localizacao;
+    var link = document.createElement('a');
+    link.href = p.url;
+    link.textContent = 'Ver restaurante';
+    conteudo.appendChild(titulo);
+    conteudo.appendChild(local);
+    conteudo.appendChild(link);
+
+    L.marker(posicao, { title: p.nome }).addTo(mapa).bindPopup(conteudo);
+  });
+
+  // Com mais de um ponto, enquadra todos; com um só, centraliza nele
+  if (posicoes.length > 1) {
+    mapa.fitBounds(posicoes, { padding: [40, 40] });
+  } else if (posicoes.length === 1) {
+    mapa.setView(posicoes[0], 17);
+  }
+})();
+</script>
 
 </body>
 </html>
