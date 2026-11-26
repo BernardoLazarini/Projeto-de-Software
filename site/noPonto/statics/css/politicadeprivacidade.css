@@ -1,0 +1,140 @@
+/* ==========================================================================
+   noPonto — Política de Privacidade
+   CSS próprio da página (independente de ../conta-estilo.css).
+   As cores seguem a paleta do projeto; se ela mudar, atualize as variáveis abaixo.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --navy: #1B365D;
+  --navy-dark: #132646;
+  --terracota: #C85238;
+  --gold: #C38D28;
+  --gold-tint: #F2E3C1;
+  --cream: #FAF8F5;
+  --white: #FFFFFF;
+  --ink: #26282C;
+  --muted: #5B6472;
+  --line: #E3DED3;
+  --radius-md: 12px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: var(--navy); font-weight: 600; }
+a:hover { color: var(--terracota); }
+a:focus-visible { outline: 3px solid var(--gold-tint); outline-offset: 2px; border-radius: 3px; }
+
+/* ---------- cabeçalho ---------- */
+
+.doc-header {
+  background: var(--navy);
+  color: var(--white);
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.doc-header img { width: 34px; height: 34px; }
+.doc-header span { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+
+/* ---------- texto corrido ---------- */
+
+.doc-wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+
+.doc-wrap .eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--terracota);
+  margin-bottom: 10px;
+}
+
+.doc-wrap h1 {
+  font-size: 32px;
+  margin: 0 0 6px;
+  color: var(--navy-dark);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.doc-date { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+
+.doc-notice {
+  background: var(--gold-tint);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  font-size: 14px;
+  margin-bottom: 36px;
+}
+.doc-notice strong { color: var(--navy-dark); }
+
+.doc-wrap h2 {
+  font-size: 19px;
+  color: var(--navy-dark);
+  margin: 36px 0 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 16px;
+}
+.doc-wrap h2:first-of-type { border-top: none; padding-top: 0; }
+
+.doc-wrap p,
+.doc-wrap li {
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+
+.doc-wrap p { margin: 0 0 12px; }
+.doc-wrap ol { padding-left: 22px; margin: 0 0 12px; }
+.doc-wrap li { margin-bottom: 6px; }
+.doc-wrap li::marker { color: var(--gold); font-weight: 700; }
+.doc-wrap strong { color: var(--navy-dark); }
+
+.doc-foot {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.doc-foot a { color: var(--terracota); text-decoration: none; }
+.doc-foot a:hover { text-decoration: underline; }
+
+/* ---------- telas pequenas ---------- */
+
+@media (max-width: 480px) {
+  .doc-wrap { padding: 32px 18px 64px; }
+  .doc-wrap h1 { font-size: 26px; }
+  .doc-header { padding: 22px 18px; }
+}
+
+/* ---------- impressão (salvar em PDF) ---------- */
+
+@media print {
+  body { background: var(--white); }
+  .doc-header { background: none; color: var(--navy-dark); padding: 0 0 16px; border-bottom: 2px solid var(--navy); }
+  .doc-wrap { max-width: none; padding: 24px 0 0; }
+  .doc-notice { break-inside: avoid; }
+  .doc-wrap h2 { break-after: avoid; }
+  .doc-foot { display: none; }
+  a { color: inherit; text-decoration: none; }
+}
