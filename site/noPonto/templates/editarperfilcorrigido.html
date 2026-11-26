@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editar perfil — noPonto</title>
+<link rel="stylesheet" href="../conta-estilo.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Painel de marca -->
+  <aside class="brand-panel">
+    <div class="brand-top">
+      <img src="../logoNoPonto.png" alt="noPonto">
+      <span>noPonto</span>
+    </div>
+
+    <div class="brand-mid">
+      <h1>Mantenha seu perfil em dia.</h1>
+      <p>Seu nome, curso e foto aparecem nas avaliações que você publica sobre os restaurantes do campus.</p>
+
+      <div class="brand-points">
+        <div class="brand-point">
+          <span class="dot">★</span>
+          Suas avaliações continuam publicadas depois de editar.
+        </div>
+        <div class="brand-point">
+          <span class="dot">☰</span>
+          O e-mail institucional não pode ser alterado.
+        </div>
+      </div>
+    </div>
+
+    <p class="brand-foot">noPonto — projeto de alunos da PUC-Rio · campus Gávea</p>
+  </aside>
+
+  <!-- Painel de formulário -->
+  <main class="form-panel">
+    <div class="form-card">
+      <span class="eyebrow">Minha conta</span>
+      <h2>Editar perfil</h2>
+      <p class="subtitle">Atualize suas informações e clique em salvar.</p>
+
+      <div class="alert alert-success" id="successAlert">
+        ✓ Alterações salvas com sucesso.
+      </div>
+
+      <div class="avatar-row">
+        <div class="avatar-circle" id="avatarIniciais">LS</div>
+        <div class="avatar-meta">
+          <strong id="avatarNome">Lucas Silveira</strong>
+          <span>Foto de perfil</span>
+        </div>
+        <div class="avatar-actions">
+          <button type="button" class="btn-ghost" id="btnTrocarFoto">Trocar</button>
+          <button type="button" class="btn-ghost danger-ghost" id="btnRemoverFoto">Remover</button>
+        </div>
+      </div>
+
+      <form id="perfilForm" novalidate>
+
+        <div class="field">
+          <label for="nome">Nome completo</label>
+          <input class="input" type="text" id="nome" name="nome" value="Lucas Silveira" required minlength="3">
+        </div>
+
+        <div class="field">
+          <label for="email">E-mail institucional <span class="hint">(não pode ser alterado)</span></label>
+          <input class="input" type="email" id="email" name="email" value="lucas@aluno.puc-rio.br" readonly>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="curso">Curso</label>
+            <select class="input" id="curso" name="curso" required>
+              <option>Engenharia</option>
+              <option>Administração</option>
+              <option>Direito</option>
+              <option>Design</option>
+              <option>Comunicação Social</option>
+              <option>Psicologia</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="matricula">Matrícula <span class="hint">(opcional)</span></label>
+            <input class="input" type="text" id="matricula" name="matricula" value="2311234">
+          </div>
+        </div>
+
+        <hr class="section-divider">
+        <p class="section-label">Alterar senha</p>
+
+        <div class="field">
+          <label for="senhaNova">Nova senha <span class="hint">(deixe em branco para manter a atual)</span></label>
+          <div class="password-field">
+            <input class="input" type="password" id="senhaNova" name="senhaNova" placeholder="Mínimo 8 caracteres" minlength="8">
+            <button type="button" class="toggle-password" data-toggle-password="senhaNova">Mostrar</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirmarSenha">Confirmar nova senha</label>
+          <div class="password-field">
+            <input class="input" type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Repita a nova senha">
+            <button type="button" class="toggle-password" data-toggle-password="confirmarSenha">Mostrar</button>
+          </div>
+          <div class="field-error" id="confirmarSenhaErro">As senhas não coincidem.</div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-secondary" id="btnCancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar alterações</button>
+        </div>
+      </form>
+
+      <p class="form-foot"><a href="../ExcluirConta/excluirconta.html">Excluir minha conta</a></p>
+    </div>
+  </main>
+
+</div>
+
+<script>
+/* noPonto — comportamento da página de edição de perfil. Vanilla JS, sem dependências.
+   Validações client-side; a submissão real deve ser conectada ao backend/API do projeto. */
+(function () {
+  'use strict';
+
+  document.querySelectorAll('[data-toggle-password]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var input = document.getElementById(btn.getAttribute('data-toggle-password'));
+      if (!input) return;
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'Ocultar' : 'Mostrar';
+    });
+  });
+
+  var nome = document.getElementById('nome');
+  var iniciais = document.getElementById('avatarIniciais');
+  var avatarNome = document.getElementById('avatarNome');
+
+  function atualizarAvatar() {
+    var partes = nome.value.trim().split(/\s+/).filter(Boolean);
+    var sigla = partes.length
+      ? (partes[0][0] + (partes.length > 1 ? partes[partes.length - 1][0] : '')).toUpperCase()
+      : '?';
+    iniciais.textContent = sigla;
+    avatarNome.textContent = nome.value.trim() || 'Sem nome';
+  }
+  nome.addEventListener('input', atualizarAvatar);
+
+  var senhaNova = document.getElementById('senhaNova');
+  var confirmar = document.getElementById('confirmarSenha');
+  var erro = document.getElementById('confirmarSenhaErro');
+
+  function senhasConferem() {
+    var ok = !senhaNova.value && !confirmar.value ? true : senhaNova.value === confirmar.value;
+    confirmar.classList.toggle('has-error', !ok);
+    erro.classList.toggle('show', !ok);
+    return ok;
+  }
+  senhaNova.addEventListener('input', senhasConferem);
+  confirmar.addEventListener('input', senhasConferem);
+
+  var form = document.getElementById('perfilForm');
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!form.checkValidity() || !senhasConferem()) {
+      form.reportValidity();
+      return;
+    }
+    var alertBox = document.getElementById('successAlert');
+    alertBox.classList.add('show');
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // TODO: enviar para a API (PUT /api/usuarios/:id).
+  });
+
+  document.getElementById('btnCancelar').addEventListener('click', function () {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = '../Login/login.html';
+  });
+
+  // TODO: abrir seletor de arquivo e enviar a nova foto / remover a foto atual.
+  document.getElementById('btnTrocarFoto').addEventListener('click', function () {});
+  document.getElementById('btnRemoverFoto').addEventListener('click', function () {});
+})();
+</script>
+</body>
+</html>
