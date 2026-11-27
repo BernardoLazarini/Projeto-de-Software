@@ -9,9 +9,10 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="stylesheet" href="{% static 'css/mapa.css' %}">
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
 </head>
 <body>
-
+<a class="btn-voltar" href="{% url 'home' %}" onclick="if (history.length > 1) { history.back(); return false; }">← Voltar</a>
 <header class="doc-header">
   <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
   <span>noPonto</span>

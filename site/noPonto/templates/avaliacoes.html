@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,31 +6,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avaliações — noPonto</title>
 <!-- Ordem importa: primeiro o design system, depois os ajustes desta página -->
-<link rel="stylesheet" href="../conta-estilo.css">
-<link rel="stylesheet" href="avaliacoes.css">
+<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}"><link rel="stylesheet" href="{% static 'css/avaliacoes.css' %}">
 </head>
 
 <!-- TODO (backend): trocar data-logado="false" por "true" quando houver sessão ativa -->
 <body data-logado="false">
 
 <header class="topbar">
-  <a class="topbar-brand" href="../Inicio/inicio.html">
-    <img src="../logoNoPonto.png" alt="">
+  <a class="topbar-brand" href="{% url 'home' %}">
+    <img src="{% static 'img/logoNoPonto.png' %}" alt="">
     <span>noPonto</span>
   </a>
 
   <nav class="topbar-nav" aria-label="Principal">
     <!-- TODO: ajustar os links quando as páginas de mapa/restaurantes existirem -->
-    <a href="../Inicio/inicio.html">Restaurantes</a>
-    <a href="avaliacoes.html" aria-current="page">Avaliações</a>
+    <a href="{% url 'home' %}">Restaurantes</a>
+    <a href="{% url 'avaliacoes' %}" aria-current="page">Avaliações</a>
   </nav>
 
   <div class="topbar-actions">
     <span class="only-guest">
-      <a class="link-btn" href="../Login/login.html">Entrar</a>
-      <a class="link-btn solid" href="../Cadastro/cadastro.html">Criar conta</a>
+      <a class="link-btn" href="{% url 'login' %}">Entrar</a>
+      <a class="link-btn solid" href="{% url 'cadastro' %}">Criar conta</a>
     </span>
-    <a class="user-chip only-user" href="../EditarPerfil/editarperfil.html" aria-label="Editar meu perfil">
+    <a class="user-chip only-user" href="{% url 'perfil' %}" aria-label="Editar meu perfil">
       <span class="avatar-circle" id="avatarTopo">LS</span>
       <span class="nome">Meu perfil</span>
     </a>
@@ -40,7 +40,7 @@
 
   <p class="breadcrumb">
     <!-- TODO: apontar para a página do restaurante (requisito: mapa ↔ página do restaurante) -->
-    <a href="../Restaurante/restaurante.html">&larr; Voltar para a página do restaurante</a>
+    <a href="restaurantes.html">&larr; Voltar para a página do restaurante</a>
   </p>
 
   <!-- Resumo do restaurante -->
@@ -151,7 +151,7 @@
 </main>
 
 <footer class="site-foot">
-  noPonto — projeto de alunos da PUC-Rio · campus Gávea ·
+  NoPonto! — projeto de alunos da PUC-Rio · campus Gávea ·
   <a href="../TermoDeUso/termodeuso.html">Termo de Uso</a>
 </footer>
 

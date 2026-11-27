@@ -199,3 +199,53 @@
   .pratos li { flex-direction: column; gap: 8px; }
   .pratos li > strong { align-self: flex-start; }
 }
+
+.card-avaliar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.avaliar-rotulo {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.estrelas-input {
+  display: inline-flex;
+}
+
+.estrela-btn {
+  background: none;
+  border: 0;
+  padding: 0 2px;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #ccc;
+  cursor: pointer;
+  transition: transform 0.1s, color 0.1s;
+}
+
+/* Dourada ao passar o mouse e depois de clicar */
+.estrela-btn.cheia {
+  color: var(--dourado, #f5b301);
+}
+
+.estrela-btn:hover {
+  transform: scale(1.15);
+}
+
+.estrela-btn:active {
+  transform: scale(0.95);
+}
+
+.estrela-btn:hover {
+  transform: scale(1.15);
+}
+
+.avaliar-msg {
+  font-size: 0.75rem;
+  color: #8a8a8a;
+}

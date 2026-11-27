@@ -31,7 +31,11 @@ urlpatterns = [
     path("restaurantes/<int:id>/", views.detalhe_restaurante, name="detalhe_restaurante"),
     path("mapa/", views.mapa, name="mapa"),
     path("perfil/", views.perfil, name="perfil"),
-    path("", views.listar_restaurantes, name="home"),
-    path("login/", views.login, name="login"),
-    path("restaurantes/", views.listar_restaurantes, name="restaurantes"),
+    path("home/", views.listar_restaurantes, name="home"),
+    path("restaurantes/<int:id>/avaliar/", views.avaliar, name="avaliar"),
+
+    path("avaliacoes/", views.avaliacoes, name="avaliacoes"),
+    path("termo-de-uso/", views.termo_de_uso, name="termo_de_uso"),
+    path("politica-de-privacidade/", views.politica_de_privacidade, name="politica_de_privacidade"),
+    path("por-que-fizemos/", views.por_que_fizemos, name="por_que_fizemos"),
 ]
