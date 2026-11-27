@@ -1,46 +1,26 @@
 /* ==========================================================================
-   noPonto — Página de Avaliações
-   Usa as variáveis (cores, raios, sombras) de ../conta-estilo.css.
-   No HTML, carregue conta-estilo.css ANTES deste arquivo.
+   NoPonto! — Ranking de restaurantes (página de avaliações)
+   Usa as variáveis de cor/raio de conta-estilo.css, que deve ser carregado antes.
    ========================================================================== */
 
-.av-header {
+.rk-header {
   background: var(--navy);
   color: var(--cream);
   padding: 18px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
 }
 
-.av-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
+.rk-brand { display: inline-flex; align-items: center; gap: 12px; }
+.rk-brand img { width: 34px; height: 34px; }
+.rk-brand span { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
 
-.av-brand img { width: 34px; height: 34px; }
-.av-brand span { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+.rk-wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
 
-.av-nav { display: flex; align-items: center; gap: 22px; font-size: 14px; font-weight: 600; }
-.av-nav a { color: #AEB9CC; text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
-.av-nav a:hover { color: var(--cream); }
-.av-nav a.ativo { color: var(--cream); border-bottom-color: var(--gold); }
+.rk-titulo h1 { font-size: 30px; font-weight: 800; color: var(--navy); margin: 0 0 6px; letter-spacing: -0.01em; }
+.rk-titulo p { margin: 0 0 24px; color: var(--muted); font-size: 14.5px; }
 
-.av-wrap { max-width: 1120px; margin: 0 auto; padding: 40px 24px 80px; }
+/* ---------- filtro por estilo ---------- */
 
-.av-titulo h1 { font-size: 30px; font-weight: 800; color: var(--navy); margin: 0 0 6px; letter-spacing: -0.01em; }
-.av-titulo p { margin: 0 0 28px; color: var(--muted); font-size: 14.5px; }
-
-/* ---------- busca e categorias ---------- */
-
-.av-filtros { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
-
-.av-busca { max-width: 420px; }
-
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
 
 .chip {
   font-family: inherit;
@@ -56,123 +36,96 @@
 }
 
 .chip:hover { border-color: var(--navy); }
+.chip:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 .chip[aria-pressed="true"] { background: var(--navy); color: var(--cream); border-color: var(--navy); }
 
-/* ---------- grade de restaurantes ---------- */
+/* ---------- lista do ranking ---------- */
 
-.av-grade {
+.rk-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+
+.rk-item {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 22px;
-}
-
-.rest-card {
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
   background: var(--white);
   border: 1.5px solid var(--line);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  border-radius: var(--radius-md);
+  padding: 16px 20px 16px 12px;
 }
 
-.rest-foto {
-  height: 150px;
-  background: var(--navy-tint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--navy);
-  font-size: 36px;
+.rk-item[hidden] { display: none; }
+
+.rk-pos {
+  font-size: 26px;
   font-weight: 800;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: -0.02em;
 }
 
-.rest-foto img { width: 100%; height: 100%; object-fit: cover; }
+/* os três primeiros se destacam */
+.rk-item.top1 { border-color: var(--gold); background: var(--gold-tint); }
+.rk-item.top1 .rk-pos { color: var(--gold); font-size: 32px; }
+.rk-item.top2 .rk-pos,
+.rk-item.top3 .rk-pos { color: var(--navy); }
 
-.rest-corpo { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.rk-nome { font-size: 17px; font-weight: 800; color: var(--navy); margin: 0 0 4px; }
 
-.rest-cabecalho { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
-.rest-nome { font-size: 18px; font-weight: 800; color: var(--navy); margin: 0; }
+.rk-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 13px; color: var(--muted); }
 
-.rest-categoria {
+.rk-estilo {
   font-size: 12px;
   font-weight: 700;
   color: var(--terracota);
   background: var(--terracota-tint);
-  padding: 4px 10px;
+  padding: 3px 10px;
   border-radius: 999px;
-  white-space: nowrap;
 }
 
-.rest-desc { font-size: 14px; color: var(--muted); margin: 0; }
+/* ---------- nota com estrelas (preenchimento proporcional à nota) ---------- */
 
-.rest-info { list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--ink); display: flex; flex-direction: column; gap: 4px; }
-.rest-info li span { color: var(--muted); }
+.rk-nota { text-align: right; }
 
-.rest-media { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
-.rest-media strong { font-size: 20px; color: var(--ink); }
+.rk-valor { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.1; }
 
-/* ---------- estrelas ---------- */
-
-.estrelas { display: inline-flex; gap: 2px; }
-
-.estrela-fixa { font-size: 17px; color: var(--line); line-height: 1; }
-.estrela-fixa.cheia { color: var(--gold); }
-
-.avaliar {
-  border-top: 1px solid var(--line);
-  padding-top: 14px;
-  margin-top: auto;
-}
-
-.avaliar-rotulo { font-size: 13px; font-weight: 600; color: var(--navy); margin: 0 0 8px; }
-
-.estrelas-input { display: flex; align-items: center; gap: 4px; }
-
-.estrela-btn {
-  background: none;
-  border: none;
-  padding: 2px;
-  font-size: 28px;
+.estrelas-nota {
+  position: relative;
+  display: inline-block;
+  font-size: 17px;
+  letter-spacing: 2px;
   line-height: 1;
-  color: var(--line);
-  cursor: pointer;
-  transition: transform .08s ease, color .1s ease;
 }
 
-.estrela-btn:hover { transform: scale(1.12); }
-.estrela-btn.ativa { color: var(--gold); }
-.estrela-btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; border-radius: 4px; }
+.estrelas-nota::before { content: "★★★★★"; color: var(--line); }
 
-.avaliar .btn { margin-top: 12px; padding: 10px 16px; }
+.estrelas-nota::after {
+  content: "★★★★★";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--nota) / 5 * 100%);
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--gold);
+}
 
-.avaliar-msg { font-size: 12.5px; margin: 8px 0 0; min-height: 18px; color: var(--muted); }
-.avaliar-msg.ok { color: var(--success); }
-.avaliar-msg.erro { color: var(--danger); }
+.rk-total { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-/* ---------- estados da página ---------- */
+.rk-sem-nota { font-size: 13px; color: var(--muted); }
 
-.av-estado {
-  grid-column: 1 / -1;
+.rk-vazio {
   text-align: center;
   padding: 48px 16px;
   color: var(--muted);
   font-size: 14.5px;
 }
 
-.av-estado .btn { width: auto; margin-top: 14px; }
-
-.skeleton { background: linear-gradient(90deg, var(--navy-tint), var(--cream), var(--navy-tint)); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius-lg); height: 340px; }
-
-@keyframes shimmer { to { background-position: -200% 0; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .skeleton { animation: none; }
-  .estrela-btn { transition: none; }
-}
-
-@media (max-width: 640px) {
-  .av-header { padding: 14px 18px; }
-  .av-nav { gap: 14px; font-size: 13px; }
-  .av-wrap { padding: 28px 16px 64px; }
-  .av-grade { grid-template-columns: 1fr; }
+@media (max-width: 560px) {
+  .rk-header { padding: 14px 18px; }
+  .rk-wrap { padding: 28px 16px 64px; }
+  .rk-item { grid-template-columns: 40px minmax(0, 1fr); padding: 14px 14px 14px 8px; }
+  .rk-pos { font-size: 22px; }
+  .rk-nota { grid-column: 2; text-align: left; display: flex; align-items: center; gap: 10px; }
+  .rk-total { display: inline; margin: 0; }
 }
