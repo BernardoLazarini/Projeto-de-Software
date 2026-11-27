@@ -133,3 +133,4 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+

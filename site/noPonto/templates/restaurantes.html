@@ -319,6 +319,14 @@
 
   reordenar();
 })();
+function getCookie(name) {
+  var match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
+  return match ? decodeURIComponent(match[3]) : null;
+}
+
+var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+var csrf = getCookie('csrftoken') || (csrfInput ? csrfInput.value : '');
+
 </script>
 
 </body>
