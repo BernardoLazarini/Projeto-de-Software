@@ -15,4 +15,4 @@ admin.site.register(Mapa)
 
 @admin.register(Aluno)
 class AlunoAdmin(admin.ModelAdmin):
-    list_display = ("nome", "user")
+    list_display = ("nome", "user") 
