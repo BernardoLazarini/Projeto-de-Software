@@ -9,6 +9,8 @@ from .models import Aluno, Avaliacao, Cardapio, EstiloComida, Restaurante
 from django.db.models import Avg, Count
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden, JsonResponse
+from django.views.decorators.http import require_POST
 
 def aluno_atual(request):
     """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
@@ -168,13 +170,13 @@ def detalhe_restaurante(request, id):
         if estrelas < 1 or estrelas > 5:
             erro = "Escolha uma nota de 1 a 5."
         else:
-                Avaliacao.objects.create(
+            Avaliacao.objects.create(
                 estrela=estrelas,
                 comentario=request.POST.get("comentario", "").strip(),
                 aluno=aluno_atual(request),
                 restaurante=restaurante,
-                )
-        return redirect("detalhe_restaurante", id=restaurante.id)
+            )
+            return redirect("detalhe_restaurante", id=restaurante.id)
 
     cardapio = Cardapio.objects.filter(restaurante=restaurante).first()
     pratos = cardapio.prato_set.all() if cardapio else []
@@ -220,6 +222,50 @@ def mapa(request):
     })
 
 @login_obrigatorio
+def listar_restaurantes(request):
+    restaurantes = list(
+        Restaurante.objects.select_related("estilo", "cardapio")
+        .prefetch_related("cardapio__prato_set")
+        .annotate(media=Avg("avaliacao__estrela"), total=Count("avaliacao"))
+        .order_by("nome")
+    )
+    aluno = aluno_atual(request)
+    minhas = dict(
+        Avaliacao.objects.filter(aluno=aluno)
+        .order_by("id")
+        .values_list("restaurante_id", "estrela")
+    )
+    for r in restaurantes:
+        r.pct = round((r.media or 0) / 5 * 100)
+        r.minha = minhas.get(r.id, 0)
+
+    return render(request, "restaurantes.html", {
+        "restaurantes": restaurantes,
+        "estilos": EstiloComida.objects.all().order_by("nome"),
+        "aluno": aluno,
+    })
+@login_obrigatorio
+def avaliacoes(request):
+    lista = (
+        Avaliacao.objects.select_related("aluno", "restaurante")
+        .order_by("-id")
+    )
+    resumo = lista.aggregate(media=Avg("estrela"), total=Count("id"))
+    return render(request, "avaliacoes.html", {
+        "avaliacoes": lista,
+        "media": resumo["media"] or 0,
+        "total": resumo["total"],
+    })
+
+def termo_de_uso(request):
+    return render(request, "termodeuso.html")
+
+def politica_de_privacidade(request):
+    return render(request, "politicadeprivacidade.html")
+
+def por_que_fizemos(request):
+    return render(request, "porquefizemos.html")
+
 @login_obrigatorio
 def perfil(request):
     aluno = aluno_atual(request)
@@ -230,3 +276,33 @@ def perfil(request):
         "avaliacoes": avaliacoes,
     })
 
+@login_obrigatorio
+@require_POST
+def avaliar(request, id):
+    restaurante = get_object_or_404(Restaurante, id=id)
+    try:
+        estrelas = int(request.POST.get("estrelas", ""))
+    except ValueError:
+        estrelas = 0
+    if estrelas < 1 or estrelas > 5:
+        return JsonResponse({"erro": "Nota inválida."}, status=400)
+
+    aluno = aluno_atual(request)
+    # Se o aluno já avaliou este restaurante, atualiza a nota em vez de duplicar
+    avaliacao = Avaliacao.objects.filter(aluno=aluno, restaurante=restaurante).order_by("id").first()
+    if avaliacao:
+        avaliacao.estrela = estrelas
+        avaliacao.save(update_fields=["estrela"])
+    else:
+        Avaliacao.objects.create(aluno=aluno, restaurante=restaurante, estrela=estrelas)
+
+    resumo = Avaliacao.objects.filter(restaurante=restaurante).aggregate(
+        media=Avg("estrela"), total=Count("id")
+    )
+    media = resumo["media"] or 0
+    return JsonResponse({
+        "minha": estrelas,
+        "media": round(media, 1),
+        "total": resumo["total"],
+        "pct": round(media / 5 * 100),
+    })

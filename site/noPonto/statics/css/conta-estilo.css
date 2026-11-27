@@ -384,6 +384,22 @@ textarea.input:focus {
   margin-top: 8px;
 }
 
+.btn-voltar {
+  display: inline-block;
+  margin: 16px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #d0d0d0;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.btn-voltar:hover {
+  background: #f3f3f3;
+}
+
 .form-foot {
   text-align: center;
   font-size: 13.5px;
