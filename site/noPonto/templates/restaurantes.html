@@ -143,10 +143,11 @@
 
 </main>
 
-<footer class="rodape">
+<footer class="rodape rodape-links">
   <a href="{% url 'termo_de_uso' %}">Termos de Uso</a>
   <span aria-hidden="true">·</span>
   <a href="{% url 'politica_de_privacidade' %}">Política de Privacidade</a>
+  <span aria-hidden="true">·</span>
   <a href="{% url 'por_que_fizemos' %}">Por que fizemos</a>
 </footer>
 
@@ -263,19 +264,26 @@
     });
   });
 
-  // ----- Favoritos (salvos no servidor) + favoritos no topo -----
+// ----- Favoritos (salvos no servidor) + ordem alfabética base -----
   var lista = document.querySelector('.cards');
   var itens = Array.prototype.slice.call(lista.children);
-  itens.forEach(function (li, i) { li.dataset.ordem = i; });
 
   function reordenar() {
     itens.sort(function (a, b) {
-      var fa = a.querySelector('.card').classList.contains('favorito') ? 0 : 1;
-      var fb = b.querySelector('.card').classList.contains('favorito') ? 0 : 1;
+      var ca = a.querySelector('.card');
+      var cb = b.querySelector('.card');
+      var fa = ca.classList.contains('favorito') ? 0 : 1;
+      var fb = cb.classList.contains('favorito') ? 0 : 1;
       if (fa !== fb) return fa - fb;
-      return Number(a.dataset.ordem) - Number(b.dataset.ordem);
+
+      var nomeA = ca.getAttribute('data-nome') || '';
+      var nomeB = cb.getAttribute('data-nome') || '';
+      return nomeA.localeCompare(nomeB, 'pt-BR', { sensitivity: 'base' });
     });
-    itens.forEach(function (li) { lista.appendChild(li); });
+
+    var fragmento = document.createDocumentFragment();
+    itens.forEach(function (li) { fragmento.appendChild(li); });
+    lista.appendChild(fragmento);
   }
 
   document.querySelectorAll('.coracao').forEach(function (botao) {
@@ -296,19 +304,20 @@
       })
       .then(function (d) {
         if (!d) return;
-        botao.setAttribute('aria-pressed', d.favorito ? 'true' : 'false');
-        botao.textContent = d.favorito ? '♥' : '♡';
-        card.classList.toggle('favorito', d.favorito);
+        var fav = Boolean(d.favorito);
+        botao.setAttribute('aria-pressed', fav ? 'true' : 'false');
+        botao.textContent = fav ? '♥' : '♡';
+        card.classList.toggle('favorito', fav);
         reordenar();
       })
       .catch(function (err) {
         console.error(err);
-        alert('Não foi possível favoritar (' + err.message + ').');
+        alert('Não foi possível atualizar favorito (' + err.message + ').');
       });
     });
   });
 
-  filtrar();
+  reordenar();
 })();
 </script>
 

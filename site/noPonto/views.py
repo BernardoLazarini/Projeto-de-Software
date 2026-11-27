@@ -3,22 +3,24 @@ from django.contrib.auth.decorators import login_required as login_obrigatorio
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Avg, Count
-from django.http import HttpResponseForbidden
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Aluno, Avaliacao, Cardapio, EstiloComida, Restaurante
-from django.db.models import Avg, Count
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.views.decorators.http import require_POST
+from .models import Aluno, Avaliacao, Cardapio, EstiloComida, Restaurante
+
 
 def aluno_atual(request):
     """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
     aluno, _ = Aluno.objects.get_or_create(
         user=request.user,
-        defaults={"nome": request.user.get_full_name() or request.user.username},
+        defaults={
+            "nome": request.user.get_full_name() or request.user.username,
+            "username": request.user.username,
+        },
     )
     return aluno
+
 
 def restaurante_detalhe(request, pk):
     restaurante = get_object_or_404(Restaurante.objects.select_related("estilo"), pk=pk)
@@ -27,7 +29,9 @@ def restaurante_detalhe(request, pk):
     return render(request, "restaurante.html", {
         "restaurante": restaurante,
         "cardapio": cardapio,
-        "pratos": pratos,})
+        "pratos": pratos,
+    })
+
 
 # ---------- Login, cadastro e sair ----------
 
@@ -74,6 +78,8 @@ def cadastrar(request):
             return redirect("login")
     return render(request, "cadastro.html", {"erro": erro})
 
+
+# ---------- Usuários (editar e excluir só a própria conta) ----------
 
 @login_obrigatorio
 def listar_usuarios(request):
@@ -127,23 +133,11 @@ def excluir(request, id):
     return render(request, "excluir.html", {"aluno": aluno, "erro": erro})
 
 
-# ---------- Usuários (editar e excluir só a própria conta) ----------
-def aluno_atual(request):
-    """Devolve o Aluno do usuário logado (cria se for, por ex., o admin)."""
-    aluno, _ = Aluno.objects.get_or_create(
-        user=request.user,
-        defaults={"nome": request.user.get_full_name() or request.user.username},
-    )
-    return aluno
-
-
-
-
 # ---------- Restaurantes ----------
 
-@login_required
+@login_obrigatorio
 def listar_restaurantes(request):
-    aluno = getattr(request.user, "aluno", None)
+    aluno = aluno_atual(request)
 
     restaurantes = list(
         Restaurante.objects.select_related("estilo", "cardapio")
@@ -152,29 +146,29 @@ def listar_restaurantes(request):
         .order_by("nome")
     )
 
-    ids_favoritos = set()
-    minhas = {}
-    if aluno:
-        ids_favoritos = set(
-            aluno.restaurantes_favoritos.values_list("id", flat=True)
-        )
-        minhas = dict(
-            Avaliacao.objects.filter(aluno=aluno)
-            .values_list("restaurante_id", "estrela")
-        )
+    ids_favoritos = set(
+        aluno.restaurantes_favoritos.values_list("id", flat=True)
+    )
+    minhas = dict(
+        Avaliacao.objects.filter(aluno=aluno)
+        .order_by("id")
+        .values_list("restaurante_id", "estrela")
+    )
 
     for r in restaurantes:
         r.pct = round((r.media or 0) / 5 * 100)
         r.minha = minhas.get(r.id, 0)
         r.favorito = r.id in ids_favoritos
 
-    restaurantes = sorted(restaurantes, key=lambda r: not r.favorito)  # favoritos primeiro
+    # Favoritos primeiro; dentro de cada grupo, mantém a ordem alfabética ("nome")
+    restaurantes = sorted(restaurantes, key=lambda r: not r.favorito)
 
     return render(request, "restaurantes.html", {
         "restaurantes": restaurantes,
         "estilos": EstiloComida.objects.all().order_by("nome"),
         "aluno": aluno,
     })
+
 
 @login_obrigatorio
 def detalhe_restaurante(request, id):
@@ -213,6 +207,7 @@ def detalhe_restaurante(request, id):
         "erro": erro,
     })
 
+
 @login_obrigatorio
 def mapa(request):
     restaurantes = list(
@@ -240,31 +235,10 @@ def mapa(request):
         "pontos": pontos,
     })
 
-@login_obrigatorio
-def listar_restaurantes(request):
-    restaurantes = list(
-        Restaurante.objects.select_related("estilo", "cardapio")
-        .prefetch_related("cardapio__prato_set")
-        .annotate(media=Avg("avaliacao__estrela"), total=Count("avaliacao"))
-        .order_by("nome")
-    )
-    aluno = aluno_atual(request)
-    minhas = dict(
-        Avaliacao.objects.filter(aluno=aluno)
-        .order_by("id")
-        .values_list("restaurante_id", "estrela")
-    )
-    for r in restaurantes:
-        r.pct = round((r.media or 0) / 5 * 100)
-        r.minha = minhas.get(r.id, 0)
 
-    return render(request, "restaurantes.html", {
-        "restaurantes": restaurantes,
-        "estilos": EstiloComida.objects.all().order_by("nome"),
-        "aluno": aluno,
-    })
 @login_obrigatorio
 def avaliacoes(request):
+    aluno = aluno_atual(request)
     lista_avaliacoes = (
         Avaliacao.objects.select_related("aluno", "restaurante")
         .order_by("-id")
@@ -286,15 +260,21 @@ def avaliacoes(request):
         "avaliacoes": lista_avaliacoes,
         "media": resumo["media"] or 0,
         "total": resumo["total"],
+        "aluno": aluno,
     })
+
+
 def termo_de_uso(request):
     return render(request, "termodeuso.html")
+
 
 def politica_de_privacidade(request):
     return render(request, "politicadeprivacidade.html")
 
+
 def por_que_fizemos(request):
     return render(request, "porquefizemos.html")
+
 
 @login_obrigatorio
 def perfil(request):
@@ -305,6 +285,7 @@ def perfil(request):
         "estilos": aluno.estilos_favoritos.all(),
         "avaliacoes": avaliacoes,
     })
+
 
 @login_obrigatorio
 @require_POST
@@ -337,12 +318,13 @@ def avaliar(request, id):
         "pct": round(media / 5 * 100),
     })
 
+
 @require_POST
 def favoritar(request, id):
     if not request.user.is_authenticated:
         return JsonResponse({"erro": "login"}, status=401)
 
-    aluno = request.user.aluno
+    aluno = aluno_atual(request)
     restaurante = get_object_or_404(Restaurante, id=id)
 
     if aluno.restaurantes_favoritos.filter(id=id).exists():
@@ -352,4 +334,4 @@ def favoritar(request, id):
         aluno.restaurantes_favoritos.add(restaurante)
         favorito = True
 
-    return JsonResponse({"favorito": favorito})    
+    return JsonResponse({"favorito": favorito})

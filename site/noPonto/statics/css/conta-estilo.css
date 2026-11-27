@@ -670,3 +670,56 @@ textarea.input:focus {
 .doc-foot { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; }
 .doc-foot a { color: var(--terracota); font-weight: 600; text-decoration: none; }
 .doc-foot a:hover { text-decoration: underline; }
+
+/* Links do rodapé mais espaçados e organizados */
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 18px;
+  padding: 20px 16px;
+}
+
+.rodape a {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+/* Classe específica para organizar e espaçar os links do rodapé */
+.rodape.rodape-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 18px;
+  margin-top: 32px;
+  padding: 20px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--white);
+  color: var(--muted);
+  font-size: 13.5px;
+}
+
+.rodape.rodape-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--navy);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.rodape.rodape-links a:hover,
+.rodape.rodape-links a:focus-visible {
+  background-color: var(--navy-tint);
+  color: var(--navy-dark);
+}

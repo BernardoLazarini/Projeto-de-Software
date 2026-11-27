@@ -6,21 +6,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Política de Privacidade — noPonto</title>
 <link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+
 </head>
 <body>
 
+<a class="btn-voltar" href="{% url 'home' %}">← Voltar</a>
 <header class="doc-header">
   <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
   <span>noPonto</span>
 </header>
-
-<nav class="abas" aria-label="Navegação principal">
-  <div class="abas-inner">
-    <a class="aba" href="{% url 'home' %}">🍽️ Restaurantes</a>
-    <a class="aba" href="{% url 'mapa' %}">📍 Mapa</a>
-    <a class="aba" href="{% url 'avaliacoes' %}">⭐ Avaliações</a>
-  </div>
-</nav>
 
 
 <main class="doc-wrap">
