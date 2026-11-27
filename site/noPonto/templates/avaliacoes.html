@@ -4,314 +4,476 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Avaliações — noPonto</title>
+<title>Avaliações — NoPonto! Restaurantes da PUC-Rio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
-<link rel="stylesheet" href="{% static 'css/avaliacoes.css' %}">
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+<link rel="stylesheet" href="{% static 'css/avalicoes.css' %}">
+<style>
+  .avaliacoes-resumo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 16px 0 20px;
+  }
+  .resumo-box {
+    background: var(--superficie, #fff);
+    border: 1px solid var(--borda, #e5e7eb);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .resumo-box span {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.75;
+  }
+  .resumo-box strong {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+  }
+  .controles-avaliacoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 14px 0 18px;
+  }
+  .ordenacao-grupo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card-comentarios {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--borda, #eee);
+  }
+  .card-comentarios h3 {
+    font-size: 0.92rem;
+    margin: 0 0 8px;
+  }
+  .comentario-item {
+    font-size: 0.88rem;
+    margin: 0 0 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.03);
+  }
+  .comentario-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .card-acoes-rodape {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  .link-detalhe {
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .link-detalhe:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
 
-<header class="av-header">
-  <a class="av-brand" href="../index.html">
-    <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
-    <span>noPonto</span>
-  </a>
-  <nav class="av-nav" aria-label="Principal">
-    <a href="../Mapa/mapa.html">Mapa</a>
-    <a href="avaliacoes.html" class="ativo" aria-current="page">Avaliações</a>
-    <a href="../EditarPerfil/editarperfil.html">Minha conta</a>
-  </nav>
+<header class="topo">
+  <div class="topo-inner">
+    <a class="marca" href="{% url 'home' %}">
+      <img src="{% static 'img/logoNoPonto.png' %}" alt="">
+      <span class="marca-texto">
+        <strong>NoPonto!</strong>
+        <small>Restaurantes da PUC-Rio</small>
+      </span>
+    </a>
+    <div class="topo-conta">
+      {% if aluno %}
+        <a class="topo-nome" href="{% url 'perfil' %}">{{ aluno.nome }}</a>
+        <a class="btn-entrar" href="{% url 'sair' %}">Sair</a>
+      {% elif request.user.is_authenticated %}
+        <a class="topo-nome" href="{% url 'perfil' %}">{{ request.user.get_full_name|default:request.user.username }}</a>
+        <a class="btn-entrar" href="{% url 'sair' %}">Sair</a>
+      {% else %}
+        <a class="btn-entrar" href="{% url 'login' %}">Entrar</a>
+      {% endif %}
+    </div>
+  </div>
 </header>
 
-<main class="av-wrap">
-  <div class="av-titulo">
-    <h1>Avalie os restaurantes do campus</h1>
-    <p>Dê de 1 a 5 estrelas para onde você comeu. A nota média é calculada com a avaliação de todos os alunos.</p>
+<nav class="abas" aria-label="Navegação principal">
+  <div class="abas-inner">
+    <a class="aba" href="{% url 'home' %}">🍽️ Restaurantes</a>
+    <a class="aba" href="{% url 'mapa' %}">📍 Mapa</a>
+    <a class="aba ativa" href="{% url 'avaliacoes' %}" aria-current="page">⭐ Avaliações</a>
   </div>
+</nav>
 
-  <div class="av-filtros">
-    <div class="av-busca">
-      <label class="sr-only" for="busca" style="position:absolute;left:-9999px">Buscar restaurante</label>
-      <input class="input" type="search" id="busca" placeholder="Buscar restaurante pelo nome" autocomplete="off">
+<main class="home-wrap">
+  {% csrf_token %}
+
+  <h1>Avaliações dos Restaurantes</h1>
+  <p class="contagem">Veja todos os restaurantes cadastrados ordenados pelas avaliações registradas no banco.</p>
+
+  <section class="avaliacoes-resumo" aria-label="Resumo geral das avaliações">
+    <div class="resumo-box">
+      <span>Média geral</span>
+      <strong id="media-geral">{{ media|default:0|floatformat:1 }}</strong>
     </div>
-    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+    <div class="resumo-box">
+      <span>Total de avaliações</span>
+      <strong id="total-geral">{{ total|default:0 }}</strong>
+    </div>
+  </section>
+
+  <div class="busca">
+    <span class="busca-icone" aria-hidden="true">🔍</span>
+    <input class="input" type="search" id="busca-avaliacoes" placeholder="Buscar restaurante ou comentário..." autocomplete="off">
   </div>
 
-  <section class="av-grade" id="grade" aria-live="polite">
-    <div class="skeleton"></div>
-    <div class="skeleton"></div>
-    <div class="skeleton"></div>
-  </section>
+  <div class="controles-avaliacoes">
+    <div class="ordenacao-grupo" role="group" aria-label="Ordenar restaurantes por avaliação">
+      <button type="button" class="chip ativo" data-ordem="maior-media">Maior média</button>
+      <button type="button" class="chip" data-ordem="mais-avaliados">Mais avaliados</button>
+      <button type="button" class="chip" data-ordem="com-avaliacao">Com avaliações</button>
+      <button type="button" class="chip" data-ordem="sem-avaliacao">Sem avaliações</button>
+      <button type="button" class="chip" data-ordem="alfabetica">A–Z</button>
+    </div>
+    <p class="contagem" id="contagem-avaliacoes" aria-live="polite"></p>
+  </div>
+
+  {% if restaurantes %}
+    <ul class="cards" id="lista-restaurantes-avaliacoes">
+      {% for r in restaurantes %}
+      {% with media_val=r.media|default:0 total_val=r.total|default:0 %}
+      <li data-ordem-inicial="{{ forloop.counter0 }}">
+        <article class="card"
+                 data-nome="{{ r.nome }}"
+                 data-media="{{ media_val|floatformat:2 }}"
+                 data-total="{{ total_val }}"
+                 data-comentarios="{% for av in r.avaliacao_set.all %}{{ av.comentario }} {% endfor %}">
+
+          <div class="card-foto">
+            {% if r.foto %}
+              <a href="{% url 'detalhe_restaurante' r.id %}">
+                <img src="{% static 'img/restaurantes/'|add:r.foto %}" alt="Foto de {{ r.nome }}" loading="lazy">
+              </a>
+            {% else %}
+              <a class="card-foto-vazia" href="{% url 'detalhe_restaurante' r.id %}" aria-hidden="true" tabindex="-1">🍽️</a>
+            {% endif %}
+            {% if r.estilo %}<span class="card-selo">{{ r.estilo.nome }}</span>{% endif %}
+          </div>
+
+          <div class="card-corpo">
+            <h2><a href="{% url 'detalhe_restaurante' r.id %}">{{ r.nome }}</a></h2>
+            <p class="card-local">📍 {{ r.localizacao }}</p>
+
+            <div class="card-nota">
+              {% if total_val > 0 %}
+                {% widthratio media_val 5 100 as pct_val %}
+                <span class="estrelas-medida" role="img" style="--pct: {{ pct_val }}%" aria-label="Nota {{ media_val|floatformat:1 }} de 5">★★★★★</span>
+                <strong class="nota-num">{{ media_val|floatformat:1 }}</strong>
+                <span class="nota-total">({{ total_val }} avaliaç{{ total_val|pluralize:"ão,ões" }})</span>
+              {% else %}
+                <span class="nota-total">Ainda sem avaliações registradas</span>
+              {% endif %}
+            </div>
+
+            <div class="card-comentarios">
+              <h3>Comentários recentes</h3>
+              {% for av in r.avaliacao_set.all %}
+                {% if av.comentario %}
+                  <div class="comentario-item">
+                    <div class="comentario-meta">
+                      <span>{{ av.aluno.nome }}</span>
+                      <span>{{ av.estrela }}/5 ★</span>
+                    </div>
+                    <p>{{ av.comentario }}</p>
+                  </div>
+                {% endif %}
+              {% empty %}
+                <p class="nota-total">Nenhum comentário registrado ainda.</p>
+              {% endfor %}
+            </div>
+
+            <div class="card-avaliar">
+              <span class="avaliar-rotulo">Sua nota:</span>
+              <div class="estrelas-input" data-url="{% url 'avaliar' r.id %}" data-minha="0" role="group" aria-label="Avaliar {{ r.nome }}">
+                {% for i in "12345" %}
+                <button type="button" class="estrela-btn" data-valor="{{ i }}" aria-label="{{ i }} de 5">★</button>
+                {% endfor %}
+              </div>
+              <span class="avaliar-msg" aria-live="polite"></span>
+            </div>
+
+            <div class="card-acoes-rodape">
+              <a class="link-detalhe" href="{% url 'detalhe_restaurante' r.id %}">Ver detalhes e comentar →</a>
+            </div>
+          </div>
+
+        </article>
+      </li>
+      {% endwith %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <ul class="cards" id="lista-restaurantes-avaliacoes">
+      {% regroup avaliacoes by restaurante as grupos_restaurante %}
+      {% for grupo in grupos_restaurante %}
+      {% with r=grupo.grouper %}
+      <li data-ordem-inicial="{{ forloop.counter0 }}">
+        <article class="card"
+                 data-nome="{{ r.nome }}"
+                 data-media="0"
+                 data-total="{{ grupo.list|length }}"
+                 data-comentarios="{% for av in grupo.list %}{{ av.comentario }} {% endfor %}">
+
+          <div class="card-foto">
+            {% if r.foto %}
+              <a href="{% url 'detalhe_restaurante' r.id %}">
+                <img src="{% static 'img/restaurantes/'|add:r.foto %}" alt="Foto de {{ r.nome }}" loading="lazy">
+              </a>
+            {% else %}
+              <a class="card-foto-vazia" href="{% url 'detalhe_restaurante' r.id %}" aria-hidden="true" tabindex="-1">🍽️</a>
+            {% endif %}
+            {% if r.estilo %}<span class="card-selo">{{ r.estilo.nome }}</span>{% endif %}
+          </div>
+
+          <div class="card-corpo">
+            <h2><a href="{% url 'detalhe_restaurante' r.id %}">{{ r.nome }}</a></h2>
+            <p class="card-local">📍 {{ r.localizacao }}</p>
+
+            <div class="card-nota">
+              <span class="nota-total">({{ grupo.list|length }} avaliaç{{ grupo.list|length|pluralize:"ão,ões" }} registradas)</span>
+            </div>
+
+            <div class="card-comentarios">
+              <h3>Avaliações registradas</h3>
+              {% for av in grupo.list %}
+                <div class="comentario-item">
+                  <div class="comentario-meta">
+                    <span>{{ av.aluno.nome }}</span>
+                    <span>{{ av.estrela }}/5 ★</span>
+                  </div>
+                  {% if av.comentario %}<p>{{ av.comentario }}</p>{% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="card-avaliar">
+              <span class="avaliar-rotulo">Sua nota:</span>
+              <div class="estrelas-input" data-url="{% url 'avaliar' r.id %}" data-minha="0" role="group" aria-label="Avaliar {{ r.nome }}">
+                {% for i in "12345" %}
+                <button type="button" class="estrela-btn" data-valor="{{ i }}" aria-label="{{ i }} de 5">★</button>
+                {% endfor %}
+              </div>
+              <span class="avaliar-msg" aria-live="polite"></span>
+            </div>
+
+            <div class="card-acoes-rodape">
+              <a class="link-detalhe" href="{% url 'detalhe_restaurante' r.id %}">Ver detalhes e comentar →</a>
+            </div>
+          </div>
+
+        </article>
+      </li>
+      {% endwith %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <div class="home-vazio" id="vazio-avaliacoes" hidden>
+    <strong>Nenhum restaurante encontrado</strong>
+    Tente outro termo de busca ou outro filtro de avaliação.
+  </div>
 </main>
 
+<footer class="rodape">
+  <a href="{% url 'termo_de_uso' %}">Termos de Uso</a>
+  <span aria-hidden="true">·</span>
+  <a href="{% url 'politica_de_privacidade' %}">Política de Privacidade</a>
+  <a href="{% url 'por_que_fizemos' %}">Por que fizemos</a>
+</footer>
+
 <script>
-/* noPonto — página de avaliações. Vanilla JS, sem dependências.
-
-   Contrato esperado da API (ajuste os caminhos ao backend do projeto):
-
-   GET  /api/restaurantes
-        -> [{ id, nome, categoria, descricao, localizacao, horario, preco_medio,
-              foto_url, nota_media, total_avaliacoes, minha_nota }]
-        (minha_nota = nota que o usuário logado já deu, ou null)
-
-   POST /api/restaurantes/:id/avaliacoes   body: { nota: 1..5 }
-        -> { nota_media, total_avaliacoes, minha_nota }
-
-   Quem chega aqui já está logado (a sessão vem por cookie). Se a API
-   responder 401, mandamos para o login. Não há avaliação por comentário. */
 (function () {
   'use strict';
 
-  var API_LISTA = '/api/restaurantes';
-  var API_AVALIAR = function (id) { return '/api/restaurantes/' + encodeURIComponent(id) + '/avaliacoes'; };
-  var PAGINA_LOGIN = '../Login/login.html';
+  var lista = document.getElementById('lista-restaurantes-avaliacoes');
+  if (!lista) return;
 
-  var grade = document.getElementById('grade');
-  var chipsBox = document.getElementById('chips');
-  var busca = document.getElementById('busca');
+  var itens = Array.prototype.slice.call(lista.children);
+  var chips = document.querySelectorAll('.chip[data-ordem]');
+  var busca = document.getElementById('busca-avaliacoes');
+  var contagem = document.getElementById('contagem-avaliacoes');
+  var vazio = document.getElementById('vazio-avaliacoes');
+  var ordemAtual = 'maior-media';
 
-  var restaurantes = [];
-  var categoriaAtiva = 'Todas';
-
-  function el(tag, classe, texto) {
-    var n = document.createElement(tag);
-    if (classe) n.className = classe;
-    if (texto !== undefined && texto !== null) n.textContent = texto;
-    return n;
+  function normalizar(texto) {
+    return (texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
-  function normalizar(s) {
-    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  function parseNumero(val) {
+    var n = parseFloat(String(val || '0').replace(',', '.'));
+    return isNaN(n) ? 0 : n;
   }
 
-  function formatarPreco(v) {
-    if (v === null || v === undefined || v === '') return null;
-    return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  }
-
-  function estrelasFixas(nota) {
-    var box = el('span', 'estrelas');
-    box.setAttribute('role', 'img');
-    box.setAttribute('aria-label', 'Nota ' + (nota || 0).toFixed(1) + ' de 5');
-    for (var i = 1; i <= 5; i++) {
-      box.appendChild(el('span', 'estrela-fixa' + (i <= Math.round(nota || 0) ? ' cheia' : ''), '★'));
+  // Calcula média real a partir das avaliações exibidas quando vier do fallback regroup
+  itens.forEach(function (li) {
+    var card = li.querySelector('.card');
+    var mediaAtual = parseNumero(card.getAttribute('data-media'));
+    if (!mediaAtual) {
+      var notas = Array.prototype.slice.call(card.querySelectorAll('.comentario-meta span:last-child'))
+        .map(function (el) { return parseFloat(el.textContent); })
+        .filter(function (n) { return !isNaN(n); });
+      if (notas.length) {
+        var soma = notas.reduce(function (acc, n) { return acc + n; }, 0);
+        var mediaCalc = soma / notas.length;
+        card.setAttribute('data-media', mediaCalc.toFixed(2));
+        var notaEl = card.querySelector('.card-nota');
+        if (notaEl) {
+          var pct = Math.round((mediaCalc / 5) * 100);
+          notaEl.innerHTML =
+            '<span class="estrelas-medida" role="img" style="--pct: ' + pct + '%">★★★★★</span> ' +
+            '<strong class="nota-num">' + mediaCalc.toFixed(1).replace('.', ',') + '</strong> ' +
+            '<span class="nota-total">(' + notas.length + ' avaliaç' + (notas.length === 1 ? 'ão' : 'ões') + ')</span>';
+        }
+      }
     }
-    return box;
-  }
+  });
 
-  function estado(texto, comBotao) {
-    grade.textContent = '';
-    var div = el('div', 'av-estado', texto);
-    if (comBotao) {
-      var b = el('button', 'btn btn-secondary', 'Tentar de novo');
-      b.type = 'button';
-      b.addEventListener('click', carregar);
-      div.appendChild(b);
-    }
-    grade.appendChild(div);
-  }
+  function ordenarEFiltrar() {
+    var termo = normalizar(busca.value.trim());
 
-  /* ---------- card de um restaurante ---------- */
+    var ordenados = itens.slice().sort(function (a, b) {
+      var ca = a.querySelector('.card');
+      var cb = b.querySelector('.card');
+      var nomeA = ca.getAttribute('data-nome') || '';
+      var nomeB = cb.getAttribute('data-nome') || '';
+      var mediaA = parseNumero(ca.getAttribute('data-media'));
+      var mediaB = parseNumero(cb.getAttribute('data-media'));
+      var totalA = parseInt(ca.getAttribute('data-total') || '0', 10);
+      var totalB = parseInt(cb.getAttribute('data-total') || '0', 10);
 
-  function criarCard(r) {
-    var card = el('article', 'rest-card');
-
-    var foto = el('div', 'rest-foto');
-    if (r.foto_url) {
-      var img = el('img');
-      img.src = r.foto_url;
-      img.alt = r.nome;
-      img.loading = 'lazy';
-      foto.appendChild(img);
-    } else {
-      foto.textContent = (r.nome || '?').charAt(0).toUpperCase();
-    }
-    card.appendChild(foto);
-
-    var corpo = el('div', 'rest-corpo');
-
-    var cab = el('div', 'rest-cabecalho');
-    cab.appendChild(el('h2', 'rest-nome', r.nome));
-    if (r.categoria) cab.appendChild(el('span', 'rest-categoria', r.categoria));
-    corpo.appendChild(cab);
-
-    if (r.descricao) corpo.appendChild(el('p', 'rest-desc', r.descricao));
-
-    var info = el('ul', 'rest-info');
-    [['Local: ', r.localizacao], ['Horário: ', r.horario], ['Preço médio: ', formatarPreco(r.preco_medio)]].forEach(function (par) {
-      if (!par[1]) return;
-      var li = el('li');
-      li.appendChild(el('span', null, par[0]));
-      li.appendChild(document.createTextNode(par[1]));
-      info.appendChild(li);
+      if (ordemAtual === 'maior-media') {
+        if (mediaB !== mediaA) return mediaB - mediaA;
+        if (totalB !== totalA) return totalB - totalA;
+        return nomeA.localeCompare(nomeB, 'pt-BR');
+      }
+      if (ordemAtual === 'mais-avaliados') {
+        if (totalB !== totalA) return totalB - totalA;
+        if (mediaB !== mediaA) return mediaB - mediaA;
+        return nomeA.localeCompare(nomeB, 'pt-BR');
+      }
+      if (ordemAtual === 'alfabetica') {
+        return nomeA.localeCompare(nomeB, 'pt-BR');
+      }
+      return Number(a.getAttribute('data-ordem-inicial')) - Number(b.getAttribute('data-ordem-inicial'));
     });
-    corpo.appendChild(info);
 
-    var media = el('div', 'rest-media');
-    media.dataset.role = 'media';
-    preencherMedia(media, r);
-    corpo.appendChild(media);
+    var visiveis = 0;
+    ordenados.forEach(function (li) {
+      lista.appendChild(li);
+      var card = li.querySelector('.card');
+      var nome = normalizar(card.getAttribute('data-nome'));
+      var comentarios = normalizar(card.getAttribute('data-comentarios'));
+      var total = parseInt(card.getAttribute('data-total') || '0', 10);
 
-    corpo.appendChild(criarAvaliar(r, media));
-    card.appendChild(corpo);
-    return card;
+      var bateBusca = !termo || nome.indexOf(termo) !== -1 || comentarios.indexOf(termo) !== -1;
+      var bateFiltro = true;
+      if (ordemAtual === 'com-avaliacao') bateFiltro = total > 0;
+      if (ordemAtual === 'sem-avaliacao') bateFiltro = total === 0;
+
+      var mostrar = bateBusca && bateFiltro;
+      li.hidden = !mostrar;
+      if (mostrar) visiveis++;
+    });
+
+    contagem.textContent = visiveis + (visiveis === 1 ? ' restaurante exibido' : ' restaurantes exibidos');
+    vazio.hidden = visiveis !== 0;
   }
 
-  function preencherMedia(box, r) {
-    box.textContent = '';
-    if (!r.total_avaliacoes) {
-      box.appendChild(el('span', null, 'Ainda sem avaliações'));
-      return;
+  busca.addEventListener('input', ordenarEFiltrar);
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      ordemAtual = chip.getAttribute('data-ordem');
+      chips.forEach(function (c) { c.classList.toggle('ativo', c === chip); });
+      ordenarEFiltrar();
+    });
+  });
+
+  // Avaliar direto pelas estrelas usando a mesma rota POST /restaurantes/<id>/avaliar/
+  var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+  var csrf = csrfInput ? csrfInput.value : '';
+
+  document.querySelectorAll('.estrelas-input').forEach(function (grupo) {
+    var botoes = grupo.querySelectorAll('.estrela-btn');
+    var card = grupo.closest('.card');
+    var li = card.closest('li');
+    var msg = card.querySelector('.avaliar-msg');
+    var atual = Number(grupo.getAttribute('data-minha')) || 0;
+
+    function pintar(n) {
+      botoes.forEach(function (b) {
+        b.classList.toggle('cheia', Number(b.getAttribute('data-valor')) <= n);
+      });
     }
-    box.appendChild(el('strong', null, Number(r.nota_media).toFixed(1).replace('.', ',')));
-    box.appendChild(estrelasFixas(Number(r.nota_media)));
-    box.appendChild(el('span', null, '(' + r.total_avaliacoes + (r.total_avaliacoes === 1 ? ' avaliação)' : ' avaliações)')));
-  }
+    pintar(atual);
 
-  /* ---------- avaliação por estrelas (sem comentário) ---------- */
+    botoes.forEach(function (botao) {
+      var valor = Number(botao.getAttribute('data-valor'));
+      botao.addEventListener('mouseenter', function () { pintar(valor); });
 
-  function criarAvaliar(r, mediaBox) {
-    var bloco = el('div', 'avaliar');
-    var escolhida = r.minha_nota || 0;
-
-    bloco.appendChild(el('p', 'avaliar-rotulo', r.minha_nota ? 'Sua avaliação' : 'Sua nota'));
-
-    var grupo = el('div', 'estrelas-input');
-    grupo.setAttribute('role', 'group');
-    grupo.setAttribute('aria-label', 'Dar nota para ' + r.nome);
-    var botoes = [];
-
-    function pintar(ate) {
-      botoes.forEach(function (b, i) { b.classList.toggle('ativa', i < ate); });
-    }
-
-    for (var i = 1; i <= 5; i++) {
-      (function (valor) {
-        var b = el('button', 'estrela-btn', '★');
-        b.type = 'button';
-        b.setAttribute('aria-label', valor + (valor === 1 ? ' estrela' : ' estrelas'));
-        b.addEventListener('mouseenter', function () { pintar(valor); });
-        b.addEventListener('focus', function () { pintar(valor); });
-        b.addEventListener('click', function () {
-          escolhida = valor;
-          pintar(valor);
-          enviar.disabled = false;
-        });
-        botoes.push(b);
-        grupo.appendChild(b);
-      })(i);
-    }
-    grupo.addEventListener('mouseleave', function () { pintar(escolhida); });
-    grupo.addEventListener('focusout', function () { pintar(escolhida); });
-    pintar(escolhida);
-    bloco.appendChild(grupo);
-
-    var enviar = el('button', 'btn btn-primary', r.minha_nota ? 'Atualizar nota' : 'Enviar nota');
-    enviar.type = 'button';
-    enviar.disabled = true;
-    bloco.appendChild(enviar);
-
-    var msg = el('p', 'avaliar-msg');
-    bloco.appendChild(msg);
-
-    enviar.addEventListener('click', function () {
-      if (!escolhida) return;
-      enviar.disabled = true;
-      msg.className = 'avaliar-msg';
-      msg.textContent = 'Enviando...';
-
-      fetch(API_AVALIAR(r.id), {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nota: escolhida })
-      })
+      botao.addEventListener('click', function () {
+        msg.textContent = 'Salvando...';
+        fetch(grupo.getAttribute('data-url'), {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': csrf,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'estrelas=' + valor
+        })
         .then(function (resp) {
-          if (resp.status === 401) { window.location.href = PAGINA_LOGIN; return null; }
           if (!resp.ok) throw new Error('falha');
           return resp.json();
         })
-        .then(function (dados) {
-          if (!dados) return;
-          r.nota_media = dados.nota_media;
-          r.total_avaliacoes = dados.total_avaliacoes;
-          r.minha_nota = dados.minha_nota || escolhida;
-          preencherMedia(mediaBox, r);
-          msg.className = 'avaliar-msg ok';
-          msg.textContent = 'Nota registrada. Obrigado!';
-          enviar.textContent = 'Atualizar nota';
+        .then(function (d) {
+          atual = d.minha;
+          pintar(atual);
+          msg.textContent = 'Avaliado!';
+          card.setAttribute('data-media', d.media);
+          card.setAttribute('data-total', d.total);
+          card.querySelector('.card-nota').innerHTML =
+            '<span class="estrelas-medida" role="img" style="--pct: ' + d.pct + '%">★★★★★</span> ' +
+            '<strong class="nota-num">' + Number(d.media).toFixed(1).replace('.', ',') + '</strong> ' +
+            '<span class="nota-total">(' + d.total + ' avaliaç' + (d.total === 1 ? 'ão' : 'ões') + ')</span>';
+          ordenarEFiltrar();
         })
         .catch(function () {
-          msg.className = 'avaliar-msg erro';
-          msg.textContent = 'Não foi possível enviar sua nota. Tente novamente.';
-          enviar.disabled = false;
+          pintar(atual);
+          msg.textContent = 'Não foi possível salvar.';
         });
-    });
-
-    return bloco;
-  }
-
-  /* ---------- lista, busca e categorias ---------- */
-
-  function desenharChips() {
-    var cats = ['Todas'];
-    restaurantes.forEach(function (r) {
-      if (r.categoria && cats.indexOf(r.categoria) === -1) cats.push(r.categoria);
-    });
-    chipsBox.textContent = '';
-    if (cats.length < 3) return; // só uma categoria: filtro não ajuda
-    cats.forEach(function (c) {
-      var b = el('button', 'chip', c);
-      b.type = 'button';
-      b.setAttribute('aria-pressed', String(c === categoriaAtiva));
-      b.addEventListener('click', function () {
-        categoriaAtiva = c;
-        desenharChips();
-        desenharLista();
       });
-      chipsBox.appendChild(b);
     });
-  }
 
-  function desenharLista() {
-    var termo = normalizar(busca.value.trim());
-    var lista = restaurantes.filter(function (r) {
-      var okCat = categoriaAtiva === 'Todas' || r.categoria === categoriaAtiva;
-      var okNome = !termo || normalizar(r.nome).indexOf(termo) !== -1;
-      return okCat && okNome;
-    });
-    if (!lista.length) {
-      estado(restaurantes.length ? 'Nenhum restaurante encontrado com esse filtro.' : 'Ainda não há restaurantes cadastrados.');
-      return;
-    }
-    grade.textContent = '';
-    lista.forEach(function (r) { grade.appendChild(criarCard(r)); });
-  }
+    grupo.addEventListener('mouseleave', function () { pintar(atual); });
+  });
 
-  busca.addEventListener('input', desenharLista);
-
-  function carregar() {
-    grade.textContent = '';
-    for (var i = 0; i < 3; i++) grade.appendChild(el('div', 'skeleton'));
-
-    fetch(API_LISTA, { credentials: 'same-origin' })
-      .then(function (resp) {
-        if (resp.status === 401) { window.location.href = PAGINA_LOGIN; return null; }
-        if (!resp.ok) throw new Error('falha');
-        return resp.json();
-      })
-      .then(function (dados) {
-        if (!dados) return;
-        restaurantes = dados;
-        desenharChips();
-        desenharLista();
-      })
-      .catch(function () {
-        estado('Não foi possível carregar os restaurantes.', true);
-      });
-  }
-
-  carregar();
+  ordenarEFiltrar();
 })();
 </script>
+
 </body>
 </html>
