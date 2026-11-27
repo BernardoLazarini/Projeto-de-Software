@@ -1,414 +1,315 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avaliações — noPonto</title>
-<!-- Ordem importa: primeiro o design system, depois os ajustes desta página -->
-<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}"><link rel="stylesheet" href="{% static 'css/avaliacoes.css' %}">
+<link rel="stylesheet" href="../conta-estilo.css">
+<link rel="stylesheet" href="avaliacoes.css">
 </head>
+<body>
 
-<!-- TODO (backend): trocar data-logado="false" por "true" quando houver sessão ativa -->
-<body data-logado="false">
-
-<header class="topbar">
-  <a class="topbar-brand" href="{% url 'home' %}">
-    <img src="{% static 'img/logoNoPonto.png' %}" alt="">
+<header class="av-header">
+  <a class="av-brand" href="../index.html">
+    <img src="../logoNoPonto.png" alt="noPonto">
     <span>noPonto</span>
   </a>
-
-  <nav class="topbar-nav" aria-label="Principal">
-    <!-- TODO: ajustar os links quando as páginas de mapa/restaurantes existirem -->
-    <a href="{% url 'home' %}">Restaurantes</a>
-    <a href="{% url 'avaliacoes' %}" aria-current="page">Avaliações</a>
+  <nav class="av-nav" aria-label="Principal">
+    <a href="../Mapa/mapa.html">Mapa</a>
+    <a href="avaliacoes.html" class="ativo" aria-current="page">Avaliações</a>
+    <a href="../EditarPerfil/editarperfil.html">Minha conta</a>
   </nav>
-
-  <div class="topbar-actions">
-    <span class="only-guest">
-      <a class="link-btn" href="{% url 'login' %}">Entrar</a>
-      <a class="link-btn solid" href="{% url 'cadastro' %}">Criar conta</a>
-    </span>
-    <a class="user-chip only-user" href="{% url 'perfil' %}" aria-label="Editar meu perfil">
-      <span class="avatar-circle" id="avatarTopo">LS</span>
-      <span class="nome">Meu perfil</span>
-    </a>
-  </div>
 </header>
 
-<main class="page">
-
-  <p class="breadcrumb">
-    <!-- TODO: apontar para a página do restaurante (requisito: mapa ↔ página do restaurante) -->
-    <a href="restaurantes.html">&larr; Voltar para a página do restaurante</a>
-  </p>
-
-  <!-- Resumo do restaurante -->
-  <section class="summary" aria-labelledby="restNome">
-    <div class="summary-info">
-      <span class="tag" id="restCategoria">Self-service</span>
-      <h1 id="restNome">Bandejão PUC-Rio</h1>
-      <p id="restDescricao">Almoço e jantar com cardápio que muda ao longo da semana. Veja o que os alunos acharam antes de entrar na fila.</p>
-
-      <div class="score-line">
-        <div class="score-number" id="mediaNumero">0,0</div>
-        <div class="score-meta">
-          <div class="stars lg" id="mediaEstrelas" aria-hidden="true"></div>
-          <span id="totalAvaliacoes">0 avaliações</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="distribution" id="distribuicao" aria-label="Distribuição das notas">
-      <!-- gerado por JS: clique em uma linha para filtrar por nota -->
-    </div>
-  </section>
-
-  <div class="content">
-
-    <!-- Lista de avaliações -->
-    <section aria-labelledby="listaTitulo">
-      <div class="toolbar">
-        <input class="input search" type="search" id="busca" placeholder="Buscar nos comentários ou por prato" aria-label="Buscar nas avaliações">
-        <select class="input" id="ordem" aria-label="Ordenar avaliações">
-          <option value="recentes">Mais recentes</option>
-          <option value="melhores">Maior nota</option>
-          <option value="piores">Menor nota</option>
-        </select>
-      </div>
-
-      <div class="list-head">
-        <h2 id="listaTitulo">Avaliações dos alunos</h2>
-        <button type="button" class="clear-filter" id="limparFiltro">Limpar filtro de nota</button>
-      </div>
-
-      <ul class="review-list" id="listaAvaliacoes" aria-live="polite"></ul>
-    </section>
-
-    <!-- Painel lateral: avaliar -->
-    <aside class="review-form-card" aria-labelledby="formTitulo">
-      <h2 id="formTitulo">Avalie este restaurante</h2>
-
-      <!-- Visitante: precisa entrar -->
-      <div class="login-gate only-guest">
-        <p class="subtitle" style="margin-bottom:20px">Entre na sua conta para dar uma nota e contar como foi a refeição.</p>
-        <a class="btn btn-primary" href="../Login/login.html">Entrar</a>
-        <p class="form-foot">Não tem conta? <a href="../Cadastro/cadastro.html">Criar conta</a></p>
-      </div>
-
-      <!-- Usuário logado: formulário -->
-      <form id="avaliacaoForm" class="only-user" novalidate>
-        <p class="subtitle">Sua opinião ajuda quem está decidindo onde comer no intervalo.</p>
-
-        <div class="alert alert-success" id="sucessoAlert" role="status">
-          ✓ Avaliação publicada. Obrigado por ajudar o campus!
-        </div>
-
-        <div class="field">
-          <label id="notaLabel">Sua nota</label>
-          <div class="rating-input" role="radiogroup" aria-labelledby="notaLabel">
-            <input type="radio" id="nota5" name="nota" value="5"><label for="nota5" title="Excelente">★</label>
-            <input type="radio" id="nota4" name="nota" value="4"><label for="nota4" title="Muito bom">★</label>
-            <input type="radio" id="nota3" name="nota" value="3"><label for="nota3" title="Bom">★</label>
-            <input type="radio" id="nota2" name="nota" value="2"><label for="nota2" title="Regular">★</label>
-            <input type="radio" id="nota1" name="nota" value="1"><label for="nota1" title="Ruim">★</label>
-          </div>
-          <div class="rating-text" id="notaTexto"></div>
-          <div class="field-error" id="notaErro">Escolha uma nota de 1 a 5 estrelas.</div>
-        </div>
-
-        <div class="field">
-          <label for="prato">Prato <span class="hint">(opcional)</span></label>
-          <input class="input" type="text" id="prato" name="prato" placeholder="Ex: Strogonoff de frango" maxlength="60">
-        </div>
-
-        <div class="field">
-          <label for="comentario">Comentário</label>
-          <textarea class="input" id="comentario" name="comentario" placeholder="Como estavam a comida, o preço e a fila?" maxlength="500" required></textarea>
-          <div class="char-count"><span id="contador">0</span>/500</div>
-          <div class="field-error" id="comentarioErro">Escreva pelo menos 10 caracteres.</div>
-        </div>
-
-        <div class="field">
-          <label>Fotos <span class="hint">(até 3)</span></label>
-          <label class="upload-btn">
-            <input type="file" id="fotos" accept="image/*" multiple>
-            + Adicionar fotos do prato
-          </label>
-          <div class="previews" id="previews"></div>
-        </div>
-
-        <div class="checkbox-row">
-          <input type="checkbox" id="aceiteVeracidade" required>
-          <label for="aceiteVeracidade">Confirmo que esta avaliação é baseada em uma experiência real, conforme o <a href="../TermoDeUso/termodeuso.html">Termo de Uso</a>.</label>
-        </div>
-
-        <button type="submit" class="btn btn-cta">Publicar avaliação</button>
-      </form>
-    </aside>
-
+<main class="av-wrap">
+  <div class="av-titulo">
+    <h1>Avalie os restaurantes do campus</h1>
+    <p>Dê de 1 a 5 estrelas para onde você comeu. A nota média é calculada com a avaliação de todos os alunos.</p>
   </div>
-</main>
 
-<footer class="site-foot">
-  NoPonto! — projeto de alunos da PUC-Rio · campus Gávea ·
-  <a href="../TermoDeUso/termodeuso.html">Termo de Uso</a>
-</footer>
+  <div class="av-filtros">
+    <div class="av-busca">
+      <label class="sr-only" for="busca" style="position:absolute;left:-9999px">Buscar restaurante</label>
+      <input class="input" type="search" id="busca" placeholder="Buscar restaurante pelo nome" autocomplete="off">
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+  </div>
+
+  <section class="av-grade" id="grade" aria-live="polite">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </section>
+</main>
 
 <script>
 /* noPonto — página de avaliações. Vanilla JS, sem dependências.
-   Os dados abaixo são de exemplo; conecte à API do projeto onde houver TODO. */
+
+   Contrato esperado da API (ajuste os caminhos ao backend do projeto):
+
+   GET  /api/restaurantes
+        -> [{ id, nome, categoria, descricao, localizacao, horario, preco_medio,
+              foto_url, nota_media, total_avaliacoes, minha_nota }]
+        (minha_nota = nota que o usuário logado já deu, ou null)
+
+   POST /api/restaurantes/:id/avaliacoes   body: { nota: 1..5 }
+        -> { nota_media, total_avaliacoes, minha_nota }
+
+   Quem chega aqui já está logado (a sessão vem por cookie). Se a API
+   responder 401, mandamos para o login. Não há avaliação por comentário. */
 (function () {
   'use strict';
 
-  // ---------- dados de exemplo (TODO: buscar da API: GET /api/restaurantes/:id/avaliacoes) ----------
-  var avaliacoes = [
-    { autor: 'Marina Costa',  curso: 'Design · 2º período',      nota: 5, prato: 'Feijoada de quarta', texto: 'A feijoada de quarta vale a fila. Porção generosa e o preço continua justo para o campus.', data: '2026-11-18', fotos: [] },
-    { autor: 'Pedro Alves',   curso: 'Engenharia · 2º período',  nota: 4, prato: '',                   texto: 'Comida boa e variada. A fila entre 12h e 13h é grande, então vale chegar mais cedo.',       data: '2026-11-15', fotos: [] },
-    { autor: 'Julia Ramos',   curso: 'Direito · 6º período',     nota: 3, prato: 'Frango grelhado',    texto: 'Frango um pouco seco hoje, mas as saladas estavam ótimas. Atendimento rápido.',            data: '2026-11-10', fotos: [] },
-    { autor: 'Rafael Nunes',  curso: 'Administração · 2º período', nota: 5, prato: '',                 texto: 'Melhor custo-benefício para quem tem pouco tempo entre aulas.',                              data: '2026-11-04', fotos: [] },
-    { autor: 'Beatriz Lima',  curso: 'Psicologia · 1º período',  nota: 2, prato: 'Macarrão ao molho',  texto: 'Molho muito salgado e o prato estava morno quando chegou na mesa.',                         data: '2026-10-29', fotos: [] }
-  ];
+  var API_LISTA = '/api/restaurantes';
+  var API_AVALIAR = function (id) { return '/api/restaurantes/' + encodeURIComponent(id) + '/avaliacoes'; };
+  var PAGINA_LOGIN = '../Login/login.html';
 
-  var filtroNota = 0; // 0 = todas
+  var grade = document.getElementById('grade');
+  var chipsBox = document.getElementById('chips');
+  var busca = document.getElementById('busca');
 
-  // ---------- utilidades ----------
-  function estrelas(n) {
-    var html = '';
-    for (var i = 1; i <= 5; i++) html += '<span class="' + (i <= n ? 'on' : '') + '">★</span>';
-    return html;
+  var restaurantes = [];
+  var categoriaAtiva = 'Todas';
+
+  function el(tag, classe, texto) {
+    var n = document.createElement(tag);
+    if (classe) n.className = classe;
+    if (texto !== undefined && texto !== null) n.textContent = texto;
+    return n;
   }
 
-  function iniciais(nome) {
-    var p = nome.trim().split(/\s+/);
-    return ((p[0] || '')[0] + (p.length > 1 ? p[p.length - 1][0] : '')).toUpperCase();
+  function normalizar(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
 
-  function formatarData(iso) {
-    var d = new Date(iso + 'T12:00:00');
-    return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
+  function formatarPreco(v) {
+    if (v === null || v === undefined || v === '') return null;
+    return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   }
 
-  function formatarNumero(n) { return n.toFixed(1).replace('.', ','); }
-
-  // ---------- resumo + distribuição ----------
-  function renderResumo() {
-    var total = avaliacoes.length;
-    var soma = avaliacoes.reduce(function (s, a) { return s + a.nota; }, 0);
-    var media = total ? soma / total : 0;
-
-    document.getElementById('mediaNumero').textContent = formatarNumero(media);
-    document.getElementById('mediaEstrelas').innerHTML = estrelas(Math.round(media));
-    document.getElementById('totalAvaliacoes').textContent =
-      total + (total === 1 ? ' avaliação' : ' avaliações');
-
-    var box = document.getElementById('distribuicao');
-    box.innerHTML = '';
-    for (var n = 5; n >= 1; n--) {
-      var qtd = avaliacoes.filter(function (a) { return a.nota === n; }).length;
-      var pct = total ? (qtd / total) * 100 : 0;
-      var row = document.createElement('button');
-      row.type = 'button';
-      row.className = 'dist-row';
-      row.setAttribute('aria-pressed', filtroNota === n ? 'true' : 'false');
-      row.setAttribute('aria-label', 'Filtrar avaliações de ' + n + ' estrelas (' + qtd + ')');
-      row.innerHTML = '<span class="dist-label">' + n + ' ★</span>' +
-        '<span class="dist-track"><span class="dist-fill" style="width:' + pct + '%"></span></span>' +
-        '<span class="dist-count">' + qtd + '</span>';
-      row.addEventListener('click', (function (nota) {
-        return function () { filtroNota = filtroNota === nota ? 0 : nota; render(); };
-      })(n));
-      box.appendChild(row);
+  function estrelasFixas(nota) {
+    var box = el('span', 'estrelas');
+    box.setAttribute('role', 'img');
+    box.setAttribute('aria-label', 'Nota ' + (nota || 0).toFixed(1) + ' de 5');
+    for (var i = 1; i <= 5; i++) {
+      box.appendChild(el('span', 'estrela-fixa' + (i <= Math.round(nota || 0) ? ' cheia' : ''), '★'));
     }
+    return box;
   }
 
-  // ---------- lista ----------
-  function renderLista() {
-    var termo = document.getElementById('busca').value.trim().toLowerCase();
-    var ordem = document.getElementById('ordem').value;
+  function estado(texto, comBotao) {
+    grade.textContent = '';
+    var div = el('div', 'av-estado', texto);
+    if (comBotao) {
+      var b = el('button', 'btn btn-secondary', 'Tentar de novo');
+      b.type = 'button';
+      b.addEventListener('click', carregar);
+      div.appendChild(b);
+    }
+    grade.appendChild(div);
+  }
 
-    var lista = avaliacoes.filter(function (a) {
-      if (filtroNota && a.nota !== filtroNota) return false;
-      if (termo && (a.texto + ' ' + a.prato).toLowerCase().indexOf(termo) === -1) return false;
-      return true;
+  /* ---------- card de um restaurante ---------- */
+
+  function criarCard(r) {
+    var card = el('article', 'rest-card');
+
+    var foto = el('div', 'rest-foto');
+    if (r.foto_url) {
+      var img = el('img');
+      img.src = r.foto_url;
+      img.alt = r.nome;
+      img.loading = 'lazy';
+      foto.appendChild(img);
+    } else {
+      foto.textContent = (r.nome || '?').charAt(0).toUpperCase();
+    }
+    card.appendChild(foto);
+
+    var corpo = el('div', 'rest-corpo');
+
+    var cab = el('div', 'rest-cabecalho');
+    cab.appendChild(el('h2', 'rest-nome', r.nome));
+    if (r.categoria) cab.appendChild(el('span', 'rest-categoria', r.categoria));
+    corpo.appendChild(cab);
+
+    if (r.descricao) corpo.appendChild(el('p', 'rest-desc', r.descricao));
+
+    var info = el('ul', 'rest-info');
+    [['Local: ', r.localizacao], ['Horário: ', r.horario], ['Preço médio: ', formatarPreco(r.preco_medio)]].forEach(function (par) {
+      if (!par[1]) return;
+      var li = el('li');
+      li.appendChild(el('span', null, par[0]));
+      li.appendChild(document.createTextNode(par[1]));
+      info.appendChild(li);
     });
+    corpo.appendChild(info);
 
-    lista.sort(function (a, b) {
-      if (ordem === 'melhores') return b.nota - a.nota || b.data.localeCompare(a.data);
-      if (ordem === 'piores')   return a.nota - b.nota || b.data.localeCompare(a.data);
-      return b.data.localeCompare(a.data);
-    });
+    var media = el('div', 'rest-media');
+    media.dataset.role = 'media';
+    preencherMedia(media, r);
+    corpo.appendChild(media);
 
-    document.getElementById('limparFiltro').classList.toggle('show', filtroNota > 0);
+    corpo.appendChild(criarAvaliar(r, media));
+    card.appendChild(corpo);
+    return card;
+  }
 
-    var ul = document.getElementById('listaAvaliacoes');
-    ul.innerHTML = '';
-
-    if (!lista.length) {
-      var vazio = document.createElement('li');
-      vazio.className = 'empty';
-      vazio.innerHTML = '<strong>Nenhuma avaliação encontrada</strong>Tente outra busca ou limpe o filtro de nota.';
-      ul.appendChild(vazio);
+  function preencherMedia(box, r) {
+    box.textContent = '';
+    if (!r.total_avaliacoes) {
+      box.appendChild(el('span', null, 'Ainda sem avaliações'));
       return;
     }
+    box.appendChild(el('strong', null, Number(r.nota_media).toFixed(1).replace('.', ',')));
+    box.appendChild(estrelasFixas(Number(r.nota_media)));
+    box.appendChild(el('span', null, '(' + r.total_avaliacoes + (r.total_avaliacoes === 1 ? ' avaliação)' : ' avaliações)')));
+  }
 
-    lista.forEach(function (a) {
-      var li = document.createElement('li');
-      li.className = 'review';
+  /* ---------- avaliação por estrelas (sem comentário) ---------- */
 
-      var top = document.createElement('div');
-      top.className = 'review-top';
-      top.innerHTML = '<span class="avatar-circle"></span>' +
-        '<div class="review-who"><strong></strong><span></span></div>' +
-        '<div class="stars sm" role="img"></div>';
-      top.querySelector('.avatar-circle').textContent = iniciais(a.autor);
-      top.querySelector('strong').textContent = a.autor;
-      top.querySelector('.review-who span').textContent = a.curso + ' · ' + formatarData(a.data);
-      var st = top.querySelector('.stars');
-      st.innerHTML = estrelas(a.nota);
-      st.setAttribute('aria-label', 'Nota ' + a.nota + ' de 5');
-      li.appendChild(top);
+  function criarAvaliar(r, mediaBox) {
+    var bloco = el('div', 'avaliar');
+    var escolhida = r.minha_nota || 0;
 
-      if (a.prato) {
-        var prato = document.createElement('span');
-        prato.className = 'review-prato';
-        prato.textContent = a.prato;
-        li.appendChild(prato);
-      }
+    bloco.appendChild(el('p', 'avaliar-rotulo', r.minha_nota ? 'Sua avaliação' : 'Sua nota'));
 
-      var texto = document.createElement('p');
-      texto.className = 'texto';
-      texto.textContent = a.texto;
-      li.appendChild(texto);
+    var grupo = el('div', 'estrelas-input');
+    grupo.setAttribute('role', 'group');
+    grupo.setAttribute('aria-label', 'Dar nota para ' + r.nome);
+    var botoes = [];
 
-      if (a.fotos.length) {
-        var fotos = document.createElement('div');
-        fotos.className = 'review-fotos';
-        a.fotos.forEach(function (src) {
-          var img = document.createElement('img');
-          img.src = src;
-          img.alt = 'Foto enviada por ' + a.autor;
-          fotos.appendChild(img);
+    function pintar(ate) {
+      botoes.forEach(function (b, i) { b.classList.toggle('ativa', i < ate); });
+    }
+
+    for (var i = 1; i <= 5; i++) {
+      (function (valor) {
+        var b = el('button', 'estrela-btn', '★');
+        b.type = 'button';
+        b.setAttribute('aria-label', valor + (valor === 1 ? ' estrela' : ' estrelas'));
+        b.addEventListener('mouseenter', function () { pintar(valor); });
+        b.addEventListener('focus', function () { pintar(valor); });
+        b.addEventListener('click', function () {
+          escolhida = valor;
+          pintar(valor);
+          enviar.disabled = false;
         });
-        li.appendChild(fotos);
-      }
+        botoes.push(b);
+        grupo.appendChild(b);
+      })(i);
+    }
+    grupo.addEventListener('mouseleave', function () { pintar(escolhida); });
+    grupo.addEventListener('focusout', function () { pintar(escolhida); });
+    pintar(escolhida);
+    bloco.appendChild(grupo);
 
-      ul.appendChild(li);
+    var enviar = el('button', 'btn btn-primary', r.minha_nota ? 'Atualizar nota' : 'Enviar nota');
+    enviar.type = 'button';
+    enviar.disabled = true;
+    bloco.appendChild(enviar);
+
+    var msg = el('p', 'avaliar-msg');
+    bloco.appendChild(msg);
+
+    enviar.addEventListener('click', function () {
+      if (!escolhida) return;
+      enviar.disabled = true;
+      msg.className = 'avaliar-msg';
+      msg.textContent = 'Enviando...';
+
+      fetch(API_AVALIAR(r.id), {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nota: escolhida })
+      })
+        .then(function (resp) {
+          if (resp.status === 401) { window.location.href = PAGINA_LOGIN; return null; }
+          if (!resp.ok) throw new Error('falha');
+          return resp.json();
+        })
+        .then(function (dados) {
+          if (!dados) return;
+          r.nota_media = dados.nota_media;
+          r.total_avaliacoes = dados.total_avaliacoes;
+          r.minha_nota = dados.minha_nota || escolhida;
+          preencherMedia(mediaBox, r);
+          msg.className = 'avaliar-msg ok';
+          msg.textContent = 'Nota registrada. Obrigado!';
+          enviar.textContent = 'Atualizar nota';
+        })
+        .catch(function () {
+          msg.className = 'avaliar-msg erro';
+          msg.textContent = 'Não foi possível enviar sua nota. Tente novamente.';
+          enviar.disabled = false;
+        });
     });
+
+    return bloco;
   }
 
-  function render() { renderResumo(); renderLista(); }
+  /* ---------- lista, busca e categorias ---------- */
 
-  document.getElementById('busca').addEventListener('input', renderLista);
-  document.getElementById('ordem').addEventListener('change', renderLista);
-  document.getElementById('limparFiltro').addEventListener('click', function () {
-    filtroNota = 0;
-    render();
-  });
-
-  // ---------- formulário ----------
-  var form = document.getElementById('avaliacaoForm');
-  var textos = { 1: 'Ruim', 2: 'Regular', 3: 'Bom', 4: 'Muito bom', 5: 'Excelente' };
-  var fotosSelecionadas = []; // { file, url }
-
-  form.querySelectorAll('input[name="nota"]').forEach(function (r) {
-    r.addEventListener('change', function () {
-      document.getElementById('notaTexto').textContent = textos[r.value];
-      document.getElementById('notaErro').classList.remove('show');
+  function desenharChips() {
+    var cats = ['Todas'];
+    restaurantes.forEach(function (r) {
+      if (r.categoria && cats.indexOf(r.categoria) === -1) cats.push(r.categoria);
     });
-  });
-
-  var comentario = document.getElementById('comentario');
-  comentario.addEventListener('input', function () {
-    document.getElementById('contador').textContent = comentario.value.length;
-    if (comentario.value.trim().length >= 10) {
-      comentario.classList.remove('has-error');
-      document.getElementById('comentarioErro').classList.remove('show');
-    }
-  });
-
-  function renderPreviews() {
-    var box = document.getElementById('previews');
-    box.innerHTML = '';
-    fotosSelecionadas.forEach(function (f, i) {
-      var div = document.createElement('div');
-      div.className = 'preview';
-      var img = document.createElement('img');
-      img.src = f.url;
-      img.alt = 'Pré-visualização da foto ' + (i + 1);
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = '×';
-      btn.setAttribute('aria-label', 'Remover foto ' + (i + 1));
-      btn.addEventListener('click', function () {
-        fotosSelecionadas.splice(i, 1);
-        renderPreviews();
+    chipsBox.textContent = '';
+    if (cats.length < 3) return; // só uma categoria: filtro não ajuda
+    cats.forEach(function (c) {
+      var b = el('button', 'chip', c);
+      b.type = 'button';
+      b.setAttribute('aria-pressed', String(c === categoriaAtiva));
+      b.addEventListener('click', function () {
+        categoriaAtiva = c;
+        desenharChips();
+        desenharLista();
       });
-      div.appendChild(img);
-      div.appendChild(btn);
-      box.appendChild(div);
+      chipsBox.appendChild(b);
     });
   }
 
-  document.getElementById('fotos').addEventListener('change', function (e) {
-    Array.prototype.forEach.call(e.target.files, function (file) {
-      if (fotosSelecionadas.length >= 3 || file.type.indexOf('image/') !== 0) return;
-      fotosSelecionadas.push({ file: file, url: URL.createObjectURL(file) });
+  function desenharLista() {
+    var termo = normalizar(busca.value.trim());
+    var lista = restaurantes.filter(function (r) {
+      var okCat = categoriaAtiva === 'Todas' || r.categoria === categoriaAtiva;
+      var okNome = !termo || normalizar(r.nome).indexOf(termo) !== -1;
+      return okCat && okNome;
     });
-    e.target.value = '';
-    renderPreviews();
-  });
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    var nota = form.querySelector('input[name="nota"]:checked');
-    var texto = comentario.value.trim();
-    var ok = true;
-
-    if (!nota) {
-      document.getElementById('notaErro').classList.add('show');
-      ok = false;
+    if (!lista.length) {
+      estado(restaurantes.length ? 'Nenhum restaurante encontrado com esse filtro.' : 'Ainda não há restaurantes cadastrados.');
+      return;
     }
-    if (texto.length < 10) {
-      comentario.classList.add('has-error');
-      document.getElementById('comentarioErro').classList.add('show');
-      ok = false;
-    }
-    if (!document.getElementById('aceiteVeracidade').checked) {
-      document.getElementById('aceiteVeracidade').focus();
-      ok = false;
-    }
-    if (!ok) return;
+    grade.textContent = '';
+    lista.forEach(function (r) { grade.appendChild(criarCard(r)); });
+  }
 
-    // TODO: enviar para a API (POST /api/restaurantes/:id/avaliacoes) com FormData
-    // (nota, prato, comentario, fotos) e só então atualizar a lista com a resposta.
-    avaliacoes.unshift({
-      autor: 'Você', // TODO: nome e curso do usuário logado
-      curso: 'Aluno PUC-Rio',
-      nota: parseInt(nota.value, 10),
-      prato: document.getElementById('prato').value.trim(),
-      texto: texto,
-      data: new Date().toISOString().slice(0, 10),
-      fotos: fotosSelecionadas.map(function (f) { return f.url; })
-    });
+  busca.addEventListener('input', desenharLista);
 
-    form.reset();
-    fotosSelecionadas = [];
-    renderPreviews();
-    document.getElementById('contador').textContent = '0';
-    document.getElementById('notaTexto').textContent = '';
-    filtroNota = 0;
-    document.getElementById('busca').value = '';
-    document.getElementById('ordem').value = 'recentes';
-    render();
+  function carregar() {
+    grade.textContent = '';
+    for (var i = 0; i < 3; i++) grade.appendChild(el('div', 'skeleton'));
 
-    var alerta = document.getElementById('sucessoAlert');
-    alerta.classList.add('show');
-    setTimeout(function () { alerta.classList.remove('show'); }, 5000);
-  });
+    fetch(API_LISTA, { credentials: 'same-origin' })
+      .then(function (resp) {
+        if (resp.status === 401) { window.location.href = PAGINA_LOGIN; return null; }
+        if (!resp.ok) throw new Error('falha');
+        return resp.json();
+      })
+      .then(function (dados) {
+        if (!dados) return;
+        restaurantes = dados;
+        desenharChips();
+        desenharLista();
+      })
+      .catch(function () {
+        estado('Não foi possível carregar os restaurantes.', true);
+      });
+  }
 
-  render();
+  carregar();
 })();
 </script>
 </body>
