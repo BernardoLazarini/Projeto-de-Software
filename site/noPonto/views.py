@@ -141,20 +141,39 @@ def aluno_atual(request):
 
 # ---------- Restaurantes ----------
 
-@login_required   # mantenha o decorador que a função já tem
+@login_required
 def listar_restaurantes(request):
+    aluno = getattr(request.user, "aluno", None)
+
     restaurantes = list(
         Restaurante.objects.select_related("estilo", "cardapio")
         .prefetch_related("cardapio__prato_set")
         .annotate(media=Avg("avaliacao__estrela"), total=Count("avaliacao"))
         .order_by("nome")
     )
+
+    ids_favoritos = set()
+    minhas = {}
+    if aluno:
+        ids_favoritos = set(
+            aluno.restaurantes_favoritos.values_list("id", flat=True)
+        )
+        minhas = dict(
+            Avaliacao.objects.filter(aluno=aluno)
+            .values_list("restaurante_id", "estrela")
+        )
+
     for r in restaurantes:
-        r.pct = round((r.media or 0) / 5 * 100)   # largura das estrelas douradas (0 a 100)
+        r.pct = round((r.media or 0) / 5 * 100)
+        r.minha = minhas.get(r.id, 0)
+        r.favorito = r.id in ids_favoritos
+
+    restaurantes = sorted(restaurantes, key=lambda r: not r.favorito)  # favoritos primeiro
 
     return render(request, "restaurantes.html", {
         "restaurantes": restaurantes,
         "estilos": EstiloComida.objects.all().order_by("nome"),
+        "aluno": aluno,
     })
 
 @login_obrigatorio
@@ -306,3 +325,20 @@ def avaliar(request, id):
         "total": resumo["total"],
         "pct": round(media / 5 * 100),
     })
+
+@require_POST
+def favoritar(request, id):
+    if not request.user.is_authenticated:
+        return JsonResponse({"erro": "login"}, status=401)
+
+    aluno = request.user.aluno
+    restaurante = get_object_or_404(Restaurante, id=id)
+
+    if aluno.restaurantes_favoritos.filter(id=id).exists():
+        aluno.restaurantes_favoritos.remove(restaurante)
+        favorito = False
+    else:
+        aluno.restaurantes_favoritos.add(restaurante)
+        favorito = True
+
+    return JsonResponse({"favorito": favorito})    

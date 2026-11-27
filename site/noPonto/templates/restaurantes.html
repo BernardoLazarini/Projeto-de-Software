@@ -42,7 +42,7 @@
 </nav>
 
 <main class="home-wrap">
- {% csrf_token %}
+  {% csrf_token %}
 
   <div class="busca">
     <span class="busca-icone" aria-hidden="true">🔍</span>
@@ -61,7 +61,7 @@
   <ul class="cards">
     {% for r in restaurantes %}
     <li>
-      <article class="card" data-nome="{{ r.nome }}" data-estilo="{% if r.estilo %}{{ r.estilo.id }}{% endif %}">
+      <article class="card{% if r.favorito %} favorito{% endif %}" data-nome="{{ r.nome }}" data-estilo="{% if r.estilo %}{{ r.estilo.id }}{% endif %}">
 
         <div class="card-foto">
           {% if r.foto %}
@@ -70,7 +70,11 @@
             <a class="card-foto-vazia" href="{% url 'detalhe_restaurante' r.id %}" aria-hidden="true" tabindex="-1">🍽️</a>
           {% endif %}
           {% if r.estilo %}<span class="card-selo">{{ r.estilo.nome }}</span>{% endif %}
-          <button type="button" class="coracao" data-id="{{ r.id }}" aria-pressed="false" aria-label="Favoritar {{ r.nome }}">♡</button>
+          <button type="button" class="coracao"
+                  data-id="{{ r.id }}"
+                  data-url="{% url 'favoritar' r.id %}"
+                  aria-pressed="{% if r.favorito %}true{% else %}false{% endif %}"
+                  aria-label="Favoritar {{ r.nome }}">{% if r.favorito %}♥{% else %}♡{% endif %}</button>
         </div>
 
         <div class="card-corpo">
@@ -118,12 +122,12 @@
 
           <div class="card-avaliar">
             <span class="avaliar-rotulo">Sua nota:</span>
-             <div class="estrelas-input" data-url="{% url 'avaliar' r.id %}" data-minha="{{ r.minha }}" role="group" aria-label="Avaliar {{ r.nome }}">
+            <div class="estrelas-input" data-url="{% url 'avaliar' r.id %}" data-minha="{{ r.minha }}" role="group" aria-label="Avaliar {{ r.nome }}">
               {% for i in "12345" %}
-             <button type="button" class="estrela-btn" data-valor="{{ i }}" aria-label="{{ i }} de 5">★</button>
-           {% endfor %}
-             </div>
-              <span class="avaliar-msg" aria-live="polite"></span>
+              <button type="button" class="estrela-btn" data-valor="{{ i }}" aria-label="{{ i }} de 5">★</button>
+              {% endfor %}
+            </div>
+            <span class="avaliar-msg" aria-live="polite"></span>
           </div>
         </div>
 
@@ -147,8 +151,6 @@
 </footer>
 
 <script>
-/* noPonto — página inicial. Vanilla JS, sem dependências.
-   Os restaurantes vêm do banco (Django). O JS só filtra o que já está na página. */
 (function () {
   'use strict';
 
@@ -162,9 +164,10 @@
   function normalizar(texto) {
     return texto.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
-  // ----- Avaliar clicando nas estrelas -----
+
   var csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
+  // ----- Avaliar clicando nas estrelas -----
   document.querySelectorAll('.estrelas-input').forEach(function (grupo) {
     var botoes = grupo.querySelectorAll('.estrela-btn');
     var card = grupo.closest('.card');
@@ -201,7 +204,6 @@
           atual = d.minha;
           pintar(atual);
           msg.textContent = 'Avaliado!';
-          // atualiza a média mostrada no card
           card.querySelector('.card-nota').innerHTML =
             '<span class="estrelas-medida" role="img" style="--pct: ' + d.pct + '%">★★★★★</span> ' +
             '<strong class="nota-num">' + d.media.toFixed(1).replace('.', ',') + '</strong> ' +
@@ -216,6 +218,7 @@
 
     grupo.addEventListener('mouseleave', function () { pintar(atual); });
   });
+
   // ----- Busca por nome + filtro por categoria -----
   function filtrar() {
     var termo = normalizar(busca.value.trim());
@@ -225,7 +228,7 @@
       var bateNome = !termo || normalizar(card.getAttribute('data-nome')).indexOf(termo) !== -1;
       var bateEstilo = !estiloAtivo || card.getAttribute('data-estilo') === estiloAtivo;
       var mostrar = bateNome && bateEstilo;
-      card.parentElement.hidden = !mostrar;   // esconde o <li> inteiro
+      card.parentElement.hidden = !mostrar;
       if (mostrar) visiveis++;
     });
 
@@ -243,7 +246,7 @@
     });
   });
 
-  // ----- Abas dentro de cada cartão (Sobre / Cardápio / Localização) -----
+  // ----- Abas dentro de cada cartão -----
   document.querySelector('.cards').addEventListener('click', function (e) {
     var aba = e.target.closest('.card-aba');
     if (!aba) return;
@@ -260,29 +263,48 @@
     });
   });
 
-  // ----- Favoritos (guardados só neste navegador) -----
-  var CHAVE = 'noponto_favoritos';
-  function lerFavoritos() {
-    try { return JSON.parse(localStorage.getItem(CHAVE)) || []; } catch (e) { return []; }
+  // ----- Favoritos (salvos no servidor) + favoritos no topo -----
+  var lista = document.querySelector('.cards');
+  var itens = Array.prototype.slice.call(lista.children);
+  itens.forEach(function (li, i) { li.dataset.ordem = i; });
+
+  function reordenar() {
+    itens.sort(function (a, b) {
+      var fa = a.querySelector('.card').classList.contains('favorito') ? 0 : 1;
+      var fb = b.querySelector('.card').classList.contains('favorito') ? 0 : 1;
+      if (fa !== fb) return fa - fb;
+      return Number(a.dataset.ordem) - Number(b.dataset.ordem);
+    });
+    itens.forEach(function (li) { lista.appendChild(li); });
   }
-  function salvarFavoritos(lista) {
-    try { localStorage.setItem(CHAVE, JSON.stringify(lista)); } catch (e) { /* sem armazenamento: ignora */ }
-  }
-  var favoritos = lerFavoritos();
 
   document.querySelectorAll('.coracao').forEach(function (botao) {
-    var id = botao.getAttribute('data-id');
-    function pintar() {
-      var ligado = favoritos.indexOf(id) !== -1;
-      botao.setAttribute('aria-pressed', ligado ? 'true' : 'false');
-      botao.textContent = ligado ? '♥' : '♡';
-    }
-    pintar();
+    var card = botao.closest('.card');
+
     botao.addEventListener('click', function () {
-      var i = favoritos.indexOf(id);
-      if (i === -1) { favoritos.push(id); } else { favoritos.splice(i, 1); }
-      salvarFavoritos(favoritos);
-      pintar();
+      fetch(botao.getAttribute('data-url'), {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrf }
+      })
+      .then(function (resp) {
+        if (resp.status === 401) {
+          window.location.href = "{% url 'login' %}";
+          return null;
+        }
+        if (!resp.ok) throw new Error('status ' + resp.status);
+        return resp.json();
+      })
+      .then(function (d) {
+        if (!d) return;
+        botao.setAttribute('aria-pressed', d.favorito ? 'true' : 'false');
+        botao.textContent = d.favorito ? '♥' : '♡';
+        card.classList.toggle('favorito', d.favorito);
+        reordenar();
+      })
+      .catch(function (err) {
+        console.error(err);
+        alert('Não foi possível favoritar (' + err.message + ').');
+      });
     });
   });
 

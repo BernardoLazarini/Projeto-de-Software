@@ -62,6 +62,10 @@ class Aluno(models.Model):
     password = models.CharField(max_length=128)               # sai no passo 3
     estilos_favoritos = models.ManyToManyField(EstiloComida, blank=True)
 
+    estilos_favoritos = models.ManyToManyField(EstiloComida, blank=True)
+    restaurantes_favoritos = models.ManyToManyField(
+        Restaurante, blank=True, related_name="favoritado_por")
+
     def __str__(self):
         return self.nome
 

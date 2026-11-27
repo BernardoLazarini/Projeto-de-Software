@@ -1,17 +1,18 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Avaliações — noPonto</title>
-<link rel="stylesheet" href="../conta-estilo.css">
-<link rel="stylesheet" href="avaliacoes.css">
+<link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
+<link rel="stylesheet" href="{% static 'css/avaliacoes.css' %}">
 </head>
 <body>
 
 <header class="av-header">
   <a class="av-brand" href="../index.html">
-    <img src="../logoNoPonto.png" alt="noPonto">
+    <img src="{% static 'img/logoNoPonto.png' %}" alt="noPonto">
     <span>noPonto</span>
   </a>
   <nav class="av-nav" aria-label="Principal">
