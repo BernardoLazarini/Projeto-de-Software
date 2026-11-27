@@ -1,0 +1,136 @@
+/* Estilos específicos da página Avaliações — NoPonto! */
+
+.avaliacoes-topo {
+  margin-bottom: 18px;
+}
+
+.avaliacoes-topo h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.2;
+  margin: 0 0 6px;
+}
+
+.avaliacoes-subtitulo {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.avaliacoes-resumo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0 20px;
+}
+
+.resumo-box {
+  background: var(--superficie, #ffffff);
+  border: 1px solid var(--borda, #e5e7eb);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.resumo-box span {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 500;
+  opacity: 0.72;
+  margin-bottom: 4px;
+}
+
+.resumo-box strong {
+  font-family: 'Fraunces', serif;
+  font-size: 1.55rem;
+  line-height: 1.1;
+}
+
+.controles-avaliacoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 20px;
+}
+
+.ordenacao-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-comentarios {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--borda, #e5e7eb);
+}
+
+.card-comentarios h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.comentario-item {
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin: 0 0 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.035);
+}
+
+.comentario-item:last-child {
+  margin-bottom: 0;
+}
+
+.comentario-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.comentario-item p {
+  margin: 0;
+  word-break: break-word;
+}
+
+.card-acoes-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding-top: 8px;
+}
+
+.link-detalhe {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.link-detalhe:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .controles-avaliacoes {
+    align-items: flex-start;
+  }
+
+  .resumo-box {
+    padding: 12px 14px;
+  }
+
+  .resumo-box strong {
+    font-size: 1.35rem;
+  }
+}

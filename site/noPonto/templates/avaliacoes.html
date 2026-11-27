@@ -10,81 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'css/conta-estilo.css' %}">
 <link rel="stylesheet" href="{% static 'css/inicio.css' %}">
-<link rel="stylesheet" href="{% static 'css/avalicoes.css' %}">
-<style>
-  .avaliacoes-resumo {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin: 16px 0 20px;
-  }
-  .resumo-box {
-    background: var(--superficie, #fff);
-    border: 1px solid var(--borda, #e5e7eb);
-    border-radius: 12px;
-    padding: 14px 16px;
-  }
-  .resumo-box span {
-    display: block;
-    font-size: 0.85rem;
-    opacity: 0.75;
-  }
-  .resumo-box strong {
-    font-family: 'Fraunces', serif;
-    font-size: 1.5rem;
-  }
-  .controles-avaliacoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
-    margin: 14px 0 18px;
-  }
-  .ordenacao-grupo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .card-comentarios {
-    margin-top: 12px;
-    padding-top: 10px;
-    border-top: 1px solid var(--borda, #eee);
-  }
-  .card-comentarios h3 {
-    font-size: 0.92rem;
-    margin: 0 0 8px;
-  }
-  .comentario-item {
-    font-size: 0.88rem;
-    margin: 0 0 8px;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.03);
-  }
-  .comentario-meta {
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-  .card-acoes-rodape {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-  }
-  .link-detalhe {
-    font-weight: 600;
-    text-decoration: none;
-  }
-  .link-detalhe:hover {
-    text-decoration: underline;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/avaliacoes.css' %}">
 </head>
 <body>
 
@@ -122,12 +48,14 @@
 <main class="home-wrap">
   {% csrf_token %}
 
-  <h1>Avaliações dos Restaurantes</h1>
-  <p class="contagem">Veja todos os restaurantes cadastrados ordenados pelas avaliações registradas no banco.</p>
+  <div class="avaliacoes-topo">
+    <h1>Avaliações dos Restaurantes</h1>
+    <p class="avaliacoes-subtitulo">Média geral e ranking de todos os restaurantes com base nas avaliações do banco.</p>
+  </div>
 
   <section class="avaliacoes-resumo" aria-label="Resumo geral das avaliações">
     <div class="resumo-box">
-      <span>Média geral</span>
+      <span>Média geral do banco</span>
       <strong id="media-geral">{{ media|default:0|floatformat:1 }}</strong>
     </div>
     <div class="resumo-box">
@@ -143,11 +71,10 @@
 
   <div class="controles-avaliacoes">
     <div class="ordenacao-grupo" role="group" aria-label="Ordenar restaurantes por avaliação">
-      <button type="button" class="chip ativo" data-ordem="maior-media">Maior média</button>
+      <button type="button" class="chip ativo" data-ordem="maior-nota">Maior avaliação / Melhor nota</button>
+      <button type="button" class="chip" data-ordem="menor-nota">Menor nota</button>
       <button type="button" class="chip" data-ordem="mais-avaliados">Mais avaliados</button>
-      <button type="button" class="chip" data-ordem="com-avaliacao">Com avaliações</button>
-      <button type="button" class="chip" data-ordem="sem-avaliacao">Sem avaliações</button>
-      <button type="button" class="chip" data-ordem="alfabetica">A–Z</button>
+      <button type="button" class="chip" data-ordem="todos">Todos os restaurantes</button>
     </div>
     <p class="contagem" id="contagem-avaliacoes" aria-live="polite"></p>
   </div>
@@ -159,7 +86,7 @@
       <li data-ordem-inicial="{{ forloop.counter0 }}">
         <article class="card"
                  data-nome="{{ r.nome }}"
-                 data-media="{{ media_val|floatformat:2 }}"
+                 data-media="{{ media_val|floatformat:4 }}"
                  data-total="{{ total_val }}"
                  data-comentarios="{% for av in r.avaliacao_set.all %}{{ av.comentario }} {% endfor %}">
 
@@ -190,19 +117,17 @@
             </div>
 
             <div class="card-comentarios">
-              <h3>Comentários recentes</h3>
+              <h3>Avaliações registradas</h3>
               {% for av in r.avaliacao_set.all %}
-                {% if av.comentario %}
-                  <div class="comentario-item">
-                    <div class="comentario-meta">
-                      <span>{{ av.aluno.nome }}</span>
-                      <span>{{ av.estrela }}/5 ★</span>
-                    </div>
-                    <p>{{ av.comentario }}</p>
+                <div class="comentario-item">
+                  <div class="comentario-meta">
+                    <span>Nota registrada</span>
+                    <span>{{ av.estrela }}/5 ★</span>
                   </div>
-                {% endif %}
+                  {% if av.comentario %}<p>{{ av.comentario }}</p>{% endif %}
+                </div>
               {% empty %}
-                <p class="nota-total">Nenhum comentário registrado ainda.</p>
+                <p class="nota-total">Nenhuma avaliação registrada ainda.</p>
               {% endfor %}
             </div>
 
@@ -217,7 +142,7 @@
             </div>
 
             <div class="card-acoes-rodape">
-              <a class="link-detalhe" href="{% url 'detalhe_restaurante' r.id %}">Ver detalhes e comentar →</a>
+              <a class="link-detalhe" href="{% url 'detalhe_restaurante' r.id %}">Ver detalhes→</a>
             </div>
           </div>
 
@@ -227,8 +152,8 @@
       {% endfor %}
     </ul>
   {% else %}
+    {% regroup avaliacoes by restaurante as grupos_restaurante %}
     <ul class="cards" id="lista-restaurantes-avaliacoes">
-      {% regroup avaliacoes by restaurante as grupos_restaurante %}
       {% for grupo in grupos_restaurante %}
       {% with r=grupo.grouper %}
       <li data-ordem-inicial="{{ forloop.counter0 }}">
@@ -262,7 +187,7 @@
               {% for av in grupo.list %}
                 <div class="comentario-item">
                   <div class="comentario-meta">
-                    <span>{{ av.aluno.nome }}</span>
+                    <span>Nota registrada</span>
                     <span>{{ av.estrela }}/5 ★</span>
                   </div>
                   {% if av.comentario %}<p>{{ av.comentario }}</p>{% endif %}
@@ -281,7 +206,7 @@
             </div>
 
             <div class="card-acoes-rodape">
-              <a class="link-detalhe" href="{% url 'detalhe_restaurante' r.id %}">Ver detalhes e comentar →</a>
+              <a class="link-detalhe" href="{% url 'detalhe_restaurante' r.id %}">Ver detalhes e avaliar →</a>
             </div>
           </div>
 
@@ -294,7 +219,7 @@
 
   <div class="home-vazio" id="vazio-avaliacoes" hidden>
     <strong>Nenhum restaurante encontrado</strong>
-    Tente outro termo de busca ou outro filtro de avaliação.
+    Tente outro termo de busca.
   </div>
 </main>
 
@@ -317,7 +242,7 @@
   var busca = document.getElementById('busca-avaliacoes');
   var contagem = document.getElementById('contagem-avaliacoes');
   var vazio = document.getElementById('vazio-avaliacoes');
-  var ordemAtual = 'maior-media';
+  var ordemAtual = 'maior-nota';
 
   function normalizar(texto) {
     return (texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -328,18 +253,19 @@
     return isNaN(n) ? 0 : n;
   }
 
-  // Calcula média real a partir das avaliações exibidas quando vier do fallback regroup
+  // Se vier pelo fallback regroup, calcula a média real a partir de todas as notas listadas
   itens.forEach(function (li) {
     var card = li.querySelector('.card');
+    var totalAtual = parseInt(card.getAttribute('data-total') || '0', 10);
     var mediaAtual = parseNumero(card.getAttribute('data-media'));
-    if (!mediaAtual) {
+    if (totalAtual > 0 && mediaAtual === 0) {
       var notas = Array.prototype.slice.call(card.querySelectorAll('.comentario-meta span:last-child'))
         .map(function (el) { return parseFloat(el.textContent); })
         .filter(function (n) { return !isNaN(n); });
       if (notas.length) {
         var soma = notas.reduce(function (acc, n) { return acc + n; }, 0);
         var mediaCalc = soma / notas.length;
-        card.setAttribute('data-media', mediaCalc.toFixed(2));
+        card.setAttribute('data-media', mediaCalc.toFixed(4));
         var notaEl = card.querySelector('.card-nota');
         if (notaEl) {
           var pct = Math.round((mediaCalc / 5) * 100);
@@ -351,6 +277,29 @@
       }
     }
   });
+
+  function atualizarResumoGeral() {
+    var somaNotas = 0;
+    var totalAvaliacoes = 0;
+
+    itens.forEach(function (li) {
+      var card = li.querySelector('.card');
+      var mediaCard = parseNumero(card.getAttribute('data-media'));
+      var totalCard = parseInt(card.getAttribute('data-total') || '0', 10);
+      if (totalCard > 0) {
+        somaNotas += mediaCard * totalCard;
+        totalAvaliacoes += totalCard;
+      }
+    });
+
+    var mediaEl = document.getElementById('media-geral');
+    var totalEl = document.getElementById('total-geral');
+    if (totalEl) totalEl.textContent = String(totalAvaliacoes);
+    if (mediaEl) {
+      var mediaGeral = totalAvaliacoes > 0 ? (somaNotas / totalAvaliacoes) : 0;
+      mediaEl.textContent = mediaGeral.toFixed(1).replace('.', ',');
+    }
+  }
 
   function ordenarEFiltrar() {
     var termo = normalizar(busca.value.trim());
@@ -364,41 +313,47 @@
       var mediaB = parseNumero(cb.getAttribute('data-media'));
       var totalA = parseInt(ca.getAttribute('data-total') || '0', 10);
       var totalB = parseInt(cb.getAttribute('data-total') || '0', 10);
+      var temAvA = totalA > 0 ? 1 : 0;
+      var temAvB = totalB > 0 ? 1 : 0;
 
-      if (ordemAtual === 'maior-media') {
+      if (ordemAtual === 'maior-nota') {
         if (mediaB !== mediaA) return mediaB - mediaA;
         if (totalB !== totalA) return totalB - totalA;
         return nomeA.localeCompare(nomeB, 'pt-BR');
       }
+
+      if (ordemAtual === 'menor-nota') {
+        // Restaurantes avaliados vêm antes dos sem avaliação; entre avaliados, menor média primeiro
+        if (temAvB !== temAvA) return temAvB - temAvA;
+        if (temAvA === 0) return nomeA.localeCompare(nomeB, 'pt-BR');
+        if (mediaA !== mediaB) return mediaA - mediaB;
+        return nomeA.localeCompare(nomeB, 'pt-BR');
+      }
+
       if (ordemAtual === 'mais-avaliados') {
         if (totalB !== totalA) return totalB - totalA;
         if (mediaB !== mediaA) return mediaB - mediaA;
         return nomeA.localeCompare(nomeB, 'pt-BR');
       }
-      if (ordemAtual === 'alfabetica') {
-        return nomeA.localeCompare(nomeB, 'pt-BR');
-      }
-      return Number(a.getAttribute('data-ordem-inicial')) - Number(b.getAttribute('data-ordem-inicial'));
+
+      return nomeA.localeCompare(nomeB, 'pt-BR');
     });
 
+    var fragmento = document.createDocumentFragment();
     var visiveis = 0;
+
     ordenados.forEach(function (li) {
-      lista.appendChild(li);
+      fragmento.appendChild(li);
       var card = li.querySelector('.card');
       var nome = normalizar(card.getAttribute('data-nome'));
       var comentarios = normalizar(card.getAttribute('data-comentarios'));
-      var total = parseInt(card.getAttribute('data-total') || '0', 10);
+      var mostrar = !termo || nome.indexOf(termo) !== -1 || comentarios.indexOf(termo) !== -1;
 
-      var bateBusca = !termo || nome.indexOf(termo) !== -1 || comentarios.indexOf(termo) !== -1;
-      var bateFiltro = true;
-      if (ordemAtual === 'com-avaliacao') bateFiltro = total > 0;
-      if (ordemAtual === 'sem-avaliacao') bateFiltro = total === 0;
-
-      var mostrar = bateBusca && bateFiltro;
       li.hidden = !mostrar;
       if (mostrar) visiveis++;
     });
 
+    lista.appendChild(fragmento);
     contagem.textContent = visiveis + (visiveis === 1 ? ' restaurante exibido' : ' restaurantes exibidos');
     vazio.hidden = visiveis !== 0;
   }
@@ -413,14 +368,12 @@
     });
   });
 
-  // Avaliar direto pelas estrelas usando a mesma rota POST /restaurantes/<id>/avaliar/
   var csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
   var csrf = csrfInput ? csrfInput.value : '';
 
   document.querySelectorAll('.estrelas-input').forEach(function (grupo) {
     var botoes = grupo.querySelectorAll('.estrela-btn');
     var card = grupo.closest('.card');
-    var li = card.closest('li');
     var msg = card.querySelector('.avaliar-msg');
     var atual = Number(grupo.getAttribute('data-minha')) || 0;
 
@@ -459,6 +412,7 @@
             '<span class="estrelas-medida" role="img" style="--pct: ' + d.pct + '%">★★★★★</span> ' +
             '<strong class="nota-num">' + Number(d.media).toFixed(1).replace('.', ',') + '</strong> ' +
             '<span class="nota-total">(' + d.total + ' avaliaç' + (d.total === 1 ? 'ão' : 'ões') + ')</span>';
+          atualizarResumoGeral();
           ordenarEFiltrar();
         })
         .catch(function () {
@@ -471,6 +425,7 @@
     grupo.addEventListener('mouseleave', function () { pintar(atual); });
   });
 
+  atualizarResumoGeral();
   ordenarEFiltrar();
 })();
 </script>

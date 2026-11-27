@@ -265,17 +265,28 @@ def listar_restaurantes(request):
     })
 @login_obrigatorio
 def avaliacoes(request):
-    lista = (
+    lista_avaliacoes = (
         Avaliacao.objects.select_related("aluno", "restaurante")
         .order_by("-id")
     )
-    resumo = lista.aggregate(media=Avg("estrela"), total=Count("id"))
+    resumo = lista_avaliacoes.aggregate(media=Avg("estrela"), total=Count("id"))
+
+    restaurantes_qs = (
+        Restaurante.objects.select_related("estilo")
+        .prefetch_related("avaliacao_set")
+        .annotate(
+            media=Avg("avaliacao__estrela"),
+            total=Count("avaliacao"),
+        )
+        .order_by("-media", "-total", "nome")
+    )
+
     return render(request, "avaliacoes.html", {
-        "avaliacoes": lista,
+        "restaurantes": restaurantes_qs,
+        "avaliacoes": lista_avaliacoes,
         "media": resumo["media"] or 0,
         "total": resumo["total"],
     })
-
 def termo_de_uso(request):
     return render(request, "termodeuso.html")
 
